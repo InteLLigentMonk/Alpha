@@ -1,0 +1,39 @@
+﻿.placeholder-container {
+    display: grid;
+    place-items: center;
+    height: 56px;
+    aspect-ratio: 1;
+    border-radius: 14px;
+}
+
+.placeholder-image {
+    transform: translateY(3px);
+}
+
+.bg-green-radial {
+    background-image: radial-gradient(circle at 15% 15%, #D9FAAF 41%, #88E397 100%)
+}
+.bg-darkorange-radial {
+    background-image: radial-gradient(circle at 5% 5%, #FFCC73 57%, #FF93A0 85%)
+}
+.bg-orange-radial {
+    background-image: radial-gradient(circle at 5% 5%, #FFD080 36%, #FFBB80 85%)
+}
+.bg-orangegreen-radial {
+    background-image: radial-gradient(circle at 5% 5%, #F4D29F 0%, #9CF0AA 85%)
+}
+.bg-darkred-radial {
+    background-image: radial-gradient(circle at 5% 5%, #FEC0B2 45%, #FF866B 85%)
+}
+.bg-red-radial {
+    background-image: radial-gradient(circle at 5% 5%, #FFD7C4 54%, #FCA67E 85%)
+}
+.bg-purple-radial {
+    background-image: radial-gradient(circle at 5% 5%, #B8A4FC 49%, #B859E4 85%)
+}
+.bg-blue-radial {
+    background-image: radial-gradient(circle at 5% 5%, #98FDC6 36%, #97DEFC 85%)
+}
+.bg-magenta-linear {
+    background-image: linear-gradient(35deg, rgba(48,124,244,0.7) 10%, rgba(134,58,246,0.7) 25%, rgba(188,55,226,0.7) 54%, rgba(239,97,92,0.7) 75%);
+}

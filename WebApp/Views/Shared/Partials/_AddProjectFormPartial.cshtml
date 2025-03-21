@@ -1,0 +1,78 @@
+﻿@model WebApp.Models.ProjectFormModel
+
+<form method="post" enctype="multipart/form-data" id="add-project-form" class="projects-form">
+    <div class="photo-upload-button">
+         <label asp-for="ProjectPhoto">
+            <div id="photo-placeholder" class="photo-placeholder-square">
+                <div class="camera-circle">
+                    <i class="fa-solid fa-camera-retro fa-2xl"></i>
+                </div>
+            </div>
+
+            <img class="upload-image d-none" src="~/uploads/04064ae1-8e33-43a5-84da-82ffbbf52256_20241126_164416 (1).jpg"/>
+
+         </label>
+        <input asp-for="ProjectPhoto" accept="image/*" class="input">
+    </div>
+        <span asp-validation-for="ProjectPhoto"></span>
+
+   <div class="form-input">
+       <label asp-for="ProjectName"></label>
+       <input asp-for="ProjectName" class="input">
+       <span asp-validation-for="ProjectName"></span>
+   </div>
+   <div class="form-input">
+       <label asp-for="ClientName"></label>
+       <input asp-for="ClientName" class="input">
+       <span asp-validation-for="ClientName"></span>
+   </div>
+   <div class="form-input">
+       <label asp-for="Description"></label>
+       <textarea asp-for="Description" class="input"></textarea>
+       <span asp-validation-for="Description"></span>
+   </div>
+    <div class="d-flex gap-4 w-full ">
+        <div class="form-input w-50 flex-1">
+            <label asp-for="StartDate"></label>
+            <input asp-for="StartDate" class="input">
+            <span asp-validation-for="StartDate"></span>
+        </div>
+        <div class="form-input w-50 flex-1">
+            <label asp-for="EndDate"></label>
+            <input asp-for="EndDate" class="input">
+            <span asp-validation-for="EndDate"></span>
+        </div>
+    </div>
+	@await Html.PartialAsync("Partials/UI/_MemberInputPartial")
+
+    <div class="form-input project-budget">
+        <label asp-for="Budget"></label>
+        <input asp-for="Budget" class="input project-budget-input">
+        <span class="project-budget-sign"><i class="fa-solid fa-sack-dollar fa-lg"></i></span>
+        <span asp-validation-for="Budget"></span>
+    </div>
+
+   @await Html.PartialAsync("Partials/UI/_ButtonPrimaryPartial", new ButtonPropertiesModel() { Text = "Create" })
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const fileInput = document.querySelector('#ProjectPhoto')
+		if(!fileInput) return
+
+        fileInput.addEventListener("change", (e) => {
+			const file = e.target.files[0]
+			const img = document.querySelector('.upload-image')
+			const placeholder = document.querySelector('.photo-placeholder-square')
+            if(file){
+			    const reader = new FileReader()
+			    reader.onload = (e) => {
+				    img.src = e.target.result
+				    img.classList.remove('d-none')
+				    placeholder.classList.add('d-none')
+			    }
+			    reader.readAsDataURL(file)
+            }
+        })
+    })
+</script>

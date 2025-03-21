@@ -1,0 +1,29 @@
+﻿@model WebApp.Models.LoginFormModel
+
+<form method="post" class="login-form">
+    <div class="form-input">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="input" autofocus>
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div class="form-input">
+        <label asp-for="Password">Password</label>
+        <div class="password-wrapper">
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('Password')">
+                <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+            </button>
+            <input asp-for="Password" value="@Model.Password" class="input">
+        </div>
+        <span asp-validation-for="Password"></span>
+    </div>
+
+    <div class="justify-between">
+        <div class="center">
+            <input asp-for="RememberMe" type="checkbox">
+            <label asp-for="RememberMe">Remember Me</label>
+        </div>
+        <a asp-action="ForgotPassword" class="forgot-password">Forgot Password?</a>
+    </div>
+    @await Html.PartialAsync("Partials/UI/_ButtonPrimaryPartial", new ButtonPropertiesModel() { Text = "Login" })
+</form>
+

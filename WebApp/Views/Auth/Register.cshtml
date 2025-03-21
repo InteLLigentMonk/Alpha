@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "../Shared/_LayoutAuth.cshtml";
+}
+<link rel="stylesheet" href="~/css/login.css" />
+<h1>Create Account</h1>
+@await Html.PartialAsync("Partials/UI/_ButtonGooglePartial", "Sign Up with Google")
+<div class="or-divider">
+    <div class="ruler"></div>
+    <div>OR</div>
+    <div class="ruler"></div>
+</div>
+@await Html.PartialAsync("Partials/_RegisterFormPartial")
+<div class="no-account center">
+    <p>Already have an account? <a asp-action="Login">Login</a></p>
+</div>
+
+
+@await Html.PartialAsync("Partials/_FormValidationPartial")

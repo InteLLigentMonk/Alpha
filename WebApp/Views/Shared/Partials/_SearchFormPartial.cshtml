@@ -1,0 +1,13 @@
+﻿@model ProjectsViewModel
+@{
+
+}
+
+<div class="search-form">
+    <form action="/" method="post">
+        <div class="d-flex align-items-center gap-2">
+        <button class="search-button"><i class="fa-solid fa-magnifying-glass fa-lg"></i></button>
+        <input asp-for="@Model.SearchForm.SearchText" id="search-input" autofocus>
+        </div>
+    </form>
+</div>

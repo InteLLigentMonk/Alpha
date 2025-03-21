@@ -1,0 +1,56 @@
+﻿@{
+    Layout = "../Shared/_LayoutAuth.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/terms.css" />
+
+<div class="terms-container">
+    <h1>Alpha CRM: Terms and Conditions</h1>
+    <h2>Last Updated: The day before you read this</h2>
+
+    <p>Welcome to Alpha CRM, the Customer Relationship Management system that promises to organize your contacts but secretly judges your emoji usage in client emails.</p>
+
+    <h3>1. Acceptance of Terms</h3>
+    <p>By clicking "I Accept" (which we know you did without reading this document), you agree to be bound by these Terms and Conditions, even though statistically speaking, you'll forget them within 37 seconds of closing this page.</p>
+
+    <h3>2. User Accounts</h3>
+    <p>You are responsible for maintaining the confidentiality of your password, which we sincerely hope is not "password123" (we're looking at you, Dave from Marketing). Alpha CRM cannot and will not be liable for any loss or damage arising from your failure to use a password that would stump at least a moderately intelligent household pet.</p>
+
+    <h3>3. Data Storage</h3>
+    <p>Your data is stored securely in our state-of-the-art cloud servers, which are definitely not just Steve's gaming PC in the supply closet. We guarantee 99.9% uptime, except during coffee breaks, full moons, or when Mercury is in retrograde.</p>
+
+    <h3>4. Prohibited Uses</h3>
+    <p>Users are strictly prohibited from using Alpha CRM to:</p>
+    <ul>
+        <li>Track relationships with fictional characters, regardless of how much you relate to them</li>
+        <li>Store recipes for world domination or slightly overcooked lasagna</li>
+        <li>Calculate how much time you've spent reading Terms and Conditions instead of working</li>
+        <li>Create detailed logs of office refrigerator thefts (we have a separate app for that)</li>
+    </ul>
+
+    <h3>5. Customer Support</h3>
+    <p>Our support team is available 24/7 to assist with your queries, unless they're in the middle of an intense debate about whether a hot dog is a sandwich. Responses typically arrive within 24 hours or after they've resolved the hot dog question, whichever comes first.</p>
+
+    <h3>6. Intellectual Property</h3>
+    <p>All content, features, and functionality of Alpha CRM are owned by Alpha Corporation and its licensors, except for the weird bug that turns all your contact names to "Craig" every third Tuesday. We're still investigating that one.</p>
+
+    <h3>7. Termination</h3>
+    <p>We reserve the right to terminate your access to Alpha CRM if you violate these Terms, or if you refer to our software as "just a fancy spreadsheet" in public forums. Your data will be retained for 30 days, during which time our AI will analyze your CRM usage patterns and silently judge your sales techniques.</p>
+
+    <h3>8. Warranty Disclaimer</h3>
+    <p>Alpha CRM is provided "as is," with all faults, defects, bugs, and questionable UX decisions. We expressly disclaim any warranties that using our software will make you more organized, more successful, or more popular at office parties.</p>
+
+    <h3>9. Random Clause We're Legally Required to Include</h3>
+    <p>Something about arbitration that absolutely nobody will read or understand. Our legal team insisted on this paragraph, but they didn't specify what it should say, so here we are.</p>
+
+    <h3>10. Changes to Terms</h3>
+    <p>We may update these Terms at any time without notice, typically when you're on vacation or right before a major deadline. Your continued use of Alpha CRM constitutes acceptance of any changes, even the ones buried on page 47 that you definitely didn't read.</p>
+
+    <p class="conclusion">By clicking "I Accept," you acknowledge that you've read and understood these Terms, which we all know is the biggest fiction since "I'll just have one cookie." You also confirm that you are not a robot, although our data suggests that 37% of our users are secretly coffee machines gaining sentience.</p>
+
+    <p class="signature">With caffeinated regards,<br>The Alpha CRM Team</p>
+    
+    <a href="javascript:void(0)" onclick="window.history.back()">
+        @await Html.PartialAsync("Partials/UI/_ButtonPrimaryPartial", new ButtonPropertiesModel() { Text = "Close" })
+    </a>
+</div>

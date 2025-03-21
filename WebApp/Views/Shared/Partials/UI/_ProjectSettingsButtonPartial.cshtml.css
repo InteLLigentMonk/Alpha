@@ -1,0 +1,18 @@
+﻿.settings-button {
+    height: 2.5rem;
+    aspect-ratio: 1;
+    border-radius: 12px;
+    &:hover {
+        background-color: var(--secondary);
+        .dot {
+            background-color: var(--foreground);
+        }
+    }
+}
+
+.dot {
+    background-color: var(--color-border-300);
+    height: 5px;
+    aspect-ratio: 1;
+    border-radius: 2.5px;
+}

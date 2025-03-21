@@ -1,0 +1,34 @@
+﻿
+	<div class="card">
+		<div class="project-card-header">
+			<div class ="d-flex gap-2 flex-row w-100">
+				@if (string.IsNullOrEmpty(""))
+				{
+				@await Html.PartialAsync("Partials/UI/_ImagePlaceholderPartial")
+				}
+				else
+				{
+					<img src="#" alt="Project image" />	
+				}
+				<div class="d-flex flex-column justify-content-center w-100">
+					<h5>Website Redesign</h5>
+					<p>GitLab Inc.</p>
+				</div>
+				<div class="d-flex justify-between">
+					<div class="dots">@await Html.PartialAsync("Partials/UI/_ProjectSettingsButtonPartial")</div>
+				</div>
+			</div>
+		</div>
+		<div class="project-card-body">
+			<p class="project-card-body-text">
+				It is necessary to develop a website redesign in a corporate style.
+			</p>
+		</div>
+		<div class="project-card-footer">
+		<div class="project-card-timeleft"><i class="fa-regular fa-clock"></i> 1 week left</div>
+			<div class="project-card-users">
+			<img src="~/icons/avatars/1.svg" alt="avatar" />
+			<img src="~/icons/avatars/2.svg" alt="avatar" />
+			</div>
+		</div>
+	</div>

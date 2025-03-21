@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Alpha</title>
+    <script type="importmap"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/dash.css" />
+    <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
+</head>
+<body class="dark">
+    <div class="layout-grid wrapper">
+        <div class="logo-wrapper">
+            <a asp-controller="Home" asp-action="index" class="logo-link">
+                <img src="~/images/Logo.svg" alt="Alpha Logo" />
+            </a>
+            <a asp-controller="Home" asp-action="index" class="logo-link">
+                <h2 class="logo-text">alpha</h2>
+            </a>
+        </div>
+        <aside class="sidebar">
+            
+        </aside>
+        <header class="header">
+            @await Html.PartialAsync("Partials/_NavBarPartial")
+        </header>
+        <main class="main">
+            @RenderBody()
+        </main>
+    </div>
+
+
+    <script src="https://kit.fontawesome.com/1e05a339f0.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

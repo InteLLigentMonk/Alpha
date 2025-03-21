@@ -1,0 +1,382 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap');
+
+
+
+
+/* variable scheme */
+:root {
+    /* typeography */
+    --font-default: 'Nunito', sans-serif;
+    --font-logo: 'Comfortaa', cursive;
+    --font-fa: 'Font Awsome 6 Free';
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+    --font-weight-black: 900;
+    --text-h1: 2.25rem;
+    --text-h2: 2rem;
+    --text-h3: 1.75rem;
+    --text-h4: 1.5rem;
+    --text-h5: 1.25rem;
+    --text-h6: 1rem;
+    --text-body: 1rem;
+    --text-body-sm: 0.875rem;
+
+    /* colors */
+    --color-heading: #1A1926;
+    --color-bodylight: #637085;
+    --color-bodydark: #28263B;
+    --color-grey-100: #F5F7FA;
+    --color-grey-200: #F0F1F5;
+    --color-grey-300: #E8EAED;
+    --color-grey-400: #E3E5E8;
+    --color-border-100: #EBEEF2;
+    --color-border-200: #E3E5E8;
+    --color-border-300: #C6C8CC;
+    --color-background: #F1F3F7;
+    --color-dark-background: #151517;
+    --color-surface: #FFFFFF;
+    --color-surface-dark: #202123;
+    --color-accent: #2D99FF;
+    --color-accent-dark: #2682D9;
+    --color-orange: #FF9640;
+    --color-dark-orange: #F09330;
+    --color-red: #FF6640;
+    --color-dark-red: #E94D3F;
+    --color-yellow: #FFD422;
+    --color-dark-yellow: #FCBB42;
+    --color-blue: #2CD9D9;
+    --color-dark-blue: #2D7DCC;
+    --color-green: #31D482;
+    --color-dark-green: #24B26B;
+    --color-purple: #826AF9;
+    --color-dark-purple: #634CD4;
+    /* color scheme */
+
+    --background: var(--color-background);
+    --foreground: var(--color-bodydark);
+    --card: var(--color-surface);
+    --card-foreground: var(--color-bodydark);
+    --popover: var(--color-surface);
+    --popover-foreground: var(--color-bodydark);
+    --primary: var(--color-surface);
+    --primary-foreground: var(--color-bodydark);
+    --secondary: var(--color-grey-200);
+    --secondary-foreground: var(--color-bodydark);
+    --muted: var(--color-grey-100);
+    --muted-foreground: var(--color-bodydark);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-surface);
+    --destructive: var(--color-red);
+    --destructive-foreground: var(--color-surface);
+    --border: var(--color-border-100);
+    --input: var(--color-surface);
+    --heading: var(--color-heading);
+    --radius: 0.875rem;
+    /* shadows */
+
+    --shadow-btn: 0 4px 16px #0081ff2e;
+    --shadow-card: 0 20px 30px -18px hsla(201, 68%, 5%, 0.16),0 12px 0px -8px #040f150f;
+    --shadow-input: 0 0 6px 0px hsl(from var(--color-accent) h s l/.6);
+}
+
+.dark {
+    --background: var(--color-background);
+    --foreground: var(--color-bodydark);
+    --card: var(--color-surface);
+    --card-foreground: var(--color-bodydark);
+    --popover: var(--color-surface);
+    --popover-foreground: var(--color-bodydark);
+    --primary: var(--color-surface);
+    --primary-foreground: var(--color-bodydark);
+    --secondary: var(--color-grey-200);
+    --secondary-foreground: var(--color-bodydark);
+    --muted: var(--color-grey-100);
+    --muted-foreground: var(--color-bodydark);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-surface);
+    --destructive: var(--color-red);
+    --destructive-foreground: var(--color-surface);
+    --border: var(--color-border-100);
+    --input: var(--color-surface);
+    --heading: var(--color-heading);
+}
+
+
+/* base */
+
+html {
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    font-family: var(--font-default);
+    background-color: var(--background);
+    font-size: 1rem;
+    font-weight: var(--font-weight-regular);
+    color: var(--foreground);
+}
+
+
+
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-family: var(--font-default);
+    color: var(--heading);
+}
+
+h1 {
+    font-size: var(--text-h1);
+    font-weight: var(--font-weight-bold);
+}
+
+h2 {
+    font-size: var(--text-h2);
+    font-weight: var(--font-weight-bold);
+}
+
+h3 {
+    font-size: var(--text-h3);
+    font-weight: var(--font-weight-bold);
+}
+
+h4 {
+    font-size: var(--text-h4);
+    font-weight: var(--font-weight-semibold);
+}
+
+h5 {
+    font-size: var(--text-h5);
+    font-weight: var(--font-weight-semibold);
+}
+
+h6 {
+    font-size: var(--text-h6);
+    font-weight: var(--font-weight-semibold);
+}
+p {
+    margin: 0;
+}
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+}
+
+a:link {
+    color: var(--color-accent);
+}
+
+a:visited {
+    color: var(--color-accent-dark)
+}
+
+a:hover, a:active {
+    color: hsl(from var(--accent) h s calc(l + 15));
+}
+
+a:focus {
+    outline: none;
+    color: hsl(from var(--accent) h s calc(l + 15));
+}
+
+input[type=text], input[type=email], input[type=password], input[type=date], textarea {
+    font-size: 1rem;
+    font-family: var(--font-default);
+    color: var(--primary-foreground);
+    background-color: transparent;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    &:focus {
+        outline: none;
+        box-shadow: var(--shadow-input);
+    }
+
+}
+
+input[type=checkbox] {
+    appearance: none; /* Remove default styling */
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    &:checked {
+        background-color: var(--accent);
+        border-color: var(--accent);
+    }
+
+    &:focus {
+        outline: none;
+        box-shadow: var(--shadow-input);
+    }
+
+}
+
+
+input[type=checkbox]:checked::after {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    left: 3px;
+}
+
+/* structure */
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    height: 100dvh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 1rem;
+    padding: 0 1rem;
+
+    @media (min-width: 768px) {
+        margin: 0 auto;
+    }
+}
+
+.center-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.center {
+    text-align: center;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.justify-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* links */
+
+
+
+/* buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    padding: 0.8rem 1.4rem;
+    border-radius: var(--radius);
+    border: 1px solid;
+    font-size: var(--text-body);
+    font-family: var(--font-default);
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--primary);
+    border-color: var(--primary);
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-btn);
+   
+    &:hover{
+        background-color: var(--color-accent-dark);
+        border-color: var(--secondary);
+    }
+
+    &:focus {
+        outline: 2px solid var(--color-accent-dark);
+        /* border-width: 2px;
+        border-color: var(--color-accent-dark); */
+    }
+
+}
+
+.btn-muted {
+    background-color: var(--secondary);
+    color: var(--primary-foreground);
+    border-color: var(--secondary);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: var(--color-grey-400);
+        border-color: var(--secondary);
+    }
+
+    &:focus {
+        outline: 2px solid var(--color-accent-dark);
+        /* border-width: 2px;
+        border-color: var(--color-accent-dark); */
+    }
+
+}
+
+
+/* lists */
+
+
+/* components */
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: none;
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    padding: 1rem;
+}
+
+.form-input {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    label {
+        margin-bottom: 0.5rem;
+    }
+
+    .field-validation-error {
+        padding: .6rem;
+    }
+}
+
+/* views */
+
+/*validation*/
+
+.field-validation-error {
+    font-size: var(--text-body-sm);
+    color: var(--color-red);
+}
+
+
+.field-validation-error::before {
+    content: '\f071';
+    padding-right: 0.4rem;
+    font: var(--fa-font-solid);
+}
+
+

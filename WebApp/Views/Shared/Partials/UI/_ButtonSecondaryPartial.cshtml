@@ -1,0 +1,3 @@
+﻿@model ButtonPropertiesModel
+
+<button type="@(string.IsNullOrEmpty(Model.Type) ? "submit" : Model.Type)" class="center btn btn-muted">@Model.Text</button>

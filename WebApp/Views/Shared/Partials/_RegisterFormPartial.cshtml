@@ -1,0 +1,47 @@
+﻿@model RegistrationFormModel
+
+<form method="post" class="login-form">
+    <div class="form-input">
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" class="input">
+        <span asp-validation-for="FullName"></span>
+    </div>
+    <div class ="form-input">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="input">
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div class="form-input">
+        <label asp-for="Password"></label>
+        <div class="password-wrapper">
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('Password')">
+                <i class="fa-solid fa-eye" id="togglePasswordIcon"></i>
+            </button>
+            <input asp-for="Password" value="@Model.Password" class="input">
+        </div>
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div class="form-input">
+        <label asp-for="ConfirmPassword"></label>
+        <div class="password-wrapper">
+            <button type="button" class="toggle-password" onclick="togglePasswordVisibility('ConfirmPassword')">
+                <i class="fa-solid fa-eye" id="toggleConfirmPasswordIcon"></i>
+            </button>
+            <input asp-for="ConfirmPassword" value="@Model.ConfirmPassword" class="input">
+        </div>
+        <span asp-validation-for="ConfirmPassword"></span>
+    </div>
+        <div class="flex flex-column gap-2 justify-center">
+            <div class="flex gap-2">
+                <input asp-for="AcceptTerms" type="checkbox">
+                <div>
+                    <label asp-for="AcceptTerms">I accept</label>
+                <a asp-action="Terms">Terms and Conditions</a>
+            </div>
+            <div>
+                <span asp-validation-for="AcceptTerms"></span>
+            </div>
+            </div>
+        </div>
+    @await Html.PartialAsync("Partials/UI/_ButtonPrimaryPartial", new ButtonPropertiesModel() { Text = "Create Account" })
+</form>

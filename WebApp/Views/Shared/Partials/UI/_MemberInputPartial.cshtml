@@ -1,0 +1,191 @@
+﻿@{
+    @model ProjectFormModel;
+}
+
+<style>
+    .member-container {
+    }
+
+    .member-input-wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        border: 1px solid #ccc;
+        padding: 5px;
+        border-radius: 8px;
+        min-height: 40px;
+    }
+
+    #selected-members {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .member-chip {
+        display: flex;
+        align-items: center;
+        background-color: #f3f3f3;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 14px;
+    }
+
+        .member-chip img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+    .remove-btn {
+        cursor: pointer;
+        margin-left: 5px;
+        color: var(--color-bodylight);
+    }
+
+    #member-input {
+        border: none;
+        outline: none;
+        box-shadow: none;
+        flex-grow: 1;
+        padding: 5px;
+    }
+
+    .suggestions-list {
+        list-style: none;
+        padding: 0;
+        margin: 5px 0 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: white;
+        max-height: 150px;
+        overflow-y: auto;
+        display: none;
+        position: absolute;
+        width: 390px;
+        z-index: 101;
+    }
+
+        .suggestions-list li {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+            .suggestions-list li:hover {
+                background-color: #f0f0f0;
+            }
+
+        .suggestions-list img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+</style>
+
+<div class="member-container">
+    <label asp-for="Members">Members</label>
+    <div class="member-input-wrapper">
+        <div id="selected-members"></div>
+        <input type="text" id="member-input" placeholder="Search members...">
+    </div>
+        <span asp-validation-for="Members"></span>
+    <ul id="suggestions" class="suggestions-list"></ul>
+</div>
+
+<script>
+        const members = [
+        { id: 1, name: "Therése Lidbom", avatar: "icons/avatars/1.svg" },
+        { id: 2, name: "Hans Mattin-Lassei", avatar: "icons/avatars/2.svg" },
+        { id: 3, name: "Alice Johnson", avatar: "icons/avatars/3.svg" },
+        { id: 4, name: "Alice Johnson", avatar: "icons/avatars/4.svg" },
+        { id: 5, name: "Alice Johnson", avatar: "icons/avatars/5.svg" },
+        { id: 6, name: "Alice Johnson", avatar: "icons/avatars/6.svg" },
+        { id: 7, name: "Alice Johnson", avatar: "icons/avatars/7.svg" },
+        { id: 8, name: "Alice Johnson", avatar: "icons/avatars/8.svg" },
+        { id: 9, name: "Alice Johnson", avatar: "icons/avatars/1.svg" },
+        { id: 10, name: "Alice Johnson", avatar: "icons/avatars/3.svg" },
+        { id: 11, name: "Bob Smith", avatar: "icons/avatars/4.svg" }
+    ];
+
+    const input = document.getElementById("member-input");
+    const suggestions = document.getElementById("suggestions");
+    const selectedMembersContainer = document.getElementById("selected-members");
+
+    let selectedMembers = [];
+
+    input.addEventListener("input", () => {
+        const query = input.value.toLowerCase();
+        suggestions.innerHTML = "";
+
+        if (query.length === 0) {
+            suggestions.style.display = "none";
+            return;
+        }
+
+        const filteredMembers = members.filter(member =>
+            member.name.toLowerCase().includes(query) &&
+            !selectedMembers.some(selected => selected.id === member.id)
+        );
+
+        if (filteredMembers.length > 0) {
+            suggestions.style.display = "block";
+            filteredMembers.forEach(member => {
+                const li = document.createElement("li");
+                li.innerHTML = `<img src="${member.avatar}" alt=""> ${member.name}`;
+                li.addEventListener("click", () => addMember(member));
+                suggestions.appendChild(li);
+            });
+        } else {
+            suggestions.style.display = "none";
+        }
+    });
+
+    function addMember(member) {
+        selectedMembers.push(member);
+        input.value = "";
+        input.focus(); // Ensure the input field remains focused
+        suggestions.style.display = "none";
+        renderSelectedMembers();
+        updateHiddenInputs();
+    }
+
+    function removeMember(memberId) {
+        selectedMembers = selectedMembers.filter(member => member.id !== memberId);
+        renderSelectedMembers();
+        updateHiddenInputs();
+    }
+
+    function renderSelectedMembers() {
+        selectedMembersContainer.innerHTML = "";
+        selectedMembers.forEach(member => {
+            const chip = document.createElement("div");
+            chip.classList.add("member-chip");
+            chip.innerHTML = `
+                <img src="${member.avatar}" alt="">
+                ${member.name}
+                <span class="remove-btn" onclick="removeMember(${member.id})">&times;</span>
+            `;
+            selectedMembersContainer.appendChild(chip);
+        });
+    }
+
+    function updateHiddenInputs() {
+        const form = document.getElementById("add-project-form");
+        const existingInputs = form.querySelectorAll("input[name='Members']");
+        existingInputs.forEach(input => input.remove());
+
+        selectedMembers.forEach(member => {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "Members";
+            hiddenInput.value = member.name; // or member.id if you prefer
+            form.appendChild(hiddenInput);
+        });
+    }
+
+</script>
