@@ -1,6 +1,4 @@
 ﻿@model ProjectsViewModel
-
-
 @{
     Layout = "../Shared/_Layout.cshtml";
 }
@@ -15,10 +13,10 @@
     <button class="projects-statusbar-tab">Started [9]</button>
     <button class="projects-statusbar-tab">Completed [6]</button>
 </div>
-<dialog><h1>Hej Hej från dialogen</h1></dialog>
 
 <div class="projects-grid">
-    @await Html.PartialAsync("Partials/_ProjectCardPartial")
+    <partial name="Partials/_ProjectCardPartial" />
+</div>
 
 
 @* Project Modal *@

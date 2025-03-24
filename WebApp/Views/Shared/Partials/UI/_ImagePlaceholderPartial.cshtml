@@ -9,7 +9,7 @@
 	document.addEventListener('DOMContentLoaded', function () {
 
 		let colors = ["bg-darkorange-radial", "bg-orange-radial", "bg-green-radial", "bg-orangegreen-radial", "bg-darkred-radial", "bg-red-radial", "bg-purple-radial", "bg-blue-radial", "bg-magenta-linear"];
-		let placeholder = document.querySelector("#image-placeholder");
+		let placeholder = document.querySelector(".placeholder-container");
 		let randomNumber = Math.floor(Math.random() * colors.length);
 		placeholder.classList.add(colors[randomNumber]);
 	});
