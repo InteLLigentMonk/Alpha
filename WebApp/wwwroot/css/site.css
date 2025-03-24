@@ -33,6 +33,7 @@
     --color-grey-200: #F0F1F5;
     --color-grey-300: #E8EAED;
     --color-grey-400: #E3E5E8;
+    --color-test: #9e9e9e;
     --color-border-100: #EBEEF2;
     --color-border-200: #E3E5E8;
     --color-border-300: #C6C8CC;
@@ -40,6 +41,8 @@
     --color-dark-background: #151517;
     --color-surface: #FFFFFF;
     --color-surface-dark: #202123;
+
+
     --color-accent: #2D99FF;
     --color-accent-dark: #2682D9;
     --color-orange: #FF9640;
@@ -57,7 +60,7 @@
     /* color scheme */
 
     --background: var(--color-background);
-    --foreground: var(--color-bodydark);
+    --foreground: var(--color-heading);
     --card: var(--color-surface);
     --card-foreground: var(--color-bodydark);
     --popover: var(--color-surface);
@@ -65,14 +68,16 @@
     --primary: var(--color-surface);
     --primary-foreground: var(--color-bodydark);
     --secondary: var(--color-grey-200);
-    --secondary-foreground: var(--color-bodydark);
+    --secondary-foreground: var(--color-bodylight);
     --muted: var(--color-grey-100);
     --muted-foreground: var(--color-bodydark);
     --accent: var(--color-accent);
     --accent-foreground: var(--color-surface);
     --destructive: var(--color-red);
     --destructive-foreground: var(--color-surface);
-    --border: var(--color-border-100);
+    --border-light: var(--color-border-100);
+    --border: var(--color-grey-400);
+    --border-dark: var(--color-border-300);
     --input: var(--color-surface);
     --heading: var(--color-heading);
     --radius: 0.875rem;
@@ -81,28 +86,31 @@
     --shadow-btn: 0 4px 16px #0081ff2e;
     --shadow-card: 0 20px 30px -18px hsla(201, 68%, 5%, 0.16),0 12px 0px -8px #040f150f;
     --shadow-input: 0 0 6px 0px hsl(from var(--color-accent) h s l/.6);
+    --shadow-popover: 0 0 40px 0px hsl(from var(--color-bodylight) h s l/.1);
 }
 
 .dark {
-    --background: var(--color-background);
-    --foreground: var(--color-bodydark);
-    --card: var(--color-surface);
-    --card-foreground: var(--color-bodydark);
+    --background: var(--color-dark-background);
+    --foreground: var(--color-surface);
+    --card: var(--color-surface-dark);
+    --card-foreground: var(--color-grey-400);
     --popover: var(--color-surface);
     --popover-foreground: var(--color-bodydark);
     --primary: var(--color-surface);
-    --primary-foreground: var(--color-bodydark);
-    --secondary: var(--color-grey-200);
-    --secondary-foreground: var(--color-bodydark);
-    --muted: var(--color-grey-100);
+    --primary-foreground: var(--color-surface);
+    --secondary: hsl(from var(--color-grey-200) h s l/0.1);
+    --secondary-foreground: var(--color-bodylight);
+    --muted: hsl(from var(--color-grey-100) h s l/0.1);
     --muted-foreground: var(--color-bodydark);
     --accent: var(--color-accent);
     --accent-foreground: var(--color-surface);
     --destructive: var(--color-red);
     --destructive-foreground: var(--color-surface);
-    --border: var(--color-border-100);
+    --border-light: hsl(from var(--color-border-100) h s l/0.1);
+    --border: hsl(from var(--color-border-100) h s l/0.1);
+    --border-dark: var(--color-border-300);
     --input: var(--color-surface);
-    --heading: var(--color-heading);
+    --heading: var(--color-surface);
 }
 
 
@@ -170,19 +178,9 @@ p {
 
 a:link, a:visited, a:hover, a:active {
     text-decoration: none;
+    color: inherit;
 }
 
-a:link {
-    color: var(--color-accent);
-}
-
-a:visited {
-    color: var(--color-accent-dark)
-}
-
-a:hover, a:active {
-    color: hsl(from var(--accent) h s calc(l + 15));
-}
 
 a:focus {
     outline: none;
@@ -195,7 +193,7 @@ input[type=text], input[type=email], input[type=password], input[type=date], tex
     color: var(--primary-foreground);
     background-color: transparent;
     padding: 1rem;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius);
     &:focus {
         outline: none;
@@ -204,11 +202,16 @@ input[type=text], input[type=email], input[type=password], input[type=date], tex
 
 }
 
+body.dark input[type="date"] {
+    color-scheme: dark;
+  }
+
+
 input[type=checkbox] {
     appearance: none; /* Remove default styling */
     width: 18px;
     height: 18px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--border-light);
     border-radius: 4px;
     cursor: pointer;
     position: relative;
@@ -285,7 +288,7 @@ input[type=checkbox]:checked::after {
     gap: 0.4em;
     padding: 0.8rem 1.4rem;
     border-radius: var(--radius);
-    border: 1px solid;
+    border: none;
     font-size: var(--text-body);
     font-family: var(--font-default);
     text-align: center;
@@ -295,7 +298,6 @@ input[type=checkbox]:checked::after {
 .btn-primary {
     background-color: var(--accent);
     color: var(--primary);
-    border-color: var(--primary);
     transition: all 0.3s ease;
     box-shadow: var(--shadow-btn);
    
@@ -329,6 +331,58 @@ input[type=checkbox]:checked::after {
         border-color: var(--color-accent-dark); */
     }
 
+}
+
+.btn-dropdown {
+    background-color: transparent;
+    color: var(--primary-foreground);   
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: var(--muted);
+    }
+
+    &:focus {
+        outline: 2px solid var(--color-accent-dark);
+        /* border-width: 2px;
+        border-color: var(--color-accent-dark); */
+    }
+
+}
+
+.btn-delete {
+    background-color: transparent;
+    color: var(--destructive);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background-color: hsl(from var(--color-red) h s l/0.2);
+        color: var(--color-dark-red);
+    }
+
+    &:focus {
+        outline: 2px solid var(--color-accent-dark);
+        /* border-width: 2px;
+        border-color: var(--color-accent-dark); */
+    }
+
+}
+
+.btn-sidebar {
+    width: 100%;
+    background-color: transparent;
+    color: var(--primary-foreground);
+    transition: all 0.3s ease;
+    border: none;
+    &:hover, &:active, &:focus {
+        background-color: hsl(from var(--color-accent) h s l/0.2);
+        color: var(--accent)
+    }
+}
+
+.btn-sidebar-active {
+    background-color: hsl(from var(--color-accent) h s l/0.2);
+    color: var(--accent);
 }
 
 

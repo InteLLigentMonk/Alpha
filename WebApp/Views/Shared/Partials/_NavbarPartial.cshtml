@@ -1,65 +1,50 @@
 ﻿<div class="d-flex w-100">
     <nav class="navbar w-100 navbar-expand-md">
-    <div class=" container-fluid justify-content-between gap-2" >
-        @await Html.PartialAsync("Partials/_SearchFormPartial")
-        <div class="d-md-none" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <img src="~/icons/avatars/1.svg" alt="your avatar" />
-        </div>
+        <div class=" container-fluid justify-content-between gap-2" >
+            @await Html.PartialAsync("Partials/_SearchFormPartial")
+            <div class="d-md-none" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <img src="~/icons/avatars/1.svg" alt="your avatar" />
+            </div>
 
-        <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-bell fa-lg"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <div class="current-user">
-                            <img src="~/icons/avatars/1.svg" alt="your avatar" />
-                            <h6>Tobias Vinther</h6>
-
+            <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-bell fa-lg"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            Hej på dej
                         </div>
-                        <div class="form-check form-switch darkmode">
-                            <div class="d-flex gap-2 align-items-center">
-                                <i class="fa-solid fa-gear"></i>
-                                <p>Dark Mode</p>
-                            </div>
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-                        </div>
-                        <div class="logout">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            <p>Logout</p>
-                        </div>
-                    </div>
                     
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-gear fa-lg"></i>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <div class="current-user">
-                            <img src="~/icons/avatars/1.svg" alt="your avatar" />
-                            <h6>Tobias Vinther</h6>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-gear fa-lg"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <div class="current-user">
+                                <img src="~/icons/avatars/1.svg" alt="your avatar" />
+                                <h6>Tobias Vinther</h6>
                             
-                        </div>
-                        <div class="form-check form-switch darkmode">
-                            <div class="d-flex gap-2 align-items-center">
-                                <i class="fa-solid fa-gear"></i>
-                                <p>Dark Mode</p>
                             </div>
-                            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                            <div class="form-check form-switch darkmode">
+                                <div class="d-flex gap-2 align-items-center">
+                                    <i class="fa-solid fa-gear"></i>
+                                    <p>Dark Mode</p>
+                                </div>
+                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked="checked">
+                            </div>
+                            <div class="logout">
+                                <i class="fa-solid fa-right-from-bracket"></i>
+                                <p>Logout</p>
+                            </div>
                         </div>
-                        <div class="logout">
-                            <i class="fa-solid fa-right-from-bracket"></i>
-                            <p>Logout</p>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
+    </nav>
+    <div class="avatar-img">
+        <img src="~/icons/avatars/1.svg" alt="your avatar" />
     </div>
-</nav>
-<div class="avatar-img">
-    <img src="~/icons/avatars/1.svg" alt="your avatar" />
-</div>
 </div>

@@ -4,6 +4,8 @@ input[type="checkbox"]::after {
 }
 
 .dropdown-menu {
+    background-color: var(--card);
+    color: var(--card-foreground);
     border: none;
     border-radius: 0;
     box-shadow: var(--shadow-card);
@@ -19,7 +21,7 @@ input[type="checkbox"]::after {
     display: none;
     place-items: center;
     padding-inline: 1rem;
-    border-left: 1px solid var(--color-grey-400);
+    border-left: 1px solid var(--border);
     img {
         border: 2px solid var(--surface);
         height: 40px;

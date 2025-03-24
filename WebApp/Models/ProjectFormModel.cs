@@ -4,7 +4,7 @@ namespace WebApp.Models;
 
 public class ProjectFormModel
 {
-    public IFormFile ProjectPhoto { get; set; } = null!;
+    public IFormFile? ProjectPhoto { get; set; }
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Name", Prompt = "Project Name")]

@@ -2,10 +2,17 @@
     height: 100%;
 }
 
+.project-card-header {
+    p {
+        color: var(--secondary-foreground);
+    }
+}
+
 .project-card-body-text {
     width: 100%;
     display: -webkit-box;
     -webkit-box-orient: vertical;
+    line-clamp: 5;
     -webkit-line-clamp: 5;
     overflow: hidden;
 }
@@ -35,5 +42,6 @@
             width: 40px;
         }
 }
+
 
 

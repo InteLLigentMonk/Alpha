@@ -72,6 +72,9 @@
 				    placeholder.classList.add('d-none')
 			    }
 			    reader.readAsDataURL(file)
+            } else {
+				img.classList.add('d-none')
+				placeholder.classList.remove('d-none')
             }
         })
     })

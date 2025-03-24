@@ -12,6 +12,8 @@
 .search-button {
     outline: none;
     border: none;
+    background-color: transparent;
+    color: var(--card-foreground);
 }
 
 #search-input {
@@ -37,6 +39,7 @@
     input[type="file"] {
         display:none;
     }
+}
 
 label[for="ProjectPhoto"] {
     color: var(--color-grey-100);
@@ -91,3 +94,22 @@ label[for="ProjectPhoto"] {
     left: 1rem;
     z-index: 1;
 }
+
+/* Project Card Edit Menu Styling */
+.project-menu-card {
+    position: absolute;
+    width: 260px;
+    top: 4rem;
+    right: 1rem;
+    box-shadow: var(--shadow-popover), var(--shadow-card);
+}
+
+.edit-menu-card-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;;
+    border-bottom: 1px solid var(--border);
+
+}
+
