@@ -1,4 +1,19 @@
-﻿<!DOCTYPE html>
+﻿@functions {
+    string IsActive(string controller, string action = "")
+    {
+        string? currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        string? currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        if (string.IsNullOrEmpty(action))
+        {
+            return currentController == controller ? "active" : "";
+        }
+
+        return (currentController == controller && currentAction == action) ? "active" : "";
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -18,16 +33,16 @@
 <body>
     <div class="layout-grid wrapper">
         <div class="logo-wrapper">
-            <a asp-controller="Home" asp-action="index" class="logo-link">
+            <a asp-controller="Home" asp-action="Projects" class="logo-link">
                 <img src="~/images/Logo.svg" alt="Alpha Logo" />
             </a>
-            <a asp-controller="Home" asp-action="index" class="logo-link">
+            <a asp-controller="Home" asp-action="Projects" class="logo-link">
                 <h2 class="logo-text">alpha</h2>
             </a>
         </div>
         <aside class="sidebar">
-            <a asp-action="Projects"><button class="btn btn-sidebar"><i class="fa-solid fa-briefcase"></i><div class="sidebar-button-text">Projects</div></button></a>
-            <a asp-action="TeamMembers"><button class="btn btn-sidebar"><i class="fa-solid fa-users"></i><div class="sidebar-button-text">Team Members</div></button></a>
+            <a asp-action="Projects" class="btn btn-sidebar @IsActive("Home", "Projects")"><i class="fa-solid fa-briefcase"></i><div class="sidebar-button-text">Projects</div></a>
+            <a asp-action="TeamMembers" class="btn btn-sidebar @IsActive("Home", "TeamMembers")"><i class="fa-solid fa-users"></i><div class="sidebar-button-text">Team Members</div></a>
         </aside>
         <header class="header">
             @await Html.PartialAsync("Partials/_NavBarPartial")

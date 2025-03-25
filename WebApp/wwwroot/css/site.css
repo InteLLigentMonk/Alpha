@@ -308,8 +308,6 @@ input[type=checkbox]:checked::after {
 
     &:focus {
         outline: 2px solid var(--color-accent-dark);
-        /* border-width: 2px;
-        border-color: var(--color-accent-dark); */
     }
 
 }
@@ -327,8 +325,6 @@ input[type=checkbox]:checked::after {
 
     &:focus {
         outline: 2px solid var(--color-accent-dark);
-        /* border-width: 2px;
-        border-color: var(--color-accent-dark); */
     }
 
 }
@@ -342,12 +338,9 @@ input[type=checkbox]:checked::after {
         background-color: var(--muted);
     }
 
-    &:focus {
-        outline: 2px solid var(--color-accent-dark);
-        /* border-width: 2px;
-        border-color: var(--color-accent-dark); */
+&:focus {
+    outline: 2px solid var(--color-accent-dark);
     }
-
 }
 
 .btn-delete {
@@ -362,8 +355,6 @@ input[type=checkbox]:checked::after {
 
     &:focus {
         outline: 2px solid var(--color-accent-dark);
-        /* border-width: 2px;
-        border-color: var(--color-accent-dark); */
     }
 
 }
@@ -374,13 +365,13 @@ input[type=checkbox]:checked::after {
     color: var(--primary-foreground);
     transition: all 0.3s ease;
     border: none;
-    &:hover, &:active, &:focus {
+    &:hover, &:focus {
         background-color: hsl(from var(--color-accent) h s l/0.2);
         color: var(--accent)
     }
 }
 
-.btn-sidebar-active {
+.btn-sidebar.active {
     background-color: hsl(from var(--color-accent) h s l/0.2);
     color: var(--accent);
 }

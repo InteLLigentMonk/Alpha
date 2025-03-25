@@ -2,7 +2,7 @@
 
 namespace WebApp.Models;
 
-public class SearchFormModel
+public class SearchFormViewModel
 {
     [Display(Name ="Search", Prompt="Search anything...")]
     [Required]

@@ -2,7 +2,7 @@
 
 namespace WebApp.Models;
 
-public class RegistrationFormModel
+public class RegistrationFormViewModel
 {
     [Display(Name ="Full Name", Prompt ="Your full name")]
     [Required(ErrorMessage="Required")]

@@ -18,7 +18,7 @@ public class AuthController : Controller
     {
         ViewData["Title"] = "Create Account";
 
-        var formData = new RegistrationFormModel();
+        var formData = new RegistrationFormViewModel();
 
         return View(formData);
     }
@@ -51,7 +51,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public IActionResult Register(RegistrationFormModel formData)
+    public IActionResult Register(RegistrationFormViewModel formData)
     {
         if (!ModelState.IsValid)
         {

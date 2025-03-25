@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
-using WebApp.ViewModels;
 
 namespace WebApp.Controllers;
 
@@ -35,5 +34,10 @@ public class HomeController(IWebHostEnvironment env) : Controller
 
 
         return RedirectToAction("Projects");
+    }
+    public IActionResult TeamMembers()
+    {
+        ViewData["Title"] = "Team Members";
+        return View();
     }
 }
