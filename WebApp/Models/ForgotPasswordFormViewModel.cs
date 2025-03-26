@@ -2,7 +2,7 @@
 
 namespace WebApp.Models;
 
-public class ForgotPasswordFormModel
+public class ForgotPasswordFormViewModel
 {
     [Display(Name = "Email", Prompt = "Your email adress")]
     [Required(ErrorMessage = "Required")]

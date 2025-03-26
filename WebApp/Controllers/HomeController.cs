@@ -15,7 +15,7 @@ public class HomeController(IWebHostEnvironment env) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Projects(ProjectFormModel project)
+    public async Task<IActionResult> Projects(ProjectFormViewModel project)
     {
         if (!ModelState.IsValid || project.ProjectPhoto == null || project.ProjectPhoto.Length == 0)
             return View(new ProjectsViewModel { ProjectForm = project });

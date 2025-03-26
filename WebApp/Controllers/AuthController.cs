@@ -9,7 +9,7 @@ public class AuthController : Controller
     {
         ViewData["Title"] = "Login";
 
-        var formData = new LoginFormModel();
+        var formData = new LoginFormViewModel();
 
         return View(formData);
     }
@@ -39,13 +39,14 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public IActionResult Login(LoginFormModel formData)
+    public IActionResult Login(LoginFormViewModel formData)
     {
         if (!ModelState.IsValid)
         {
             ViewData["Title"] = "Login";
             return View(formData);
         }
+
         ViewData["Title"] = "Dashboard";
         return RedirectToAction("Index", "Home");
     }
@@ -64,7 +65,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public IActionResult ForgotPassword(ForgotPasswordFormModel formData)
+    public IActionResult ForgotPassword(ForgotPasswordFormViewModel formData)
     {
         if (!ModelState.IsValid)
         {

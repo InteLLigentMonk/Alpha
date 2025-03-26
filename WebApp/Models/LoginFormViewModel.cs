@@ -2,7 +2,7 @@
 
 namespace WebApp.Models;
 
-public class LoginFormModel
+public class LoginFormViewModel
 {
     [Display(Name ="Email", Prompt ="Your email adress")]
     [Required(ErrorMessage = "Required")]

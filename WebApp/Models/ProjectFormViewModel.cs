@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BusinessLogic.Models;
 
 namespace WebApp.Models;
 
-public class ProjectFormModel
+public class ProjectFormViewModel
 {
     public IFormFile? ProjectPhoto { get; set; }
 
@@ -36,4 +37,21 @@ public class ProjectFormModel
     [Range(0, double.MaxValue, ErrorMessage = "Must be a positive number")]
     [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Budget must be a number with maximum 2 decimal places")]
     public decimal Budget { get; set; }
+
+
+
+    public static implicit operator ProjectRegistrationForm(ProjectFormViewModel model)
+    {
+        return model == null ? null! : new ProjectRegistrationForm
+        {
+            ProjectName = model.ProjectName,
+            ClientName = model.ClientName,
+            Description = model.Description,
+            StartDate = model.StartDate,
+            EndDate = model.EndDate,
+            Members = model.Members,
+            Budget = model.Budget,
+            ProjectPhotoUrl = model.ProjectPhoto?.FileName
+        };
+    }
 }
