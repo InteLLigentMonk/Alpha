@@ -59,7 +59,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         const fileInput = document.querySelector('#ProjectPhoto')
 		if(!fileInput) return
-
         fileInput.addEventListener("change", (e) => {
 			const file = e.target.files[0]
 			const img = document.querySelector('.upload-image')

@@ -10,10 +10,14 @@
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border);
         padding: 5px;
         border-radius: 8px;
         min-height: 40px;
+    }
+
+    .member-input-wrapper:has(#member-input:focus) {
+        box-shadow: var(--shadow-input);
     }
 
     #selected-members {
@@ -25,7 +29,7 @@
     .member-chip {
         display: flex;
         align-items: center;
-        background-color: #f3f3f3;
+        background-color: var(--muted);
         border-radius: 4px;
         padding: 5px 10px;
         font-size: 14px;
@@ -56,9 +60,9 @@
         list-style: none;
         padding: 0;
         margin: 5px 0 0;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border);
         border-radius: 5px;
-        background: white;
+        background: var(--card);
         max-height: 150px;
         overflow-y: auto;
         display: none;
@@ -75,7 +79,7 @@
         }
 
             .suggestions-list li:hover {
-                background-color: #f0f0f0;
+                background-color: var(--muted);
             }
 
         .suggestions-list img {
