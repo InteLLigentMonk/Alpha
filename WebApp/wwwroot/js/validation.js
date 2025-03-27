@@ -39,6 +39,7 @@ const validateForm = (form) => {
 
     fields.forEach(field => {
         if (!validateField(field)) {
+            console.log(`${field} not valid`)
             isFormValid = false;
         }
     });

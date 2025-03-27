@@ -1,5 +1,4 @@
-﻿
-input[type="checkbox"]::after {
+﻿input[type="checkbox"]::after {
     content: '';
 }
 
@@ -14,18 +13,6 @@ input[type="checkbox"]::after {
     @media(min-width: 768px){
         border-radius: var(--radius);
         
-    }
-}
-
-.avatar-img {
-    display: none;
-    place-items: center;
-    padding-inline: 1rem;
-    border-left: 1px solid var(--border);
-    img {
-        border: 2px solid var(--surface);
-        height: 40px;
-        aspect-ratio: 1;
     }
 }
 
@@ -78,8 +65,5 @@ input[type="checkbox"]::after {
     .dropdown-menu {
         padding: 1rem;
         width: 300px;
-    }
-    .avatar-img {
-        display: grid;
     }
 }

@@ -1,0 +1,10 @@
+﻿<aside class="sidebar">
+    <a asp-action="Projects" class="btn btn-sidebar @(Context.Request.Path == "/" ? "active" : "")">
+        <i class="fa-duotone fa-solid fa-briefcase"></i>
+        <span class="sidebar-button-text">Projects</span>
+    </a>
+    <a asp-action="TeamMembers" class="btn btn-sidebar @(Context.Request.Path == "/home/teammembers" ? "active" : "")">
+        <i class="fa-duotone fa-solid fa-users"></i>
+        <span class="sidebar-button-text">Team Members</span>
+    </a>
+</aside>

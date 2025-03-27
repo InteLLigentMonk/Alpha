@@ -1,6 +1,6 @@
-﻿@model WebApp.Models.LoginFormViewModel
+﻿@model LoginFormViewModel
 
-<form method="post" class="login-form">
+<form asp-action="Login" asp-controller="Auth" method="post" class="login-form">
     <div class="form-input">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="input" autofocus>
@@ -19,7 +19,7 @@
 
     <div class="justify-between">
         <div class="center">
-            <input asp-for="RememberMe" type="checkbox">
+            <input asp-for="RememberMe" type="checkbox" data-val="false">
             <label asp-for="RememberMe">Remember Me</label>
         </div>
         <a asp-action="ForgotPassword" class="forgot-password">Forgot Password?</a>

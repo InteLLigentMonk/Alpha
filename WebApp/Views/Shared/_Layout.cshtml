@@ -1,19 +1,4 @@
-﻿@functions {
-    string IsActive(string controller, string action = "")
-    {
-        string? currentController = ViewContext.RouteData.Values["controller"]?.ToString();
-        string? currentAction = ViewContext.RouteData.Values["action"]?.ToString();
-
-        if (string.IsNullOrEmpty(action))
-        {
-            return currentController == controller ? "active" : "";
-        }
-
-        return (currentController == controller && currentAction == action) ? "active" : "";
-    }
-}
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -25,28 +10,17 @@
         initializeDarkMode();
     </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://kit.fontawesome.com/a576612222.css" crossorigin="anonymous">
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/dash.css" />
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
     <div class="layout-grid wrapper">
-        <div class="logo-wrapper">
-            <a asp-controller="Home" asp-action="Projects" class="logo-link">
-                <img src="~/images/Logo.svg" alt="Alpha Logo" />
-            </a>
-            <a asp-controller="Home" asp-action="Projects" class="logo-link">
-                <h2 class="logo-text">alpha</h2>
-            </a>
-        </div>
-        <aside class="sidebar">
-            <a asp-action="Projects" class="btn btn-sidebar @IsActive("Home", "Projects")"><i class="fa-solid fa-briefcase"></i><div class="sidebar-button-text">Projects</div></a>
-            <a asp-action="TeamMembers" class="btn btn-sidebar @IsActive("Home", "TeamMembers")"><i class="fa-solid fa-users"></i><div class="sidebar-button-text">Team Members</div></a>
-        </aside>
-        <header class="header">
-            @await Html.PartialAsync("Partials/_NavBarPartial")
-        </header>
+        <partial name="Partials/_LogoPartial" />
+        <partial name="Partials/_SidebarPartial" />
+        <partial name="Partials/_HeaderPartial" />
+
         <main class="main">
             @RenderBody()
         </main>
@@ -59,7 +33,6 @@
 
         })
     </script>
-    <script src="https://kit.fontawesome.com/1e05a339f0.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

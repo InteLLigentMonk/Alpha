@@ -3,4 +3,8 @@
 @using WebApp.Models
 @using WebApp.Models.PropertiesModels
 @using Microsoft.AspNetCore.Mvc.Rendering
+@using Data.Entities
+@using Microsoft.AspNetCore.Identity
 @inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
+@inject SignInManager<AppUser> signInManager
+@inject UserManager<AppUser> userManager

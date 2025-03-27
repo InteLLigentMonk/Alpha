@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
+[Authorize]
 public class HomeController(IWebHostEnvironment env) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
@@ -35,7 +37,7 @@ public class HomeController(IWebHostEnvironment env) : Controller
 
         return RedirectToAction("Projects");
     }
-    public IActionResult TeamMembers()
+    public IActionResult Members()
     {
         ViewData["Title"] = "Team Members";
         return View();

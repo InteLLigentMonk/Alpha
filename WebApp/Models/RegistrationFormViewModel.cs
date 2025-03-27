@@ -1,14 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BusinessLogic.Models;
 
 namespace WebApp.Models;
 
 public class RegistrationFormViewModel
 {
-    [Display(Name ="Full Name", Prompt ="Your full name")]
-    [Required(ErrorMessage="Required")]
-    [RegularExpression(@"^.{3,}$", ErrorMessage = "Must be at least 3 characters long.")]
-    public string FullName { get; set; } = null!;
-
     [Display(Name = "Email", Prompt = "Your email address")]
     [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage="Not valid")]
     [Required(ErrorMessage = "Required")]
@@ -30,4 +26,12 @@ public class RegistrationFormViewModel
     [Required(ErrorMessage = "Required")]
     [Range(typeof(bool), "true", "true", ErrorMessage = "Required")]
     public bool AcceptTerms { get; set; }
+
+    public static implicit operator UserRegistrationForm(RegistrationFormViewModel model)
+    {
+        return model == null ? null! : new UserRegistrationForm
+        {
+            Email = model.Email
+        };
+    }
 }
