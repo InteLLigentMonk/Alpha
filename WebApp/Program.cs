@@ -14,7 +14,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
+builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ProfileService>();
+builder.Services.AddScoped<ProjectService>();
 
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
@@ -43,7 +46,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Projects}/{id?}")
+    pattern: "{controller=Home}/{action=Dashboard}/{id?}")
     .WithStaticAssets();
 
 

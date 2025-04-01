@@ -13,12 +13,22 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // One to One Relationship between User and Profile
+
         modelBuilder.Entity<ProfileEntity>()
             .HasOne(p => p.User)
-            .WithOne()
+            .WithOne(u => u.Profile)
             .HasForeignKey<ProfileEntity>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProjectEntity>(entity =>
+        {
+            entity.Property(e => e.Budget).HasColumnType("decimal(18, 2)");
+        });
+
+        modelBuilder.Entity<ProjectEntity>()
+            .HasMany(p => p.Users)
+            .WithMany(u => u.Projects)
+            .UsingEntity(j => j.ToTable("UserProjects"));
 
     }
 

@@ -1,11 +1,12 @@
 ﻿@model ProjectsViewModel
 @{
     Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Projects";
 }
 
 <div class="projects-title">
     <h2>Projects</h2>
-    <button id="btn-new-project" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Project</button>
+    <button id="btn-new-project" class="btn btn-primary" onclick="toggleModal('newProjectModal', 'btn-new-project-close', 'add-project-form')"><i class="fa-solid fa-plus"></i> Add Project</button>
 </div>
 
 <div class="projects-statusbar">
@@ -14,7 +15,7 @@
     <button class="projects-statusbar-tab">Completed [6]</button>
 </div>
 
-<div class="projects-grid">
+<div class="main-grid">
     <partial name="Partials/_ProjectCardPartial" />
 </div>
 

@@ -1,0 +1,29 @@
+﻿@model MembersViewModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Team Members";
+}
+
+<div class="projects-title">
+    <h2>@ViewData["Title"]</h2>
+    <button id="btn-new-member" class="btn btn-primary" onclick="toggleModal('newMemberModal', 'btn-new-member-close', 'new-member-form')"><i class="fa-solid fa-plus"></i> Team Member</button>
+</div>
+<div class="main-grid">
+    @foreach (var member in Model.Members)
+    {
+        <partial name="Partials/_MemberCardPartial" model="member" />
+    }
+</div>
+
+@* Project Modal *@
+<div id="newMemberModal" class="modal">
+     <div class="card modal-content">
+         <div class="modal-heading">
+             <h3>New Member</h3>
+             <span id="btn-new-member-close" class="close">&times;</span>
+         </div>
+         <partial name="Partials/_NewMemberFormPartial" model="@Model.NewMemberForm" />
+    </div>
+</div>
+
+@await Html.PartialAsync("Partials/_FormValidationPartial")

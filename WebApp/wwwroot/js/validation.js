@@ -57,7 +57,6 @@ const initializeValidation = (formSelector) => {
         return;
     }
 
-    console.log("Initializing validation for form:", formSelector);
     const fields = form.querySelectorAll("input[data-val='true'], textarea[data-val='true']");
 
     fields.forEach(field => {

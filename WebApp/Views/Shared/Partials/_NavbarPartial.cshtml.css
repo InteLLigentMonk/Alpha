@@ -52,6 +52,13 @@
     border-top: 1px solid var(--border)
 }
 
+.settings {
+    display: flex;
+    gap: .5rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--border)
+}
+
 .fa-gear, .fa-right-from-bracket, .fa-bell {
     color: hsl(from var(--heading) h s l/0.25);
     transition: 0.3s;

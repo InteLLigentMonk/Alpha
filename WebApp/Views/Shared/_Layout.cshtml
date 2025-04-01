@@ -16,25 +16,17 @@
     <link rel="stylesheet" href="~/WebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
+
     <div class="layout-grid wrapper">
         <partial name="Partials/_LogoPartial" />
         <partial name="Partials/_SidebarPartial" />
         <partial name="Partials/_HeaderPartial" />
-
         <main class="main">
             @RenderBody()
         </main>
     </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", ()=>{
-			const sidebar = document.querySelector('.sidebar');
-
-
-        })
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

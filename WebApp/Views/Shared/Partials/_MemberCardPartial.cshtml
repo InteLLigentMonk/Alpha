@@ -1,0 +1,32 @@
+﻿@model Member
+
+<div class="member-card">
+	<div class="member-card-header">
+		<div class="btn-card-settings" data-member-id="@Model.Id"><partial name="Partials/UI/_ProjectSettingsButtonPartial"/></div>
+		<div class="member-photo">
+			@if (string.IsNullOrEmpty(Model.AvatarUrl))
+			{
+				<img src="~/icons/avatars/5.svg" alt="@Model.FirstName @Model.LastName" />
+			}
+			else
+			{
+				<img src="~/uploads/@Model.AvatarUrl" alt="@Model.FirstName @Model.LastName" />
+			}
+		</div>
+		<div class="member-info">
+			<h4>@Model.FirstName @Model.LastName</h4>
+			<span class="">@Model.JobTitle</span>
+		</div>
+	</div>
+	<div class="member-card-body">
+		<div class="member-contact">
+			<span>@Model.EmailAddress</span>
+			<span>@Model.PhoneNumber</span>
+		</div>
+	</div>
+	<div class="member-card-footer">
+		<button class="btn btn-muted w-100">Message</button>
+	</div>
+
+	<partial name="Partials/_MemberCardMenuPartial" model="Model"/>
+</div>

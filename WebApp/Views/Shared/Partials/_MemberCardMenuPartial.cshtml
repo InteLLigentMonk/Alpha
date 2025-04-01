@@ -1,0 +1,20 @@
+﻿@model Member
+
+<div id="member-card-menu-@Model.Id" class="card project-menu-card">
+    <div class="edit">
+        <a asp-action="Edit" asp-controller="Projects">
+            <div class="btn btn-dropdown w-100">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <p>Edit</p>
+            </div>
+        </a>
+    </div>
+    <div class="delete">
+        <a asp-action="Delete" asp-controller="Auth" asp-route-id="@Model.Id">
+            <div class="btn btn-delete w-100">
+                <i class="fa-solid fa-trash-can"></i>
+                <p>Delete</p>
+            </div>
+        </a>
+    </div>
+</div>

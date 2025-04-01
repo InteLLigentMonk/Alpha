@@ -1,0 +1,12 @@
+﻿@model WebApp.Models.ProfileFormViewModel
+
+@{
+	ViewData["Title"] = "Profile";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>Welcome to your profile page, @Model.FirstName @Model.LastName</p>
+<div class="card">
+	<partial name="Partials/_ProfileFormPartial" model="Model" />
+</div>

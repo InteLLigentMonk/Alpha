@@ -34,7 +34,7 @@ namespace Data.Migrations
 
                     b.HasIndex("UsersId");
 
-                    b.ToTable("AppUserProjectEntity");
+                    b.ToTable("UserProjects", (string)null);
                 });
 
             modelBuilder.Entity("Data.Entities.AppRole", b =>
@@ -146,13 +146,16 @@ namespace Data.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly?>("DateOfBirth")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -187,6 +190,13 @@ namespace Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("Budget")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -194,6 +204,10 @@ namespace Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectPhotoUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -325,7 +339,7 @@ namespace Data.Migrations
             modelBuilder.Entity("Data.Entities.ProfileEntity", b =>
                 {
                     b.HasOne("Data.Entities.AppUser", "User")
-                        .WithOne()
+                        .WithOne("Profile")
                         .HasForeignKey("Data.Entities.ProfileEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -381,6 +395,12 @@ namespace Data.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Data.Entities.AppUser", b =>
+                {
+                    b.Navigation("Profile")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

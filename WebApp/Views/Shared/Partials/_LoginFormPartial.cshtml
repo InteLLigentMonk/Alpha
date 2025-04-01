@@ -1,6 +1,8 @@
 ﻿@model LoginFormViewModel
 
 <form asp-action="Login" asp-controller="Auth" method="post" class="login-form">
+    <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
     <div class="form-input">
         <label asp-for="Email"></label>
         <input asp-for="Email" class="input" autofocus>

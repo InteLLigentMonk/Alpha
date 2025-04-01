@@ -1,0 +1,132 @@
+﻿@model WebApp.Models.ProfileFormViewModel
+
+<form method="post" enctype="multipart/form-data" id="profile-form" class="projects-form">
+    <div class="photo-upload-button">
+        <label asp-for="Avatar">
+            @if (!string.IsNullOrEmpty(Model.AvatarUrl))
+            {
+                <div id="photo-placeholder" class="photo-placeholder-square d-none">
+                    <div class="camera-circle">
+                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
+                    </div>
+                </div>
+
+                <img class="upload-image" src="~/uploads/@Model.AvatarUrl" />
+            }
+            else
+            {
+                <div id="photo-placeholder" class="photo-placeholder-square ">
+                    <div class="camera-circle">
+                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
+                    </div>
+                </div>
+
+                <img class="upload-image d-none" src="#" />
+            }
+        </label>
+            <input asp-for="Avatar" accept="image/*" class="input">
+        </div>
+        <span asp-validation-for="Avatar"></span>
+
+    <div class="form-group">
+        <div class="form-input">
+            <label asp-for="FirstName"></label>
+            <input asp-for="FirstName" class="input">
+            <span asp-validation-for="FirstName"></span>
+        </div>
+        <div class="form-input">
+            <label asp-for="LastName"></label>
+            <input asp-for="LastName" class="input">
+            <span asp-validation-for="LastName"></span>
+        </div>
+    </div>
+    <div class="form-input">
+        <label for="Email">Email Adress</label>
+        <input type="text" id="Email" value="@userManager.GetUserAsync(User).Result" class="input" disabled>
+    </div>    
+    <div class="form-input">
+        <label asp-for="PhoneNumber"></label>
+        <input asp-for="PhoneNumber" class="input">
+        <span asp-validation-for="PhoneNumber"></span>
+    </div>
+    <div class="form-group">
+        <div class="form-input">
+            <label asp-for="StreetAddress"></label>
+            <input asp-for="StreetAddress" class="input">
+            <span asp-validation-for="StreetAddress"></span>
+        </div>
+        <div class="form-input w-25">
+            <label asp-for="StreetNumber"></label>
+            <input asp-for="StreetNumber" class="input">
+            <span asp-validation-for="StreetNumber"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-input w-25">
+            <label asp-for="ZipCode"></label>
+            <input asp-for="ZipCode" class="input">
+            <span asp-validation-for="ZipCode"></span>
+        </div>
+        <div class="form-input">
+            <label asp-for="City"></label>
+            <input asp-for="City" class="input">
+            <span asp-validation-for="City"></span>
+        </div>
+    </div>
+    <div class="form-input">
+        <label asp-for="JobTitle"></label>
+        <input asp-for="JobTitle" class="input">
+        <span asp-validation-for="JobTitle"></span>
+    </div>
+
+    <div>
+        <label class="mb-2">Date of Birth</label>
+        <div class="form-group">
+            <div class="d-flex gap-2">
+                <select asp-for="Day" class="input">
+                    @for (int day = 1; day <= 31; day++)
+                    {
+                        <option value="@day">@day.ToString("D2")</option>
+                    }
+                </select>
+                <select asp-for="Month" class="input">
+                    @for (int month = 1; month <= 12; month++)
+                    {
+                        <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                    }
+                </select>
+                <select asp-for="Year" class="input">
+                    @for (int year = DateTime.Now.Year; year >= 1900; year--)
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary w-25">Save Profile</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const fileInput = document.querySelector('#Avatar')
+        if(!fileInput) return
+        fileInput.addEventListener("change", (e) => {
+            const file = e.target.files[0]
+            const img = document.querySelector('.upload-image')
+            const placeholder = document.querySelector('.photo-placeholder-square')
+            if(file){
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                    img.src = e.target.result
+                    img.classList.remove('d-none')
+                    placeholder.classList.add('d-none')
+                }
+                reader.readAsDataURL(file)
+            } else {
+                img.classList.add('d-none')
+                placeholder.classList.remove('d-none')
+            }
+        })
+    })
+</script>

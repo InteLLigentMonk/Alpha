@@ -24,12 +24,12 @@ public class ProjectFormViewModel
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Start Date")]
     [DataType(DataType.Date)]
-    public DateOnly StartDate { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    public DateTime StartDate { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "End Date")]
     [DataType(DataType.Date)]
-    public DateOnly EndDate { get; set; } = DateOnly.FromDateTime(DateTime.Today.AddDays(30));
+    public DateTime EndDate { get; set; } = DateTime.Today.AddDays(30);
     [Required]
     public List<string>? Members { get; set; } = [];
     [Required(ErrorMessage = "Required")]

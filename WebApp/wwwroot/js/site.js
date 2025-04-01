@@ -12,58 +12,73 @@ function togglePasswordVisibility(id) {
 
 
 
-function toggleAddProjectModal() {
-    const modal = document.getElementById("newProjectModal");
-    const showButton = document.querySelector("#btn-new-project");
-    const closeButton = document.getElementById("btn-new-project-close");
+function toggleModal(modalId, closeButtonId, formId) {
+    const modal = document.querySelector(`#${modalId}`);
+    const closeButton = document.querySelector(`#${closeButtonId}`);
 
-    showButton.addEventListener("click", () => {
-        modal.style.display = "block";
-        initializeValidation("#add-project-form");
-    });
+    if (!modal || !closeButton) {
+        return;
+    }
 
-    closeButton.addEventListener("click", () => {
+    modal.style.display = "block";
+
+    if (formId) {
+        initializeValidation(`#${formId}`);
+    }
+
+    const closeModal = () => {
         modal.style.display = "none";
-    });
+        closeButton.removeEventListener("click", closeModal);
+        window.removeEventListener("click", windowCloseModal);
+    }
 
-    window.addEventListener("click", (event) => {
-        if (event.target == modal) {
-            modal.style.display = "none";
+    const windowCloseModal = (e) => {
+        if (e.target == modal) {
+            closeModal();
         }
-    });
-
-    const form = document.querySelector("#add-project-form");
-    form.addEventListener("submit", function (event) {
-        console.log(selectedMembers)
-    });
+    }
+    closeButton.addEventListener("click", closeModal);
+    window.addEventListener("click", windowCloseModal);
 }
 
 
+function toggleMemberCardMenu() {
+    const menuButtons = document.querySelectorAll(".btn-card-settings");
 
-function toggleEditProjectMenu(id) {
-    const menu = document.querySelector(".project-menu-card");
-    const showButton = document.querySelector("#btn-new-project");
-    const closeButton = document.getElementById("btn-new-project-close");
+    if (!menuButtons || menuButtons.length === 0) {
+        console.log("stop here");
+        return;
+    }
 
-    showButton.addEventListener("click", () => {
-        modal.style.display = "block";
-        initializeValidation("#add-project-form");
-    });
+    menuButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            const memberId = button.getAttribute("data-member-id");
 
-    closeButton.addEventListener("click", () => {
-        modal.style.display = "none";
-    });
+            const menu = document.querySelector(`#member-card-menu-${memberId}`)
+            if (menu) {
+                if (menu.style.display === "none" || menu.style.display === "") {
+                    menu.style.display = "block";
 
-    window.addEventListener("click", (event) => {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    });
+                    const closeMenuOnClickOutside = (e) => {
+                        if (!menu.contains(e.target) && e.target !== button) {
+                            menu.style.display = "none";
+                            document.removeEventListener("click", closeMenuOnClickOutside);
+                        }
+                    };
 
-    const form = document.querySelector("#add-project-form");
-    form.addEventListener("submit", function (event) {
-        console.log(selectedMembers)
-    });
+                    setTimeout(() => {
+                        document.addEventListener("click", closeMenuOnClickOutside);
+                    }, 0);
+
+                    console.log(`Member menu opened for ID: ${memberId}`);
+                } else {
+                    menu.style.display = "none";
+                }
+            }
+            event.stopPropagation();
+        })
+    })
+
 }
 // ------------ Utility functions ------------
 
@@ -71,7 +86,6 @@ function toggleEditProjectMenu(id) {
 // ------------ Darkmode ------------
 function initializeDarkMode() {
     var savedDarkMode = localStorage.getItem("darkMode");
-    console.log(savedDarkMode);
     if (savedDarkMode === null) {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             localStorage.setItem("darkMode", "true")
@@ -110,6 +124,6 @@ function switchDarkMode() {
 
 document.addEventListener("DOMContentLoaded", () => {
     switchDarkMode();
-    toggleAddProjectModal()
+    toggleMemberCardMenu()
 });
 // ------------ Darkmode ------------

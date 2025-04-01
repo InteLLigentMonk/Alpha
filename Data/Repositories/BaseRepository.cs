@@ -55,7 +55,7 @@ namespace Data.Repositories
             }
         }
 
-        public virtual async Task<TEntity?> GetByIdAsync(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> expression)
         {
             ArgumentNullException.ThrowIfNull(expression);
 
@@ -108,6 +108,11 @@ namespace Data.Repositories
         public virtual async Task<int> SaveAsync()
         {
             return await _context.SaveChangesAsync();
+        }
+
+        public Task<bool> Exsists(Expression<Func<TEntity, bool>> expression)
+        {
+            return _dbSet.AnyAsync(expression);
         }
 
         #endregion
