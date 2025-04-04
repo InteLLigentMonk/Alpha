@@ -1,32 +1,20 @@
-﻿@model WebApp.Models.ProfileFormViewModel
+﻿@model NewMemberFormViewModel
 
-<form method="post" enctype="multipart/form-data" id="profile-form" class="projects-form">
+<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="member-form" class="projects-form">
+	<input type="hidden" asp-for="Id"/>
     <div class="photo-upload-button">
         <label asp-for="Avatar">
-            @if (!string.IsNullOrEmpty(Model.AvatarUrl))
-            {
-                <div id="photo-placeholder" class="photo-placeholder-square d-none">
-                    <div class="camera-circle">
-                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
-                    </div>
+            <div id="photo-placeholder" class="photo-placeholder-square ">
+                <div class="camera-circle">
+                    <i class="fa-solid fa-camera-retro fa-2xl"></i>
                 </div>
+            </div>
 
-                <img class="upload-image" src="~/uploads/@Model.AvatarUrl" />
-            }
-            else
-            {
-                <div id="photo-placeholder" class="photo-placeholder-square ">
-                    <div class="camera-circle">
-                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
-                    </div>
-                </div>
-
-                <img class="upload-image d-none" src="#" />
-            }
+            <img id="member-img" class="upload-image d-none" src="#" />
         </label>
-            <input asp-for="Avatar" accept="image/*" class="input">
-        </div>
-        <span asp-validation-for="Avatar"></span>
+        <input asp-for="Avatar" data-user-id="@Model.Id" accept="image/*" class="input">
+    </div>
+    <span asp-validation-for="Avatar"></span>
 
     <div class="form-group">
         <div class="form-input">
@@ -41,9 +29,10 @@
         </div>
     </div>
     <div class="form-input">
-        <label for="Email">Email Adress</label>
-        <input type="text" id="Email" value="@userManager.GetUserAsync(User).Result" class="input" disabled>
-    </div>    
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="input">
+        <span asp-validation-for="Email"></span>
+    </div>
     <div class="form-input">
         <label asp-for="PhoneNumber"></label>
         <input asp-for="PhoneNumber" class="input">
@@ -72,11 +61,6 @@
             <input asp-for="City" class="input">
             <span asp-validation-for="City"></span>
         </div>
-    </div>
-    <div class="form-input">
-        <label asp-for="Country"></label>
-        <input asp-for="Country" class="input">
-        <span asp-validation-for="Country"></span>
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>
@@ -109,7 +93,7 @@
             </div>
         </div>
     </div>
-    <button class="btn btn-primary w-25">Save Profile</button>
+    <button id="btn-member" class="btn btn-primary w-100">Add Member</button>
 </form>
 
 <script>

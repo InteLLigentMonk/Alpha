@@ -1,17 +1,18 @@
 ﻿@model NewMemberFormViewModel
 
-<form asp-action="AdminAddMember" asp-controller="Auth" method="post" enctype="multipart/form-data" id="new-member-form" class="projects-form">
+<form asp-action="AdminEditMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="edit-member-form" class="projects-form">
+    <input type="hidden" asp-for="Id" />
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             @if (!string.IsNullOrEmpty(Model.AvatarUrl))
             {
-                <div id="photo-placeholder" class="photo-placeholder-square d-none">
+                <div id="photo-placeholder" data-user-id="@Model.Id" class="photo-placeholder-square d-none">
                     <div class="camera-circle">
                         <i class="fa-solid fa-camera-retro fa-2xl"></i>
                     </div>
                 </div>
 
-                <img class="upload-image" src="~/uploads/@Model.AvatarUrl" />
+                <img class="upload-image" data-user-id="@Model.Id" src="~/uploads/@Model.AvatarUrl" />
             }
             else
             {
@@ -24,7 +25,7 @@
                 <img class="upload-image d-none" src="#" />
             }
         </label>
-        <input asp-for="Avatar" accept="image/*" class="input">
+        <input asp-for="Avatar" data-user-id="@Model.Id" accept="image/*" class="input">
     </div>
     <span asp-validation-for="Avatar"></span>
 
@@ -42,7 +43,7 @@
     </div>
     <div class="form-input">
         <label asp-for="Email"></label>
-        <input asp-for="Email" class="input">
+        <input asp-for="Email" class="input" readonly>
         <span asp-validation-for="Email"></span>
     </div>
     <div class="form-input">
@@ -73,6 +74,11 @@
             <input asp-for="City" class="input">
             <span asp-validation-for="City"></span>
         </div>
+        <div class="form-input">
+            <label asp-for="Country"></label>
+            <input asp-for="Country" class="input">
+            <span asp-validation-for="Country"></span>
+        </div>
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>
@@ -87,47 +93,49 @@
                 <select asp-for="Day" class="input">
                     @for (int day = 1; day <= 31; day++)
                     {
-                        <option value="@day">@day.ToString("D2")</option>
+                        if(day == Model.Day)
+                        {
+                            <option value="@day" selected >@day.ToString("D2")</option>
+                        } 
+                        else
+                        {
+                            <option value="@day">@day.ToString("D2")</option>
+                        }
                     }
                 </select>
                 <select asp-for="Month" class="input">
                     @for (int month = 1; month <= 12; month++)
                     {
-                        <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        if (month == Model.Month)
+                        {
+                            <option value="@month" selected>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        }
+                        else
+                        {
+                            <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        }
                     }
                 </select>
                 <select asp-for="Year" class="input">
-                    @for (int year = DateTime.Now.Year; year >= 1900; year--)
+                    @for (int year = DateTime.Now.Year; year >= 1901; year--)
                     {
-                        <option value="@year">@year</option>
+                        
+                        if (year == Model.Year)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
                     }
                 </select>
             </div>
         </div>
     </div>
-    <button class="btn btn-primary w-100">Add Member</button>
+    <button class="btn btn-primary w-100">Save</button>
 </form>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const fileInput = document.querySelector('#Avatar')
-        if(!fileInput) return
-        fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0]
-            const img = document.querySelector('.upload-image')
-            const placeholder = document.querySelector('.photo-placeholder-square')
-            if(file){
-                const reader = new FileReader()
-                reader.onload = (e) => {
-                    img.src = e.target.result
-                    img.classList.remove('d-none')
-                    placeholder.classList.add('d-none')
-                }
-                reader.readAsDataURL(file)
-            } else {
-                img.classList.add('d-none')
-                placeholder.classList.remove('d-none')
-            }
-        })
-    })
+
 </script>

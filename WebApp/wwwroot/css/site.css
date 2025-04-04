@@ -194,9 +194,13 @@ input[type=text], input[type=tel], input[type=email], input[type=password], inpu
         outline: none;
         box-shadow: var(--shadow-input);
     }
-    &:disabled {
+    &:read-only {
         background-color: var(--muted);
         color: var(--muted-foreground);
+    }
+    &:read-only:focus {
+        outline: none;
+        box-shadow: var(--shadow-input);
     }
 
 }

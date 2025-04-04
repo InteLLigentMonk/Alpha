@@ -14,4 +14,5 @@ public class Member
     public string? City { get; set; }
     public string? Country { get; set; }
     public string? AvatarUrl { get; set; }
+    public DateTime? DateOfBirth { get; set; }
 }

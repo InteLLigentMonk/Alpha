@@ -1,29 +1,60 @@
-﻿@model MembersViewModel
+﻿@using System.Security.Claims
+@model MembersViewModel
 @{
     Layout = "../Shared/_Layout.cshtml";
     ViewData["Title"] = "Team Members";
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);  
 }
+
+
+
 
 <div class="projects-title">
     <h2>@ViewData["Title"]</h2>
-    <button id="btn-new-member" class="btn btn-primary" onclick="toggleModal('newMemberModal', 'btn-new-member-close', 'new-member-form')"><i class="fa-solid fa-plus"></i> Team Member</button>
+    <button id="btn-new-member" class="btn btn-primary" onclick="toggleModal('MemberModal', 'btn-member-close', 'member-form')"><i class="fa-solid fa-plus"></i> Team Member</button>
 </div>
 <div class="main-grid">
     @foreach (var member in Model.Members)
     {
-        <partial name="Partials/_MemberCardPartial" model="member" />
+
+        if (member.Id.ToString() != userId)
+        {
+            var cardViewModel = new NewMemberFormViewModel
+                {
+                    Id = member.Id,
+                    FirstName = member.FirstName,
+                    LastName = member.LastName,
+                    Email = member.EmailAddress!,
+                    PhoneNumber = member.PhoneNumber,
+                    StreetAddress = member.StreetAddress,
+                    StreetNumber = member.StreetNumber,
+                    ZipCode = member.ZipCode,
+                    City = member.City,
+                    Country = member.Country,
+                    JobTitle = member.JobTitle,
+                    AvatarUrl = member.AvatarUrl,
+                    Day = member.DateOfBirth!.Value.Day,
+                    Month = member.DateOfBirth.Value.Month,
+                    Year = member.DateOfBirth.Value.Year
+
+
+                };
+            <partial name="Partials/_MemberCardPartial"
+                     model="@cardViewModel" />
+        }
+
     }
 </div>
 
-@* Project Modal *@
-<div id="newMemberModal" class="modal">
+@* Member Modal *@
+<div id="MemberModal" class="modal">
      <div class="card modal-content">
          <div class="modal-heading">
-             <h3>New Member</h3>
-             <span id="btn-new-member-close" class="close">&times;</span>
+             <h3 id="modal-title">New Member</h3>
+             <span id="btn-member-close" class="close">&times;</span>
          </div>
-         <partial name="Partials/_NewMemberFormPartial" model="@Model.NewMemberForm" />
+         <partial name="Partials/_MemberFormPartial" model="@Model.NewMemberForm" />
     </div>
 </div>
 
-@await Html.PartialAsync("Partials/_FormValidationPartial")
+<partial name="Partials/_FormValidationPartial"/>

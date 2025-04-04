@@ -4,6 +4,8 @@ namespace WebApp.Models
 {
     public class NewMemberFormViewModel
     {
+        public Guid? Id { get; set; }
+
         [Display(Name = "First Name", Prompt = "Bruce")]
         public string? FirstName { get; set; }
 

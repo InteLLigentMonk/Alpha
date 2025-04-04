@@ -46,7 +46,7 @@ public class HomeController(IWebHostEnvironment env, UserService userService, Pr
         return RedirectToAction("Projects");
     }
 
-
+    [Authorize(Roles = "Admin")]
     public IActionResult Members()
     {
         var vm = new MembersViewModel

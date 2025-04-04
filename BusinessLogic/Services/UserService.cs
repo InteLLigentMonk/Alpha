@@ -51,33 +51,75 @@ public class UserService(SignInManager<AppUser> signInManager, UserManager<AppUs
         await _signInManager.SignOutAsync();
     }
 
-    public IEnumerable<AppUser?> GetAllUsers()
+    public IEnumerable<AppUser> GetAllUsers()
     {
         var users = _userManager.Users
             .Include(u => u.Profile).ToList();
-
+        if (users == null)
+        {
+            Console.WriteLine("GetAllUsers returned null");
+            return [];
+        }
         return users;
     }
 
     public IEnumerable<Member> GetAllMembers()
     {
-        var users = GetAllUsers();
-        if (users != null)
+        try
         {
-            var members = users.Select(u => new Member
+            var users = GetAllUsers();
+
+            if (users == null)
             {
-                Id = u!.Id,
-                FirstName = u.Profile?.FirstName,
-                LastName = u.Profile?.LastName,
-                PhoneNumber = u.Profile?.PhoneNumber,
-                EmailAddress = u.Email,
-                JobTitle = u.Profile?.JobTitle,
-                AvatarUrl = u.Profile?.AvatarUrl
-            });
+                Console.WriteLine("GetAllUsers returned null");
+                return Enumerable.Empty<Member>();
+            }
+
+            var usersList = users.ToList();
+
+            if (usersList.Count == 0)
+            {
+                Console.WriteLine("No users found");
+                return Enumerable.Empty<Member>();
+            }
+
+            var members = usersList.Select(u =>
+            {
+                if (u == null)
+                {
+                    Console.WriteLine("Encountered a null user in the collection");
+                    return null;
+                }
+
+                return new Member
+                {
+                    Id = u.Id,
+                    FirstName = u.Profile.FirstName,
+                    LastName = u.Profile.LastName,
+                    PhoneNumber = u.Profile.PhoneNumber,
+                    EmailAddress = u.Email,
+                    StreetAddress = u.Profile.StreetAddress,
+                    StreetNumber = u.Profile.StreetNumber,
+                    ZipCode = u.Profile.ZipCode,
+                    City = u.Profile.City,
+                    Country = u.Profile.Country,
+                    JobTitle = u.Profile.JobTitle,
+                    DateOfBirth = u.Profile.DateOfBirth,
+                    AvatarUrl = u.Profile.AvatarUrl
+                };
+            })
+            .Where(m => m != null) // Filter out nulls
+            .Cast<Member>() // Cast to Member to match the target type
+            .ToList();
+
             return members;
         }
-        return [];
-
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in GetAllMembers: {ex.Message}");
+            // Log the exception properly if you have a logger
+            return Enumerable.Empty<Member>();
+        }
     }
 
     public async Task<bool> Delete(Guid id)

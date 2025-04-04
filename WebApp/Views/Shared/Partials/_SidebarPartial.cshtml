@@ -7,8 +7,11 @@
         <i class="fa-duotone fa-solid fa-xl fa-briefcase"></i>
         <span class="sidebar-button-text">Projects</span>
     </a>
-    <a asp-action="Members" class="btn btn-sidebar @(Context.Request.Path == "/home/members" ? "active" : "")">
-        <i class="fa-duotone fa-solid fa-xl fa-users"></i>
-        <span class="sidebar-button-text">Team Members</span>
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Members" class="btn btn-sidebar @(Context.Request.Path == "/home/members" ? "active" : "")">
+            <i class="fa-duotone fa-solid fa-xl fa-users"></i>
+            <span class="sidebar-button-text">Team Members</span>
+        </a>  
+    }
 </aside>

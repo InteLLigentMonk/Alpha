@@ -1,3 +1,4 @@
+using BusinessLogic.Factories;
 using BusinessLogic.Services;
 using Data.Contexts;
 using Data.Entities;
@@ -41,6 +42,37 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+    var profileService = scope.ServiceProvider.GetRequiredService<ProfileService>();
+
+    var roleExists = await roleManager.RoleExistsAsync("Admin");
+    if (!roleExists)
+    {
+        var role = new AppRole { Name = "Admin" };
+        await roleManager.CreateAsync(role);
+    }
+
+    var user = new AppUser { UserName = "admin@alpha.com", Email = "admin@alpha.com" };
+    var userExists = await userManager.FindByNameAsync(user.UserName);
+    if(userExists == null)
+    {
+        var result = await userManager.CreateAsync(user, "BytMig123!");
+        if(result.Succeeded)
+        {
+            var profile = ProfileFactory.NewProfileEntity();
+            profile.UserId = user.Id;
+            await profileService.CreateProfile(profile);
+
+            await userManager.AddToRoleAsync(user, "Admin");
+        }
+    }
+};
+
 
 app.MapStaticAssets();
 

@@ -1,16 +1,31 @@
-﻿@model Member
+﻿@model NewMemberFormViewModel
 
 <div id="member-card-menu-@Model.Id" class="card project-menu-card">
     <div class="edit">
-        <a asp-action="Edit" asp-controller="Projects">
-            <div class="btn btn-dropdown w-100">
-                <i class="fa-solid fa-pen-to-square"></i>
-                <p>Edit</p>
-            </div>
-        </a>
+        <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick="toggleModalWithData('MemberModal', 'btn-member-close', 'member-form',
+                    {
+                        Id: '@Model.Id',
+                        FirstName: '@Model.FirstName',
+                        LastName: '@Model.LastName',
+                        Email: '@Model.Email',
+                        PhoneNumber: '@Model.PhoneNumber',
+                        StreetAddress: '@Model.StreetAddress',
+                        StreetNumber: '@Model.StreetNumber',
+                        ZipCode: '@Model.ZipCode',
+                        City: '@Model.City',
+                        Country: '@Model.Country',
+                        JobTitle: '@Model.JobTitle',
+                        AvatarUrl: '@Model.AvatarUrl',
+                        Day: '@Model.Day',
+                        Month: '@Model.Month',
+                        Year: '@Model.Year'
+                    })">
+            <i class="fa-solid fa-pen-to-square"></i>
+             Edit
+        </button>
     </div>
     <div class="delete">
-        <a asp-action="Delete" asp-controller="Auth" asp-route-id="@Model.Id">
+        <a asp-action="Delete" asp-controller="Admin" asp-route-id="@Model.Id">
             <div class="btn btn-delete w-100">
                 <i class="fa-solid fa-trash-can"></i>
                 <p>Delete</p>

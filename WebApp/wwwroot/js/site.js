@@ -28,6 +28,36 @@ function toggleModal(modalId, closeButtonId, formId) {
 
     const closeModal = () => {
         modal.style.display = "none";
+
+        if (formId) {
+            const form = document.querySelector(`#${formId}`);
+            const hiddenInput = document.querySelector("#Id");
+            const img = document.querySelector("#member-img");
+            const button = document.querySelector("#btn-member");
+            const modalTitle = document.querySelector("#modal-title");
+            const photoPlaceholder = document.querySelector("#photo-placeholder");
+            if (form) {
+                form.reset();
+            }
+            if (hiddenInput) {
+                hiddenInput.value = "";
+            }
+            if (img) {
+                img.classList.add("d-none")
+                img.src = "#"
+                img.alt = "Avatar placeholder"
+            }
+            if (button) {
+                button.innerHTML = "Add Member"
+            }
+            if (modalTitle) {
+                modalTitle.innerHTML = "New Member"
+            }
+            if (photoPlaceholder) {
+                photoPlaceholder.classList.remove("d-none")
+            }
+        }
+
         closeButton.removeEventListener("click", closeModal);
         window.removeEventListener("click", windowCloseModal);
     }
@@ -41,12 +71,44 @@ function toggleModal(modalId, closeButtonId, formId) {
     window.addEventListener("click", windowCloseModal);
 }
 
+function toggleModalWithData(modalId, closeButtonId, formId, data) {
+    toggleModal(modalId, closeButtonId, formId)
+    // set the data in the inputs
+    const modal = document.querySelector(`#${modalId}`);
+    // Change modal h3 to Edit Member
+    const modalTitle = document.querySelector("#modal-title");
+    const photoPlaceholder = document.querySelector("#photo-placeholder");
+    const img = document.querySelector("#member-img");
+    const button = document.querySelector("#btn-member");
+    if (img) {
+        img.src = `/uploads/${data.AvatarUrl}`;
+        img.alt = `${data.FirstName} ${data.LastName}`;
+        img.classList.remove("d-none");
+        photoPlaceholder.classList.add("d-none");
+    }
+    if (modalTitle) {
+        modalTitle.innerHTML = "Edit Member";
+    }
+    if (button) {
+        button.innerHTML = "Save"
+    }
+
+
+    const inputs = modal.querySelectorAll("input, select, textarea");
+    inputs.forEach(input => {
+        const name = input.getAttribute("name");
+        if (data[name]) {
+            input.value = data[name];
+        }
+    });
+
+}
+
 
 function toggleMemberCardMenu() {
     const menuButtons = document.querySelectorAll(".btn-card-settings");
 
     if (!menuButtons || menuButtons.length === 0) {
-        console.log("stop here");
         return;
     }
 
@@ -68,7 +130,7 @@ function toggleMemberCardMenu() {
 
                     setTimeout(() => {
                         document.addEventListener("click", closeMenuOnClickOutside);
-                    }, 0);
+                    }, 500);
 
                     console.log(`Member menu opened for ID: ${memberId}`);
                 } else {

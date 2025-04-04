@@ -1,4 +1,5 @@
-﻿@model Member
+﻿@model NewMemberFormViewModel
+
 
 <div class="member-card">
 	<div class="member-card-header">
@@ -20,7 +21,7 @@
 	</div>
 	<div class="member-card-body">
 		<div class="member-contact">
-			<span>@Model.EmailAddress</span>
+			<span>@Model.Email</span>
 			<span>@Model.PhoneNumber</span>
 		</div>
 	</div>
@@ -30,3 +31,5 @@
 
 	<partial name="Partials/_MemberCardMenuPartial" model="Model"/>
 </div>
+
+
