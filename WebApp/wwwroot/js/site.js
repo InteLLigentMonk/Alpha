@@ -71,7 +71,13 @@ function toggleModal(modalId, closeButtonId, formId) {
     window.addEventListener("click", windowCloseModal);
 }
 
+
+
+
 function toggleModalWithData(modalId, closeButtonId, formId, data) {
+    console.log("Full data object:", data);
+
+
     toggleModal(modalId, closeButtonId, formId)
     // set the data in the inputs
     const modal = document.querySelector(`#${modalId}`);
@@ -79,12 +85,17 @@ function toggleModalWithData(modalId, closeButtonId, formId, data) {
     const modalTitle = document.querySelector("#modal-title");
     const photoPlaceholder = document.querySelector("#photo-placeholder");
     const img = document.querySelector("#member-img");
+    const email = document.querySelector("#Email");
+    console.log(email)
     const button = document.querySelector("#btn-member");
     if (img) {
         img.src = `/uploads/${data.AvatarUrl}`;
         img.alt = `${data.FirstName} ${data.LastName}`;
         img.classList.remove("d-none");
         photoPlaceholder.classList.add("d-none");
+    }
+    if (email) {
+        email.readOnly = true;
     }
     if (modalTitle) {
         modalTitle.innerHTML = "Edit Member";
@@ -93,12 +104,161 @@ function toggleModalWithData(modalId, closeButtonId, formId, data) {
         button.innerHTML = "Save"
     }
 
-
     const inputs = modal.querySelectorAll("input, select, textarea");
+    console.log("Found inputs:", inputs.length);
+
     inputs.forEach(input => {
         const name = input.getAttribute("name");
+        const id = input.getAttribute("id");
+        console.log(`Input: id=${id}, name=${name}, value=${input.value}`);
         if (data[name]) {
+            console.log(`  Setting ${name} to ${data[name]}`);
             input.value = data[name];
+        } else {
+            console.log(`  No matching data property for ${name}`);
+            // Check for camelCase version
+            const camelCaseName = name.charAt(0).toLowerCase() + name.slice(1);
+            if (data[camelCaseName]) {
+                console.log(`  Found camelCase match: ${camelCaseName} = ${data[camelCaseName]}`);
+                input.value = data[camelCaseName];
+            }
+        }
+    });
+
+}
+
+function toggleProjectModal(modalId, closeButtonId, formId) {
+    const modal = document.querySelector(`#${modalId}`);
+    const closeButton = document.querySelector(`#${closeButtonId}`);
+
+    if (!modal || !closeButton) {
+        return;
+    }
+
+    modal.style.display = "block";
+
+    if (formId) {
+        initializeValidation(`#${formId}`);
+    }
+
+    const closeModal = () => {
+        modal.style.display = "none";
+
+        if (formId) {
+            const form = document.querySelector(`#${formId}`);
+            const hiddenInput = document.querySelector("#Id");
+            const img = document.querySelector("#project-img");
+            const button = document.querySelector("#btn-project");
+            const modalTitle = document.querySelector("#modal-title");
+            const photoPlaceholder = document.querySelector("#photo-placeholder");
+            if (form) {
+                form.reset();
+            }
+            if (hiddenInput) {
+                hiddenInput.value = "";
+            }
+            if (img) {
+                img.classList.add("d-none")
+                img.src = "#"
+                img.alt = "Project photo placeholder"
+            }
+            if (button) {
+                button.innerHTML = "Create"
+            }
+            if (modalTitle) {
+                modalTitle.innerHTML = "AddProject"
+            }
+            if (photoPlaceholder) {
+                photoPlaceholder.classList.remove("d-none")
+            }
+        }
+
+        closeButton.removeEventListener("click", closeModal);
+        window.removeEventListener("click", windowCloseModal);
+    }
+
+    const windowCloseModal = (e) => {
+        if (e.target == modal) {
+            closeModal();
+        }
+    }
+    closeButton.addEventListener("click", closeModal);
+    window.addEventListener("click", windowCloseModal);
+}
+
+function editProject(button) {
+    const projectData = {
+        Id: button.getAttribute('data-project-id'),
+        ProjectPhotoUrl: button.getAttribute('data-project-photo'),
+        ProjectName: button.getAttribute('data-project-name'),
+        ClientName: button.getAttribute('data-client-name'),
+        Description: button.getAttribute('data-description'),
+        StartDate: button.getAttribute('data-start-date'),
+        EndDate: button.getAttribute('data-end-date'),
+        Budget: button.getAttribute('data-budget')
+    };
+
+    // Handle members separately to avoid JSON parse issues
+    try {
+        const membersBase64 = button.getAttribute('data-members');
+        if (membersBase64) {
+            // Decode the Base64 string to get the JSON
+            const jsonString = atob(membersBase64);
+            projectData.Members = JSON.parse(jsonString);
+        }
+    } catch (e) {
+        console.error("Error parsing members JSON:", e);
+        projectData.Members = [];
+    }
+
+    toggleProjectModalWithData('ProjectModal', 'btn-close', 'project-form', projectData);
+}
+
+function toggleProjectModalWithData(modalId, closeButtonId, formId, data) {
+    toggleProjectModal(modalId, closeButtonId, formId)
+    const modal = document.querySelector(`#${modalId}`);
+    const modalTitle = document.querySelector("#modal-title");
+    const photoPlaceholder = document.querySelector("#photo-placeholder");
+    const img = document.querySelector("#project-img");
+    const button = document.querySelector("#btn-project");
+
+    if (img) {
+        img.src = `/uploads/${data.ProjectPhotoUrl}`;
+        img.alt = `${data.FirstName} ${data.LastName}`;
+        img.classList.remove("d-none");
+        photoPlaceholder.classList.add("d-none");
+    }
+    if (modalTitle) {
+        modalTitle.innerHTML = "Edit Project";
+    }
+    if (button) {
+        button.innerHTML = "Save"
+    }
+
+    const inputs = modal.querySelectorAll("input, select, textarea, date");
+
+    inputs.forEach(input => {
+        const name = input.getAttribute("name");
+        if (name === "member-input") {
+
+            window.selectedMembers = [];
+
+            if (data.Members && Array.isArray(data.Members)) {
+                data.Members.forEach(member => {
+                    if (!window.selectedMembers.some(m => m.id === member.id)) {
+                        window.selectedMembers.push(member);
+                    }
+                });
+            }
+
+            if (typeof window.renderSelectedMembers === "function") {
+                window.renderSelectedMembers();
+                window.updateHiddenInputs();
+            }
+        } else {
+            if (data[name]) {
+                input.value = data[name];
+            }
         }
     });
 
@@ -116,7 +276,7 @@ function toggleMemberCardMenu() {
         button.addEventListener('click', (event) => {
             const memberId = button.getAttribute("data-member-id");
 
-            const menu = document.querySelector(`#member-card-menu-${memberId}`)
+            const menu = document.querySelector(`#card-menu-${memberId}`)
             if (menu) {
                 if (menu.style.display === "none" || menu.style.display === "") {
                     menu.style.display = "block";

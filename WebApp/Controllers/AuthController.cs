@@ -1,15 +1,16 @@
-﻿using BusinessLogic.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using BusinessLogic.Factories;
+using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-public class AuthController(IWebHostEnvironment env, UserService userService, ProfileService profileService) : Controller
+public class AuthController(IWebHostEnvironment env, IUserService userService, IProfileService profileService, IAuthService authService) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
-    private readonly UserService _userService = userService;
-    private readonly ProfileService _profileService = profileService;
+    private readonly IUserService _userService = userService;
+    private readonly IProfileService _profileService = profileService;
+    private readonly IAuthService _authService = authService;
 
 
     public IActionResult Login(string returnUrl="~/")
@@ -26,11 +27,10 @@ public class AuthController(IWebHostEnvironment env, UserService userService, Pr
     {
         if (!ModelState.IsValid)
         {
-            ViewData["Title"] = "Login";
             return View(formData);
         }
 
-        var result = await _userService.LoginAsync(formData.Email, formData.Password, formData.RememberMe);
+        var result = await _authService.LoginAsync(formData.Email, formData.Password, formData.RememberMe);
         if (result.Succeeded)
         {
             return LocalRedirect(returnUrl);
@@ -53,11 +53,17 @@ public class AuthController(IWebHostEnvironment env, UserService userService, Pr
     {
         if (ModelState.IsValid)
         {
-            var (result, _) = await _userService.RegisterAsync(formData, formData.Password);
+            var (result, userId) = await _userService.RegisterAsync(formData, formData.Password);
             if (result.Succeeded)
             {
-                ViewData["Title"] = "Dashboard";
-                return RedirectToAction("Login", "Auth");
+                var profile = ProfileFactory.NewProfile();
+                profile.UserId = userId;
+                var response = await _profileService.CreateProfile(profile);
+                if(response.Succeeded)
+                {
+                    ViewData["Title"] = "Dashboard";
+                    return RedirectToAction("Login", "Auth");
+                }
             }
         }
         ViewData["Title"] = "Create Account";
@@ -91,7 +97,7 @@ public class AuthController(IWebHostEnvironment env, UserService userService, Pr
 
     public async Task<IActionResult> LogoutAsync()
     {
-        await _userService.LogoutAsync();
+        await _authService.LogoutAsync();
         return RedirectToAction("Login", "Auth");
     }
 

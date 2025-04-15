@@ -1,20 +1,22 @@
-﻿@model WebApp.Models.ProjectFormViewModel
+﻿@model ProjectFormViewModel
+@{
+}
 
-<form method="post" enctype="multipart/form-data" id="add-project-form" class="projects-form">
+<form asp-action="Projects" asp-controller="Project" method="post" enctype="multipart/form-data" id="project-form" class="projects-form">
+    <input asp-for="Id" hidden />
     <div class="photo-upload-button">
-         <label asp-for="ProjectPhoto">
-            <div id="photo-placeholder" class="photo-placeholder-square">
+        <label asp-for="ProjectPhoto">
+            <div id="photo-placeholder" class="photo-placeholder-square ">
                 <div class="camera-circle">
                     <i class="fa-solid fa-camera-retro fa-2xl"></i>
                 </div>
             </div>
 
-            <img class="upload-image d-none" src="~/uploads/04064ae1-8e33-43a5-84da-82ffbbf52256_20241126_164416 (1).jpg"/>
-
-         </label>
-        <input asp-for="ProjectPhoto" accept="image/*" class="input">
+            <img id="project-img" class="upload-image d-none" src="#" />
+        </label>
+        <input asp-for="ProjectPhoto" data-user-id="@Model.Id" accept="image/*" class="input">
     </div>
-        <span asp-validation-for="ProjectPhoto"></span>
+    <span asp-validation-for="ProjectPhoto"></span>
 
    <div class="form-input">
        <label asp-for="ProjectName"></label>
@@ -43,7 +45,7 @@
             <span asp-validation-for="EndDate"></span>
         </div>
     </div>
-	@await Html.PartialAsync("Partials/UI/_MemberInputPartial")
+	<partial name="Partials/UI/_MemberInputPartial" model="@Model"/>
 
     <div class="form-input project-budget">
         <label asp-for="Budget"></label>
@@ -52,7 +54,7 @@
         <span asp-validation-for="Budget"></span>
     </div>
 
-   @await Html.PartialAsync("Partials/UI/_ButtonPrimaryPartial", new ButtonPropertiesModel() { Text = "Create" })
+    <button id="btn-project" class="btn btn-primary w-100">Create</button>
 </form>
 
 <script>

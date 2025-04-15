@@ -1,15 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Models;
 
 namespace WebApp.Models;
 
 public class ProfileFormViewModel
 {
+    public Guid Id { get; set; }
+
+    public Guid? UserId { get; set; }
+
     [Display(Name = "First Name", Prompt ="Bruce")]
     public string? FirstName { get; set; }
 
     [Display(Name = "Last Name", Prompt ="Wayne")]
     public string? LastName { get; set; }
-    
+
+    [Display(Name = "Email", Prompt = "Email address")]
+    [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Must be a valid Email")]
+    [Required(ErrorMessage = "Required")]
+    public string Email { get; set; } = null!;
+
     [Display(Name = "Phone Number", Prompt = "Your phone number...")]
     [DataType(DataType.PhoneNumber)]
     public string? PhoneNumber { get; set; }
@@ -61,4 +71,29 @@ public class ProfileFormViewModel
     public string? AvatarUrl { get; set; }
 
     public IFormFile? Avatar { get; set; }
+
+    public static implicit operator Profile(ProfileFormViewModel model)
+    {
+        var profile = new Profile
+        {
+            Id = model.Id,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            PhoneNumber = model.PhoneNumber,
+            JobTitle = model.JobTitle,
+            StreetAddress = model.StreetAddress,
+            StreetNumber = model.StreetNumber,
+            ZipCode = model.ZipCode,
+            City = model.City,
+            Country = model.Country,
+            DateOfBirth = new DateTime(model.Year, model.Month, model.Day),
+            AvatarUrl = model.AvatarUrl
+        };
+
+        if (model.UserId.HasValue)
+        {
+            profile.UserId = model.UserId;
+        }
+        return profile;
+    }
 }

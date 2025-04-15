@@ -1,17 +1,19 @@
 ﻿@{
     Layout = "../Shared/_LayoutAuth.cshtml";
+	string buttonName = "Login with Google";
+	ViewData["Title"] = "Login";
 }
 <link rel="stylesheet" href="~/css/login.css" />
-<h1>Login</h1>
-@await Html.PartialAsync("Partials/UI/_ButtonGooglePartial", "Login with Google")
+<h1>@ViewData["Title"]</h1>
+<partial name="Partials/UI/_ButtonGooglePartial" model=buttonName />
 <div class="or-divider">
     <div class="ruler"></div>
     <div>OR</div>
     <div class="ruler"></div>
 </div>
-@await Html.PartialAsync("Partials/_LoginFormPartial")
+<partial name="Partials/_LoginFormPartial" />
 <div class="no-account center">
     <p>Don't have an account? <a asp-action="Register">Sign up</a></p>
 </div>
 
-@await Html.PartialAsync("Partials/_FormValidationPartial")
+<partial name="Partials/_FormValidationPartial" />

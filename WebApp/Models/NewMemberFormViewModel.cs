@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Domain.Models;
 
 namespace WebApp.Models
 {
@@ -68,5 +69,35 @@ namespace WebApp.Models
         public string? AvatarUrl { get; set; }
 
         public IFormFile? Avatar { get; set; }
+
+        
+        
+        public static implicit operator Member(NewMemberFormViewModel model)
+        {
+            if (model == null)
+            {
+                return null!;
+            }
+            var member = new Member
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                EmailAddress = model.Email,
+                StreetAddress = model.StreetAddress,
+                StreetNumber = model.StreetNumber,
+                ZipCode = model.ZipCode,
+                City = model.City,
+                Country = model.Country,
+                JobTitle = model.JobTitle,
+                DateOfBirth = model.DateOfBirth,
+                AvatarUrl = model.AvatarUrl
+            };
+            if (model.Id.HasValue)
+            {
+                member.Id = model.Id.Value;
+            }
+            return member;
+        }
     }
 }

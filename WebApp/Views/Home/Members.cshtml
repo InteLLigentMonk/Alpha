@@ -19,9 +19,10 @@
 
         if (member.Id.ToString() != userId)
         {
-            var cardViewModel = new NewMemberFormViewModel
+            var profileViewModel = new ProfileFormViewModel
                 {
                     Id = member.Id,
+					UserId = member.UserId,
                     FirstName = member.FirstName,
                     LastName = member.LastName,
                     Email = member.EmailAddress!,
@@ -40,7 +41,7 @@
 
                 };
             <partial name="Partials/_MemberCardPartial"
-                     model="@cardViewModel" />
+                     model="@profileViewModel" />
         }
 
     }
@@ -53,7 +54,7 @@
              <h3 id="modal-title">New Member</h3>
              <span id="btn-member-close" class="close">&times;</span>
          </div>
-         <partial name="Partials/_MemberFormPartial" model="@Model.NewMemberForm" />
+         <partial name="Partials/_MemberFormPartial" model="@Model.NewProfileForm" />
     </div>
 </div>
 

@@ -3,13 +3,13 @@
         <i class="fa-duotone fa-solid fa-xl fa-objects-column"></i>
         <span class="sidebar-button-text">Dashboard</span>
     </a>
-    <a asp-action="Projects" class="btn btn-sidebar @(Context.Request.Path == "/home/projects" ? "active" : "")">
+    <a asp-action="Projects" asp-controller="Project" class="btn btn-sidebar @(Context.Request.Path == "/home/projects" ? "active" : "")">
         <i class="fa-duotone fa-solid fa-xl fa-briefcase"></i>
         <span class="sidebar-button-text">Projects</span>
     </a>
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Members" class="btn btn-sidebar @(Context.Request.Path == "/home/members" ? "active" : "")">
+        <a asp-action="Members" asp-controller="Home" class="btn btn-sidebar @(Context.Request.Path == "/home/members" ? "active" : "")">
             <i class="fa-duotone fa-solid fa-xl fa-users"></i>
             <span class="sidebar-button-text">Team Members</span>
         </a>  

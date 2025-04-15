@@ -1,10 +1,11 @@
-﻿@{
-    @model ProjectFormViewModel;
+﻿@model ProjectFormViewModel;
+@{
+    var selectedMembersList = Model.Members ?? new List<Member>();
+    var avalibleMembers = ViewData["Members"] as List<Member> ?? new List<Member>();
+    var test = "string";
 }
 
 <style>
-    .member-container {
-    }
 
     .member-input-wrapper {
         display: flex;
@@ -35,12 +36,13 @@
         font-size: 14px;
     }
 
-        .member-chip img {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
+    .member-chip img {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin-right: 5px;
+        object-fit: cover;
+    }
 
     .remove-btn {
         cursor: pointer;
@@ -71,23 +73,24 @@
         z-index: 101;
     }
 
-        .suggestions-list li {
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-        }
+    .suggestions-list li {
+        padding: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+    }
 
-            .suggestions-list li:hover {
-                background-color: var(--muted);
-            }
+    .suggestions-list li:hover {
+        background-color: var(--muted);
+    }
 
-        .suggestions-list img {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
+    .suggestions-list img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
 
 </style>
 
@@ -95,101 +98,137 @@
     <label asp-for="Members">Members</label>
     <div class="member-input-wrapper">
         <div id="selected-members"></div>
-        <input type="text" id="member-input" placeholder="Search members...">
+        <input type="text" id="member-input" name="member-input" placeholder="Search members...">
     </div>
         <span asp-validation-for="Members"></span>
     <ul id="suggestions" class="suggestions-list"></ul>
 </div>
 
 <script>
-        const members = [
-        { id: 1, name: "Therése Lidbom", avatar: "icons/avatars/1.svg" },
-        { id: 2, name: "Hans Mattin-Lassei", avatar: "icons/avatars/2.svg" },
-        { id: 3, name: "Alice Johnson", avatar: "icons/avatars/3.svg" },
-        { id: 4, name: "Alice Johnson", avatar: "icons/avatars/4.svg" },
-        { id: 5, name: "Alice Johnson", avatar: "icons/avatars/5.svg" },
-        { id: 6, name: "Alice Johnson", avatar: "icons/avatars/6.svg" },
-        { id: 7, name: "Alice Johnson", avatar: "icons/avatars/7.svg" },
-        { id: 8, name: "Alice Johnson", avatar: "icons/avatars/8.svg" },
-        { id: 9, name: "Alice Johnson", avatar: "icons/avatars/1.svg" },
-        { id: 10, name: "Alice Johnson", avatar: "icons/avatars/3.svg" },
-        { id: 11, name: "Bob Smith", avatar: "icons/avatars/4.svg" }
-    ];
+
+    // Har tagit hjälp av ai för att göra delar av detta script.
+
+    window.members = @Html.Raw(Json.Serialize(avalibleMembers));
+    window.selectedMembers = @Html.Raw(Json.Serialize(selectedMembersList));
 
     const input = document.getElementById("member-input");
     const suggestions = document.getElementById("suggestions");
     const selectedMembersContainer = document.getElementById("selected-members");
 
-    let selectedMembers = [];
+    function initializeMemberInput() {
+        input.addEventListener("input", () => {
+            const query = input.value.toLowerCase();
+            suggestions.innerHTML = "";
 
-    input.addEventListener("input", () => {
-        const query = input.value.toLowerCase();
-        suggestions.innerHTML = "";
+            if (query.length === 0) {
+                suggestions.style.display = "none";
+                return;
+            }
 
-        if (query.length === 0) {
-            suggestions.style.display = "none";
-            return;
-        }
+            const filteredMembers = window.members.filter(member => {
+                if (!member || !member.firstName) return false;
 
-        const filteredMembers = members.filter(member =>
-            member.name.toLowerCase().includes(query) &&
-            !selectedMembers.some(selected => selected.id === member.id)
+                const nameMatches = member.firstName.toLowerCase().includes(query);
+
+                // More robust duplicate detection in filter
+                const alreadySelected = window.selectedMembers.some(selected =>
+                    (selected && member && selected.id === member.id) ||
+                    (selected && member && selected.userId === member.userId) ||
+                    (selected && member && selected.emailAddress && member.emailAddress &&
+                     selected.emailAddress.toLowerCase() === member.emailAddress.toLowerCase())
+                );
+
+                return nameMatches && !alreadySelected;
+            });
+
+
+            if (filteredMembers.length > 0) {
+                suggestions.style.display = "block";
+                filteredMembers.forEach(member => {
+                    const li = document.createElement("li");
+                    // Use avatarUrl instead of avatar, and concatenate firstName + lastName instead of name
+                    const displayName = `${member.firstName || ''} ${member.lastName || ''}`.trim();
+                    const avatarUrl = member.avatarUrl || '../icons/avatars/1.svg';
+
+                    li.innerHTML = `<img src="/uploads/${avatarUrl}" alt=""> ${displayName}`;
+                    li.addEventListener("click", () => window.addMember(member));
+                    suggestions.appendChild(li);
+                });
+            } else {
+                suggestions.style.display = "none";
+            }
+        });
+    }
+
+
+    window.addMember = function(member) {
+        // More robust duplicate detection
+        const isDuplicate = window.selectedMembers.some(existing =>
+            // Check multiple properties to ensure we catch duplicates even if ID formats differ
+            (existing.id && member.id && existing.id === member.id) ||
+            (existing.userId && member.userId && existing.userId === member.userId) ||
+            (existing.emailAddress && member.emailAddress &&
+             existing.emailAddress.toLowerCase() === member.emailAddress.toLowerCase())
         );
 
-        if (filteredMembers.length > 0) {
-            suggestions.style.display = "block";
-            filteredMembers.forEach(member => {
-                const li = document.createElement("li");
-                li.innerHTML = `<img src="${member.avatar}" alt=""> ${member.name}`;
-                li.addEventListener("click", () => addMember(member));
-                suggestions.appendChild(li);
-            });
-        } else {
+        if (!isDuplicate) {
+            window.selectedMembers.push(member);
+            input.value = "";
+            input.focus();
             suggestions.style.display = "none";
+            window.renderSelectedMembers();
+            window.updateHiddenInputs();
+        } else {
+            console.log("Prevented adding duplicate member:", member);
         }
-    });
-
-    function addMember(member) {
-        selectedMembers.push(member);
-        input.value = "";
-        input.focus(); // Ensure the input field remains focused
-        suggestions.style.display = "none";
-        renderSelectedMembers();
-        updateHiddenInputs();
     }
 
-    function removeMember(memberId) {
-        selectedMembers = selectedMembers.filter(member => member.id !== memberId);
-        renderSelectedMembers();
-        updateHiddenInputs();
+    window.removeMember = function(memberId) {
+        window.selectedMembers = window.selectedMembers.filter(member => member.id !== memberId);
+        window.renderSelectedMembers();
+        window.updateHiddenInputs();
     }
 
-    function renderSelectedMembers() {
+    window.renderSelectedMembers = function() {
         selectedMembersContainer.innerHTML = "";
-        selectedMembers.forEach(member => {
+        window.selectedMembers.forEach(member => {
             const chip = document.createElement("div");
             chip.classList.add("member-chip");
+
+            const displayName = `${member.firstName || ''} ${member.lastName || ''}`.trim();
+            const avatarUrl = member.avatarUrl || '/images/default-avatar.png';
+
             chip.innerHTML = `
-                <img src="${member.avatar}" alt="">
-                ${member.name}
-                <span class="remove-btn" onclick="removeMember(${member.id})">&times;</span>
+                <img src="/uploads/${avatarUrl}" alt="">
+                ${displayName}
+                <span class="remove-btn" onclick="window.removeMember('${member.id}')">&times;</span>
             `;
             selectedMembersContainer.appendChild(chip);
         });
     }
 
-    function updateHiddenInputs() {
-        const form = document.getElementById("add-project-form");
-        const existingInputs = form.querySelectorAll("input[name='Members']");
+    window.updateHiddenInputs = function() {
+        const form = document.getElementById("project-form");
+        if (!form) {
+            console.error("Form with ID 'project-form' not found");
+            return;
+        }
+
+        const existingInputs = form.querySelectorAll("input[name^='Members']");
         existingInputs.forEach(input => input.remove());
 
-        selectedMembers.forEach(member => {
+        window.selectedMembers.forEach((member, index) => {
             const hiddenInput = document.createElement("input");
             hiddenInput.type = "hidden";
-            hiddenInput.name = "Members";
-            hiddenInput.value = member.name; // or member.id if you prefer
+            hiddenInput.name = `Members[${index}].UserId`;
+            hiddenInput.value = member.userId;
             form.appendChild(hiddenInput);
         });
     }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        initializeMemberInput();
+        renderSelectedMembers();
+    });
 
 </script>

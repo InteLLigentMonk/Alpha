@@ -1,4 +1,4 @@
-﻿const validateField = (field) => {
+﻿const validateField = (field, checkRelatedField = true) => {
     let errorSpan = document.querySelector(`span[data-valmsg-for='${field.name}']`);
     if (!errorSpan) return;
 
@@ -13,6 +13,51 @@
         let pattern = new RegExp(field.getAttribute("data-val-regex-pattern"));
         if (!pattern.test(value)) {
             errorMessage = field.getAttribute("data-val-regex");
+        }
+    }
+
+    if ((field.name === "EndDate" || field.name === "StartDate") && !errorMessage) {
+        const startDateField = document.querySelector('input[name="StartDate"]');
+        const endDateField = document.querySelector('input[name="EndDate"]');
+
+        if (startDateField && endDateField) {
+            const startDate = new Date(startDateField.value);
+            const endDate = new Date(endDateField.value);
+
+            // Check if dates are valid before comparing
+            if (!isNaN(endDate.getTime()) && !isNaN(startDate.getTime())) {
+                const datesAreValid = endDate >= startDate;
+
+                // Clear both fields or set error messages as appropriate
+                if (datesAreValid) {
+                    // If dates are valid, always clear both fields regardless of which one changed
+                    if (checkRelatedField) {
+                        // Clear related field error too
+                        const relatedField = field.name === "StartDate" ? endDateField : startDateField;
+                        const relatedErrorSpan = document.querySelector(`span[data-valmsg-for='${relatedField.name}']`);
+
+                        if (relatedErrorSpan) {
+                            relatedField.classList.remove("input-validation-error");
+                            relatedErrorSpan.classList.remove("field-validation-error");
+                            relatedErrorSpan.classList.add("field-validation-valid");
+                            relatedErrorSpan.textContent = "";
+                        }
+                    }
+                } else {
+                    // Invalid date relationship
+                    if (field.name === "EndDate") {
+                        errorMessage = "End date must be after the start date";
+                    } else {
+                        errorMessage = "Start date must be before the end date";
+                    }
+
+                    // Also validate the related date field to show an error
+                    if (checkRelatedField) {
+                        const relatedField = field.name === "StartDate" ? endDateField : startDateField;
+                        validateField(relatedField, false); // Pass false to prevent infinite recursion
+                    }
+                }
+            }
         }
     }
 

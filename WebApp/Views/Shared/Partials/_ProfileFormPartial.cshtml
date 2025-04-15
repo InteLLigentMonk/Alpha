@@ -1,6 +1,12 @@
-﻿@model WebApp.Models.ProfileFormViewModel
+﻿@model ProfileFormViewModel
 
-<form method="post" enctype="multipart/form-data" id="profile-form" class="projects-form">
+<form asp-action="Profile" asp-controller="Home" method="post" enctype="multipart/form-data" id="profile-form" class="projects-form">
+    <input asp-for="Id" class="d-none" data-val="false" />
+    <input asp-for="UserId" class="d-none" data-val="false" />
+    <input asp-for="AvatarUrl" class="d-none" data-val="false" />
+
+    
+    
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             @if (!string.IsNullOrEmpty(Model.AvatarUrl))
@@ -25,8 +31,8 @@
             }
         </label>
             <input asp-for="Avatar" accept="image/*" class="input">
-        </div>
-        <span asp-validation-for="Avatar"></span>
+     </div>
+    <span asp-validation-for="Avatar"></span>
 
     <div class="form-group">
         <div class="form-input">
@@ -41,9 +47,17 @@
         </div>
     </div>
     <div class="form-input">
-        <label for="Email">Email Adress</label>
-        <input type="text" id="Email" value="@userManager.GetUserAsync(User).Result" class="input" disabled>
-    </div>    
+        <label asp-for="Email"></label>
+        @if (!string.IsNullOrEmpty(Model.Email))
+        {
+            <input asp-for="Email" class="input" readonly>
+        }
+        else
+        {
+            <input asp-for="Email" class="input">
+        }
+        <span asp-validation-for="Email"></span>
+    </div>
     <div class="form-input">
         <label asp-for="PhoneNumber"></label>
         <input asp-for="PhoneNumber" class="input">

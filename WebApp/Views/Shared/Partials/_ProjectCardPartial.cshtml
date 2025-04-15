@@ -1,35 +1,71 @@
-﻿
-	<div class="card">
-		<div class="project-card-header">
-			<div class ="d-flex gap-2 flex-row w-100">
-				@if (string.IsNullOrEmpty(""))
-				{
-				@await Html.PartialAsync("Partials/UI/_ImagePlaceholderPartial")
-				}
-				else
-				{
-					<img src="#" alt="Project image" />	
-				}
-				<div class="d-flex flex-column justify-content-center w-100">
-					<h5>Website Redesign</h5>
-					<p>GitLab Inc.</p>
-				</div>
-				<div class="d-flex justify-between">
-					<div>@await Html.PartialAsync("Partials/UI/_ProjectSettingsButtonPartial")</div>
-				</div>
+﻿@model ProjectFormViewModel
+@{
+	int memberCount = 0;
+	IEnumerable<Member> exampleMembers = [];
+	if(Model.Members != null)
+	{
+		memberCount = Model.Members.Count();
+		exampleMembers = Model.Members.Take(3);
+
+	}
+	var timeLeft = (Model.EndDate - Model.StartDate).Days;
+}
+<div class="card">
+	<div class="project-card-header">
+		<div class ="d-flex gap-2 flex-row w-100">
+			@if (string.IsNullOrEmpty(Model.ProjectPhotoUrl))
+			{
+				<partial name="Partials/UI/_ImagePlaceholderPartial" model="Model" />
+			}
+			else
+			{
+					<div class="project-card-photo">
+						<img src="/uploads/@Model.ProjectPhotoUrl" alt="@Model.ProjectName image" />	
+					</div>
+			}
+			<div class="d-flex flex-column justify-content-center">
+				<h5>@Model.ProjectName</h5>
+				<p>@Model.ClientName</p>
+			</div>
+			<div class="d-flex justify-between">
+				<div class ="btn-card-settings" data-member-id="@Model.Id"><partial name="Partials/UI/_ProjectSettingsButtonPartial" /></div>
 			</div>
 		</div>
-		<div class="project-card-body">
-			<p class="project-card-body-text">
-				It is necessary to develop a website redesign in a corporate style.
-			</p>
-		</div>
-		<div class="project-card-footer">
-			<div class="project-card-timeleft"><i class="fa-regular fa-clock"></i> 1 week left</div>
-				<div class="project-card-users">
-				<img src="~/icons/avatars/1.svg" alt="avatar" />
-				<img src="~/icons/avatars/2.svg" alt="avatar" />
+	</div>
+	<div class="project-card-body">
+		<p class="project-card-body-text">
+			@Model.Description
+		</p>
+	</div>
+	<div class="project-card-footer">
+		@if(timeLeft > 7)
+		{
+			var weeks = timeLeft / 7;
+			<div class="project-card-timeleft"><i class="fa-regular fa-clock"></i> @(weeks == 1 ? "1 week" : $"{weeks} weeks") left</div>
+		}
+		else
+		{
+			<div class="project-card-timeleft danger"><i class="fa-regular fa-clock"></i> @(timeLeft == 1 ? "1 day" : $"{timeLeft} days") left</div>
+		}
+		<div class="project-card-users">
+			@if (memberCount > 0)
+			{
+				<div class="project-card-users-list">
+					@foreach (var member in exampleMembers)
+					{
+						<div class="project-member-avatar">
+							<img src="/uploads/@member.AvatarUrl" alt="avatar" />
+						</div>
+					}
+					@if(memberCount > 3)
+					{
+						<div class="project-member-more">
+							<i class="fa-solid fa-plus-large"></i>
+						</div>
+					}
+				</div>
+			}
 			</div>
 		</div>
-		@await Html.PartialAsync("Partials/_ProjectCardMenuPartial")
+		<partial name="Partials/_ProjectCardMenuPartial" model="@Model"/>
 	</div>

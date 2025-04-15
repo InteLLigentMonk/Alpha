@@ -1,0 +1,56 @@
+﻿@using System.Diagnostics
+@model ProjectsViewModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Projects";
+    ViewData["Members"] = Model.Members as List<Member>;
+
+    var totalProjects = Model.Projects.Count();
+    var totalStarted = Model.Projects.Count(p => p.StartDate.Date <= DateTime.Today.Date);
+    Debug.WriteLine("totalStarted");
+
+}
+
+<div class="projects-title">
+    <h2>Projects</h2>
+    <button id="btn-new-project" class="btn btn-primary" onclick="toggleModal('ProjectModal', 'btn-close', 'project-form')"><i class="fa-solid fa-plus"></i> Add Project</button>
+</div>
+
+<div class="projects-statusbar">
+    <button class="projects-statusbar-tab">All [@totalProjects]</button>
+    <button class="projects-statusbar-tab">Started [@totalStarted]</button>
+    <button class="projects-statusbar-tab">Completed [6]</button>
+</div>
+
+<div class="main-grid">
+    @foreach (var project in Model.Projects)
+    {
+       var projectViewModel = new ProjectFormViewModel
+            {
+                Id = project.Id,
+				ProjectName = project.ProjectName,
+				ClientName = project.ClientName,
+				Description = project.Description,
+				StartDate = project.StartDate,
+				EndDate = project.EndDate,
+				Members = project.Users,
+				Budget = project.Budget,
+				ProjectPhotoUrl = project.ProjectPhotoUrl,
+            };
+            <partial name="Partials/_ProjectCardPartial" model="@projectViewModel"/>
+    }
+</div>
+
+
+@* Project Modal *@
+<div id="ProjectModal" class="modal">
+    <div class="card modal-content">
+        <div class="modal-heading">
+            <h3 id="modal-title">Add Project</h3>
+            <span id="btn-close" class="close">&times;</span>
+        </div>
+        <partial name="Partials/_AddProjectFormPartial" model="Model.ProjectForm" />
+    </div>
+</div>
+
+@await Html.PartialAsync("Partials/_FormValidationPartial")

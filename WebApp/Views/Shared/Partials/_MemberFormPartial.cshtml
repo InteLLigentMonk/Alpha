@@ -1,7 +1,10 @@
-﻿@model NewMemberFormViewModel
+﻿@model ProfileFormViewModel
 
 <form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="member-form" class="projects-form">
-	<input type="hidden" asp-for="Id"/>
+	<input asp-for="Id" class="d-none" data-val="false"/>
+    <input asp-for="UserId" class="d-none" data-val="false" />
+    <input asp-for="AvatarUrl" class="d-none" data-val="false" />
+
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             <div id="photo-placeholder" class="photo-placeholder-square ">
@@ -30,7 +33,14 @@
     </div>
     <div class="form-input">
         <label asp-for="Email"></label>
-        <input asp-for="Email" class="input">
+		@if (!string.IsNullOrEmpty(Model.Email))
+		{
+			<input asp-for="Email" class="input" readonly>
+		}
+		else
+		{
+			<input asp-for="Email" class="input">
+		}
         <span asp-validation-for="Email"></span>
     </div>
     <div class="form-input">
@@ -75,19 +85,41 @@
                 <select asp-for="Day" class="input">
                     @for (int day = 1; day <= 31; day++)
                     {
-                        <option value="@day">@day.ToString("D2")</option>
+                        if (day == Model.Day)
+                        {
+                            <option value="@day" selected>@day.ToString("D2")</option>
+                        }
+                        else
+                        {
+                            <option value="@day">@day.ToString("D2")</option>
+                        }
                     }
                 </select>
                 <select asp-for="Month" class="input">
                     @for (int month = 1; month <= 12; month++)
                     {
-                        <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        if (month == Model.Month)
+                        {
+                            <option value="@month" selected>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        }
+                        else
+                        {
+                            <option value="@month">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                        }
                     }
                 </select>
                 <select asp-for="Year" class="input">
-                    @for (int year = DateTime.Now.Year; year >= 1900; year--)
+                    @for (int year = DateTime.Now.Year; year >= 1901; year--)
                     {
-                        <option value="@year">@year</option>
+
+                        if (year == Model.Year)
+                        {
+                            <option value="@year" selected>@year</option>
+                        }
+                        else
+                        {
+                            <option value="@year">@year</option>
+                        }
                     }
                 </select>
             </div>

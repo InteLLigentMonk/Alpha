@@ -1,4 +1,5 @@
 ﻿using Data.Entities;
+using Domain.Models;
 
 namespace BusinessLogic.Factories;
 
@@ -6,11 +7,45 @@ public class ProfileFactory
 {
     public static ProfileEntity NewProfileEntity()
     {
-        var profile = new ProfileEntity()
+        var entity = new ProfileEntity()
         {
             Id = Guid.NewGuid(),
         };
 
+        return entity;
+    }
+
+    public static Profile NewProfile()
+    {
+        var profile = new Profile()
+        {
+            Id = Guid.NewGuid(),
+        };
+
+        return profile;
+    }
+
+    public static ProfileEntity Profile(Profile model)
+    {
+        var profile = new ProfileEntity()
+        {
+            Id = model.Id,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            PhoneNumber = model.PhoneNumber,
+            JobTitle = model.JobTitle,
+            StreetAddress = model.StreetAddress,
+            StreetNumber = model.StreetNumber,
+            ZipCode = model.ZipCode,
+            City = model.City,
+            Country = model.Country,
+            DateOfBirth = model.DateOfBirth,
+            AvatarUrl = model.AvatarUrl,
+        };
+        if (model.UserId.HasValue)
+        {
+            profile.UserId = model.UserId.Value;
+        }
         return profile;
     }
 }

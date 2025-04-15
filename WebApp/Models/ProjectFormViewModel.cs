@@ -1,11 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using BusinessLogic.Models;
+using Domain.Models;
 
 namespace WebApp.Models;
 
-public class ProjectFormViewModel
+public class ProjectFormViewModel : IValidatableObject
 {
+    public Guid? Id { get; set; }
+
     public IFormFile? ProjectPhoto { get; set; }
+    public string? ProjectPhotoUrl { get; set; }
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Project Name", Prompt = "Project Name")]
@@ -19,7 +22,7 @@ public class ProjectFormViewModel
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Description", Prompt = "Description")]
-    public string Description { get; set; } = null!;
+    public string? Description { get; set; }
 
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Start Date")]
@@ -30,28 +33,47 @@ public class ProjectFormViewModel
     [Display(Name = "End Date")]
     [DataType(DataType.Date)]
     public DateTime EndDate { get; set; } = DateTime.Today.AddDays(30);
+
+
     [Required]
-    public List<string>? Members { get; set; } = [];
+    public List<Member>? Members { get; set; } = [];
+
+
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Budget")]
     [Range(0, double.MaxValue, ErrorMessage = "Must be a positive number")]
     [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Budget must be a number with maximum 2 decimal places")]
     public decimal Budget { get; set; }
 
-
-
-    public static implicit operator ProjectRegistrationForm(ProjectFormViewModel model)
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        return model == null ? null! : new ProjectRegistrationForm
+        if (EndDate < StartDate)
+        {
+            yield return new ValidationResult(
+                "End date must be after the start date",
+                [nameof(EndDate)]);
+        }
+    }
+
+    public static implicit operator Project(ProjectFormViewModel model)
+    {
+
+        var result = new Project
         {
             ProjectName = model.ProjectName,
             ClientName = model.ClientName,
             Description = model.Description,
             StartDate = model.StartDate,
             EndDate = model.EndDate,
-            Members = model.Members,
+            Users = model.Members,
             Budget = model.Budget,
             ProjectPhotoUrl = model.ProjectPhoto?.FileName
         };
+        if (model.Id != null)
+        {
+            result.Id = model.Id.Value;
+        }
+        return result;
+
     }
 }

@@ -1,55 +1,37 @@
-﻿using BusinessLogic.Models;
+﻿using BusinessLogic.Factories;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Models;
 using BusinessLogic.Services;
+using Data.Entities;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-public class AdminController(IWebHostEnvironment env, UserService userService, ProfileService profileService) : Controller
+public class AdminController(IWebHostEnvironment env, IUserService userService, IProfileService profileService) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
-    private readonly UserService _userService = userService;
-    private readonly ProfileService _profileService = profileService;
+    private readonly IUserService _userService = userService;
+    private readonly IProfileService _profileService = profileService;
 
 
     [HttpPost]
-    public async Task<IActionResult> AddMember(NewMemberFormViewModel formData, string password = "BytMig123!")
+    public async Task<IActionResult> AddMember(ProfileFormViewModel formData, string password = "BytMig123!")
     {
         if (ModelState.IsValid)
         {
-            if (formData.Id.HasValue)
+            if (formData.Id != Guid.Empty)
             {
-                var userProfile = await _profileService.GetProfile(formData.Id.Value);
-                if (userProfile != null)
+                Profile model = formData;
+                if (formData.Avatar != null)
                 {
-                    userProfile.FirstName = formData.FirstName;
-                    userProfile.LastName = formData.LastName;
-                    userProfile.PhoneNumber = formData.PhoneNumber;
-                    userProfile.JobTitle = formData.JobTitle;
-                    userProfile.StreetAddress = formData.StreetAddress;
-                    userProfile.StreetNumber = formData.StreetNumber;
-                    userProfile.City = formData.City;
-                    userProfile.ZipCode = formData.ZipCode;
-                    userProfile.Country = formData.Country;
-                    if (formData.DateOfBirth.HasValue)
-                    {
-                        userProfile.DateOfBirth = formData.DateOfBirth.Value;
-                    }
-                    if (formData.Avatar != null)
-                    {
-                        var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                        if (!Directory.Exists(uploadsFolder))
-                            Directory.CreateDirectory(uploadsFolder);
-                        var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(formData.Avatar.FileName)}";
-                        var filePath = Path.Combine(uploadsFolder, fileName);
-                        using (var fileStream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await formData.Avatar.CopyToAsync(fileStream);
-                        }
-                        userProfile.AvatarUrl = fileName;
-                    }
-                    await _profileService.UpdateProfile(userProfile);
+                    var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                    var uploadResponse = await FileService.UploadImageAsync(formData.Avatar, uploadsFolder);
+                    if(uploadResponse.Result != null)
+                        model.AvatarUrl = uploadResponse.Result.ToString();
                 }
+                await _profileService.UpdateProfile(model);
             }
             else
             {
@@ -61,40 +43,21 @@ public class AdminController(IWebHostEnvironment env, UserService userService, P
                 var (result, userId) = await _userService.RegisterAsync(user, password);
                 if (result.Succeeded && userId.HasValue)
                 {
-                    var userProfile = await _profileService.GetProfile(userId.Value);
-                    if (userProfile != null)
+                    
+                    Profile model = formData;
+                    model.UserId = userId;
+                    model.Id = Guid.NewGuid();
+
+                    if (formData.Avatar != null)
                     {
-                        userProfile.FirstName = formData.FirstName;
-                        userProfile.LastName = formData.LastName;
-                        userProfile.PhoneNumber = formData.PhoneNumber;
-                        userProfile.JobTitle = formData.JobTitle;
-                        userProfile.StreetAddress = formData.StreetAddress;
-                        userProfile.StreetNumber = formData.StreetNumber;
-                        userProfile.City = formData.City;
-                        userProfile.ZipCode = formData.ZipCode;
-                        userProfile.Country = formData.Country;
-
-                        if (formData.DateOfBirth.HasValue)
-                        {
-                            userProfile.DateOfBirth = formData.DateOfBirth.Value;
-                        }
-
-                        if (formData.Avatar != null)
-                        {
-                            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                            if (!Directory.Exists(uploadsFolder))
-                                Directory.CreateDirectory(uploadsFolder);
-                            var fileName = $"{Guid.NewGuid()}_{Path.GetFileName(formData.Avatar.FileName)}";
-                            var filePath = Path.Combine(uploadsFolder, fileName);
-                            using (var fileStream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await formData.Avatar.CopyToAsync(fileStream);
-                            }
-                            userProfile.AvatarUrl = fileName;
-                        }
-
-                        await _profileService.UpdateProfile(userProfile);
+                        var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                        var uploadResponse = await FileService.UploadImageAsync(formData.Avatar, uploadsFolder);
+                        if (uploadResponse.Result != null)
+                            model.AvatarUrl = uploadResponse.Result.ToString();
                     }
+                    
+                    await _profileService.CreateProfile(model);
+                    
 
                 }
             }
@@ -102,7 +65,7 @@ public class AdminController(IWebHostEnvironment env, UserService userService, P
         return RedirectToAction("Members", "Home");
     }
 
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         if (id == Guid.Empty)
         {

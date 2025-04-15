@@ -1,87 +1,250 @@
-﻿using Data.Contexts;
-using Data.Entities;
+﻿using System.Diagnostics;
+using BusinessLogic.Factories;
+using BusinessLogic.Interfaces;
+using BusinessLogic.Models;
 using Data.Interfaces;
-using Data.Repositories;
-using Microsoft.EntityFrameworkCore;
+using Domain.Models;
 
 namespace BusinessLogic.Services;
 
-public class ProjectService(IProjectsRepository projectsRepository)
+public class ProjectService(IProjectsRepository projectsRepository, ProjectFactory projectFactory) : IProjectService
 {
     private readonly IProjectsRepository _projectsRepository = projectsRepository;
+    private readonly ProjectFactory _projectFactory = projectFactory;
 
-    public async Task AddProject(ProjectEntity project)
+    public async Task<ServiceResult<bool>> AddProject(Project project)
     {
-        await _projectsRepository.BeginTransactionAsync();
+        if (project != null)
+        {
+            var projectEntity = await _projectFactory.Project(project);
+
+            await _projectsRepository.BeginTransactionAsync();
+            try
+            {
+                await _projectsRepository.CreateAsync(projectEntity);
+                await _projectsRepository.SaveAsync();
+                await _projectsRepository.CommitTransactionAsync();
+                return new ServiceResult<bool>
+                {
+                    Succeeded = true,
+                    StatusCode = 200,
+                    Result = true
+                };
+            }
+            catch (Exception ex)
+            {
+                await _projectsRepository.RollbackTransactionAsync();
+                Debug.WriteLine(ex.Message);
+                return new ServiceResult<bool>
+                {
+                    Succeeded = false,
+                    StatusCode = 500,
+                    Error = "Could not create project",
+                    Result = false
+                };
+            }
+        }
+        return new ServiceResult<bool>
+        {
+            Succeeded = false,
+            StatusCode = 400,
+            Error = "Project can't be null",
+            Result = false
+        };
+
+    }
+
+    public async Task<ServiceResult<IEnumerable<Project>>> GetProjects()
+    {
         try
         {
-            await _projectsRepository.CreateAsync(project);
-            await _projectsRepository.SaveAsync();
-            await _projectsRepository.CommitTransactionAsync();
+            var result = await _projectsRepository.GetAllAsync(p => new Project
+            {
+                Id = p.Id,
+                ProjectName = p.ProjectName,
+                ClientName = p.ClientName,
+                Description = p.Description,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Budget = p.Budget,
+                ProjectPhotoUrl = p.ProjectPhotoUrl,
+                Users = p.Users.Select(u => new Member
+                {
+                    Id = u.Id,
+                    EmailAddress = u.Email,
+                    FirstName = u.Profile.FirstName,
+                    LastName = u.Profile.LastName,
+                    AvatarUrl = u.Profile.AvatarUrl,
+                    UserId = u.Profile.UserId
+                }).ToList()
+            },
+            includes: [p => p.Users]
+            );
+            if (result == null)
+            {
+                return new ServiceResult<IEnumerable<Project>>
+                {
+                    Succeeded = false,
+                    StatusCode = 404,
+                    Error = "No projects found",
+                };
+            }
+            ;
+
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = true,
+                StatusCode = 200,
+                Result = result.Result
+            };
         }
         catch (Exception ex)
         {
-            await _projectsRepository.RollbackTransactionAsync();
-            throw new Exception("Could not add project", ex);
+            Debug.WriteLine(ex.Message);
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = false,
+                StatusCode = 500,
+                Error = "Could not retrieve projects"
+            };
         }
     }
 
-    public async Task<IEnumerable<ProjectEntity>> GetProjects()
+    public async Task<ServiceResult<Project>> GetProjectById(Guid id)
     {
-        try
+        if (id != Guid.Empty)
         {
-            var result = await _projectsRepository.GetAllAsync();
-            return result;
+            try
+            {
+                var model = await _projectsRepository.GetAsync(x => x.Id == id);
+                if (model == null)
+                {
+                    return new ServiceResult<Project>
+                    {
+                        Succeeded = false,
+                        StatusCode = 404,
+                        Error = "Project not found",
+                    };
+                }
+                return new ServiceResult<Project>
+                {
+                    Succeeded = true,
+                    StatusCode = 200,
+                    Result = model.Result
+                };
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+                return new ServiceResult<Project>
+                {
+                    Succeeded = false,
+                    StatusCode = 500,
+                    Error = "Could not retrieve project"
+                };
+            }
         }
-        catch (Exception ex)
+        return new ServiceResult<Project>
         {
-            throw new Exception("Could not retrieve projects", ex);
-        }
+            Succeeded = false,
+            StatusCode = 400,
+            Error = "Id can't be empty",
+        };
     }
 
-    public async Task<ProjectEntity?> GetProjectById(Guid id)
+    public async Task<ServiceResult<bool>> UpdateProject(Project project)
     {
-        try
+        if (project != null)
         {
-            var result = await _projectsRepository.GetAsync(x => x.Id == id);
-            return result;
+            await _projectsRepository.BeginTransactionAsync();
+            try
+            {
+                var projectEntity = await _projectFactory.Project(project);
+
+                var result = await _projectsRepository.UpdateWithMembersAsync(projectEntity);
+                if (result.Succeeded)
+                {
+                    await _projectsRepository.SaveAsync();
+                    await _projectsRepository.CommitTransactionAsync();
+                    return new ServiceResult<bool>
+                    {
+                        Succeeded = true,
+                        StatusCode = 200,
+                        Result = true
+                    };
+                }
+                else
+                {
+                    await _projectsRepository.RollbackTransactionAsync();
+                    return new ServiceResult<bool>
+                    {
+                        Succeeded = false,
+                        StatusCode = result.StatusCode,
+                        Error = result.Error,
+                        Result = false
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                await _projectsRepository.RollbackTransactionAsync();
+                Debug.WriteLine(ex.Message);
+                Debug.WriteLine(ex.InnerException?.Message);
+                return new ServiceResult<bool>
+                {
+                    Succeeded = false,
+                    StatusCode = 500,
+                    Error = "Could not update project",
+                    Result = false
+                };
+            }
         }
-        catch (Exception ex)
+        return new ServiceResult<bool>
         {
-            throw new Exception("Could not retrieve project", ex);
-        }
+            Succeeded = false,
+            StatusCode = 400,
+            Error = "Project can't be null",
+            Result = false
+        };
     }
 
-    public async Task UpdateProject(ProjectEntity project)
+    public async Task<ServiceResult<bool>> DeleteProject(Guid id)
     {
-        await _projectsRepository.BeginTransactionAsync();
-        try
+        if (id != Guid.Empty)
         {
-            _projectsRepository.Update(project);
-            await _projectsRepository.SaveAsync();
-            await _projectsRepository.CommitTransactionAsync();
+            await _projectsRepository.BeginTransactionAsync();
+            try
+            {
+                    await _projectsRepository.DeleteByIdAsync(id);
+                    await _projectsRepository.SaveAsync();
+                    await _projectsRepository.CommitTransactionAsync();
+                    return new ServiceResult<bool>
+                    {
+                        Succeeded = true,
+                        StatusCode = 200,
+                        Result = true
+                    };
+            }
+            catch (Exception ex)
+            {
+                await _projectsRepository.RollbackTransactionAsync();
+                Debug.WriteLine(ex.Message);
+                return new ServiceResult<bool>
+                {
+                    Succeeded = false,
+                    StatusCode = 500,
+                    Error = "Could not delete project",
+                    Result = false
+                };
+            }
         }
-        catch (Exception ex)
+        return new ServiceResult<bool>
         {
-            await _projectsRepository.RollbackTransactionAsync();
-            throw new Exception("Could not update project", ex);
-        }
-    }
-
-    public async Task DeleteProject(Guid id)
-    {
-        await _projectsRepository.BeginTransactionAsync();
-        try
-        {
-            var project = await _projectsRepository.GetAsync(x => x.Id == id) ?? throw new Exception("Project not found");
-            _projectsRepository.Delete(project);
-            await _projectsRepository.SaveAsync();
-            await _projectsRepository.CommitTransactionAsync();
-        }
-        catch (Exception ex)
-        {
-            await _projectsRepository.RollbackTransactionAsync();
-            throw new Exception("Could not delete project", ex);
-        }
+            Succeeded = false,
+            StatusCode = 400,
+            Error = "Id can't be empty",
+            Result = false
+        };
     }
 }

@@ -1,4 +1,4 @@
-﻿using BusinessLogic.Models;
+﻿using Domain.Models;
 
 namespace WebApp.Models;
 
@@ -6,5 +6,5 @@ public class MembersViewModel
 {
     public IEnumerable<Member> Members { get; set; } = [];
 
-    public NewMemberFormViewModel NewMemberForm { get; set; } = new();
+    public ProfileFormViewModel NewProfileForm { get; set; } = new();
 }

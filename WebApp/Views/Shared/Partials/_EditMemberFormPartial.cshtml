@@ -1,7 +1,8 @@
-﻿@model NewMemberFormViewModel
+﻿@model ProfileFormViewModel
 
-<form asp-action="AdminEditMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="edit-member-form" class="projects-form">
+<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="edit-member-form" class="projects-form">
     <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="UserId" />
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             @if (!string.IsNullOrEmpty(Model.AvatarUrl))

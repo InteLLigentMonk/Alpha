@@ -1,7 +1,10 @@
+using Domain.Models;
+
 namespace WebApp.Models;
 
 public class ProjectsViewModel
 {
-    public SearchFormViewModel SearchForm { get; set; } = new();
+    public IEnumerable<Member> Members { get; set; } = [];
+    public IEnumerable<Project> Projects { get; set; } = [];
     public ProjectFormViewModel ProjectForm { get; set; } = new();
 }

@@ -1,16 +1,17 @@
 ﻿using BusinessLogic.Factories;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Models;
 using Data.Entities;
+using Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Services;
 
-public class UserService(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, ProfileService profileService)
+public class UserService(UserManager<AppUser> userManager, IProfileService profileService) : IUserService
 {
     private readonly UserManager<AppUser> _userManager = userManager;
-    private readonly SignInManager<AppUser> _signInManager = signInManager;
-    private readonly ProfileService _profileService = profileService;
+    private readonly IProfileService _profileService = profileService;
 
 
     public async Task<(IdentityResult result, Guid? userId)> RegisterAsync(UserRegistrationForm user, string password)
@@ -31,109 +32,130 @@ public class UserService(SignInManager<AppUser> signInManager, UserManager<AppUs
 
             if (result.Succeeded)
             {
-                var profile = ProfileFactory.NewProfileEntity();
-                profile.UserId = appUser.Id;
-                await _profileService.CreateProfile(profile);
-
                 return (IdentityResult.Success, appUser.Id);
             }
         }
-        return (IdentityResult.Failed(new IdentityError { Description = "User cannot be null" }), null);
+        return (IdentityResult.Failed(new IdentityError { Description = "User can't' be null" }), null);
     }
 
-    public async Task<SignInResult> LoginAsync(string email, string password, bool rememberMe)
+    public async Task<ServiceResult<AppUser>> GetUserById(Guid id)
     {
-        return await _signInManager.PasswordSignInAsync(email, password, rememberMe, false);
+        if (id == Guid.Empty)
+        {
+            return new ServiceResult<AppUser>
+            {
+                Succeeded = false,
+                StatusCode = 400,
+                Error = "Id can't be empty",
+                Result = null
+            };
+        }
+        var user = await _userManager.Users
+            .Include(u => u.Profile)
+            .FirstOrDefaultAsync(u => u.Id == id);
+        return user == null
+            ? new ServiceResult<AppUser>
+            {
+                Succeeded = false,
+                StatusCode = 404,
+                Error = "User Not found"
+            }
+            : new ServiceResult<AppUser>
+            {
+                Succeeded = true,
+                StatusCode = 200,
+                Result = user
+            };
     }
 
-    public async Task LogoutAsync()
+    public async Task<ServiceResult<Member>> GetMemberById(Guid id)
     {
-        await _signInManager.SignOutAsync();
+        if (id == Guid.Empty)
+        {
+            return new ServiceResult<Member>
+            {
+                Succeeded = false,
+                StatusCode = 400,
+                Error = "Id cannot be empty",
+                Result = null
+            };
+        }
+        var userResult = await GetUserById(id);
+        if (userResult.Result == null)
+        {
+            return new ServiceResult<Member>
+            {
+                Succeeded = false,
+                StatusCode = 404,
+                Error = "Member not found"
+            };
+        }
+        return new ServiceResult<Member>
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = UserFactory.Member(userResult.Result)
+        };
     }
 
-    public IEnumerable<AppUser> GetAllUsers()
+
+    public async Task<ServiceResult<IEnumerable<AppUser>>> GetAllUsersAsync()
     {
-        var users = _userManager.Users
-            .Include(u => u.Profile).ToList();
+        var users = await _userManager.Users
+            .Include(u => u.Profile).ToListAsync();
         if (users == null)
         {
-            Console.WriteLine("GetAllUsers returned null");
-            return [];
+            return new ServiceResult<IEnumerable<AppUser>>
+            {
+                Succeeded = false,
+                StatusCode = 404,
+                Error = "No users found"
+            };
         }
-        return users;
+        return new ServiceResult<IEnumerable<AppUser>>
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = users
+        };
     }
 
-    public IEnumerable<Member> GetAllMembers()
+    public async Task<ServiceResult<IEnumerable<Member>>> GetAllMembersAsync()
     {
-        try
+        var users = await GetAllUsersAsync();
+        if (users.Result != null)
         {
-            var users = GetAllUsers();
-
-            if (users == null)
+            var usersList = users.Result.ToList();
+            if (usersList.Count != 0)
             {
-                Console.WriteLine("GetAllUsers returned null");
-                return Enumerable.Empty<Member>();
-            }
+                IEnumerable<Member> members = usersList.Select(u => UserFactory.Member(u)).ToList();
 
-            var usersList = users.ToList();
-
-            if (usersList.Count == 0)
-            {
-                Console.WriteLine("No users found");
-                return Enumerable.Empty<Member>();
-            }
-
-            var members = usersList.Select(u =>
-            {
-                if (u == null)
+                return new ServiceResult<IEnumerable<Member>>
                 {
-                    Console.WriteLine("Encountered a null user in the collection");
-                    return null;
-                }
-
-                return new Member
-                {
-                    Id = u.Id,
-                    FirstName = u.Profile.FirstName,
-                    LastName = u.Profile.LastName,
-                    PhoneNumber = u.Profile.PhoneNumber,
-                    EmailAddress = u.Email,
-                    StreetAddress = u.Profile.StreetAddress,
-                    StreetNumber = u.Profile.StreetNumber,
-                    ZipCode = u.Profile.ZipCode,
-                    City = u.Profile.City,
-                    Country = u.Profile.Country,
-                    JobTitle = u.Profile.JobTitle,
-                    DateOfBirth = u.Profile.DateOfBirth,
-                    AvatarUrl = u.Profile.AvatarUrl
+                    Succeeded = true,
+                    StatusCode = 200,
+                    Result = members
                 };
-            })
-            .Where(m => m != null) // Filter out nulls
-            .Cast<Member>() // Cast to Member to match the target type
-            .ToList();
-
-            return members;
+            }
         }
-        catch (Exception ex)
+        return new ServiceResult<IEnumerable<Member>>
         {
-            Console.WriteLine($"Error in GetAllMembers: {ex.Message}");
-            // Log the exception properly if you have a logger
-            return Enumerable.Empty<Member>();
-        }
+            Succeeded = false,
+            StatusCode = 404,
+            Error = "No members found"
+        };
     }
 
     public async Task<bool> Delete(Guid id)
     {
-        if (id == Guid.Empty)
+        if (id != Guid.Empty)
         {
-            throw new ArgumentException("Id cannot be empty", nameof(id));
-        }
-
-        var user = await _userManager.FindByIdAsync(id.ToString());
-        if (user != null)
-        {
-            var result = await _userManager.DeleteAsync(user);
-            return result.Succeeded;
+            var user = await _userManager.FindByIdAsync(id.ToString());
+            if (user != null)
+            {
+                var result = await _userManager.DeleteAsync(user);
+                return result.Succeeded;
+            }
         }
         return false;
     }
