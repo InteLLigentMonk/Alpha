@@ -1,10 +1,11 @@
 ﻿@model ProfileFormViewModel
 
-<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="member-form" class="projects-form">
-	<input asp-for="Id" class="d-none" data-val="false"/>
-    <input asp-for="UserId" class="d-none" data-val="false" />
-    <input asp-for="AvatarUrl" class="d-none" data-val="false" />
+<div class="modal-heading">
+    <h3 id="modal-title">New Member</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
 
+<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="add-member-form" class="projects-form">
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             <div id="photo-placeholder" class="photo-placeholder-square ">
@@ -85,7 +86,7 @@
                 <select asp-for="Day" class="input">
                     @for (int day = 1; day <= 31; day++)
                     {
-                        if (day == Model.Day)
+                        if (day == 1)
                         {
                             <option value="@day" selected>@day.ToString("D2")</option>
                         }
@@ -98,7 +99,7 @@
                 <select asp-for="Month" class="input">
                     @for (int month = 1; month <= 12; month++)
                     {
-                        if (month == Model.Month)
+                        if (month == 1)
                         {
                             <option value="@month" selected>@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
                         }
@@ -112,7 +113,7 @@
                     @for (int year = DateTime.Now.Year; year >= 1901; year--)
                     {
 
-                        if (year == Model.Year)
+                        if (year == 1901)
                         {
                             <option value="@year" selected>@year</option>
                         }
@@ -127,27 +128,3 @@
     </div>
     <button id="btn-member" class="btn btn-primary w-100">Add Member</button>
 </form>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const fileInput = document.querySelector('#Avatar')
-        if(!fileInput) return
-        fileInput.addEventListener("change", (e) => {
-            const file = e.target.files[0]
-            const img = document.querySelector('.upload-image')
-            const placeholder = document.querySelector('.photo-placeholder-square')
-            if(file){
-                const reader = new FileReader()
-                reader.onload = (e) => {
-                    img.src = e.target.result
-                    img.classList.remove('d-none')
-                    placeholder.classList.add('d-none')
-                }
-                reader.readAsDataURL(file)
-            } else {
-                img.classList.add('d-none')
-                placeholder.classList.remove('d-none')
-            }
-        })
-    })
-</script>

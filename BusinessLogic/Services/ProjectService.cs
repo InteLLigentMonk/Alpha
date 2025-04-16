@@ -116,7 +116,7 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
         {
             try
             {
-                var model = await _projectsRepository.GetAsync(x => x.Id == id);
+                var model = await _projectsRepository.GetProjectWithProfileAsync(x => x.Id == id);
                 if (model == null)
                 {
                     return new ServiceResult<Project>

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq.Expressions;
 using Data.Contexts;
 using Data.Entities;
 using Data.Interfaces;
@@ -10,6 +11,64 @@ namespace Data.Repositories;
 
 public class ProjectsRepository(AppDbContext context) : BaseRepository<ProjectEntity, Project>(context), IProjectsRepository
 {
+
+    public async Task<RepositoryResult<Project>> GetProjectWithProfileAsync(Expression<Func<ProjectEntity, bool>> filter)
+    {
+        try
+        {
+
+            var entity = await _dbSet
+                .Include(p => p.Users)
+                .ThenInclude(u => u.Profile)
+                .FirstOrDefaultAsync(filter);
+
+            if (entity == null)
+            {
+                return new RepositoryResult<Project>
+                {
+                    Succeeded = false,
+                    StatusCode = 404,
+                    Error = "Entity not found"
+                };
+            }
+
+            var result = new Project
+            {
+                Id = entity.Id,
+                ProjectName = entity.ProjectName,
+                ClientName = entity.ClientName,
+                Description = entity.Description,
+                StartDate = entity.StartDate,
+                EndDate = entity.EndDate,
+                Budget = entity.Budget,
+                ProjectPhotoUrl = entity.ProjectPhotoUrl,
+                Users = entity.Users.Select(u => new Member
+                {
+                    Id = u.Profile.Id,
+                    EmailAddress = u.Email,
+                    FirstName = u.Profile.FirstName,
+                    LastName = u.Profile.LastName,
+                    AvatarUrl = u.Profile.AvatarUrl,
+                    UserId = u.Id
+                }).ToList()
+            };
+            return new RepositoryResult<Project>
+            {
+                Succeeded = true,
+                StatusCode = 200,
+                Result = result
+            };
+        }
+        catch (Exception ex)
+        {
+            return new RepositoryResult<Project>
+            {
+                Succeeded = false,
+                StatusCode = 500,
+                Error = ex.Message
+            };
+        }
+    }
 
     public async Task<RepositoryResult<bool>> UpdateWithMembersAsync(ProjectEntity updatedEntity)
     {

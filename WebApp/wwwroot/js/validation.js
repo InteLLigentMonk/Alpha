@@ -105,12 +105,15 @@ const initializeValidation = (formSelector) => {
     const fields = form.querySelectorAll("input[data-val='true'], textarea[data-val='true']");
 
     fields.forEach(field => {
-        field.addEventListener("input", function () {
-            validateField(field);
+        const newField = field.cloneNode(true);
+        field.parentNode.replaceChild(newField, field);
+
+        newField.addEventListener("input", function () {
+            validateField(newField);
         });
-        if (field.type === "checkbox") {
-            field.addEventListener("change", function () {
-                validateField(field);
+        if (newField.type === "checkbox") {
+            newField.addEventListener("change", function () {
+                validateField(newField);
             });
         }
     });

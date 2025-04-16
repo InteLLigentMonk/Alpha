@@ -4,18 +4,7 @@
 <div id="card-menu-@Model.Id" class="card project-menu-card">
     <div class="edit-menu-card-frame">
         <div class="edit">
-            <button id="btn-edit-member" class="btn btn-dropdown w-100"
-                    data-project-id="@Model.Id"
-                    data-project-photo="@Model.ProjectPhotoUrl"
-                    data-project-name="@Model.ProjectName"
-                    data-client-name="@Model.ClientName"
-                    data-description="@Model.Description"
-                    data-start-date="@Model.StartDate.ToString("yyyy-MM-dd")"
-                    data-end-date="@Model.EndDate.ToString("yyyy-MM-dd")"
-                    data-budget="@Model.Budget"
-                    data-members="@Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(Model.Members,
-                   new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })))"
-                    onclick="editProject(this)">
+            <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick='loadEditModal("Project","edit-project-form", "@Model.Id")'>
                 <i class="fa-solid fa-pen-to-square"></i>
                 Edit
             </button>

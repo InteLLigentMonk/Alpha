@@ -13,7 +13,7 @@
 
 <div class="projects-title">
     <h2>Projects</h2>
-    <button id="btn-new-project" class="btn btn-primary" onclick="toggleModal('ProjectModal', 'btn-close', 'project-form')"><i class="fa-solid fa-plus"></i> Add Project</button>
+    <button id="btn-new-project" class="btn btn-primary" onclick='loadCreateModal("Project","add-project-form")'><i class="fa-solid fa-plus"></i> Add Project</button>
 </div>
 
 <div class="projects-statusbar">
@@ -42,15 +42,12 @@
 </div>
 
 
-@* Project Modal *@
-<div id="ProjectModal" class="modal">
-    <div class="card modal-content">
-        <div class="modal-heading">
-            <h3 id="modal-title">Add Project</h3>
-            <span id="btn-close" class="close">&times;</span>
+<div class="modal fade custom-modal" id="formModal" tabindex="-1" ariea-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-content">
+            
         </div>
-        <partial name="Partials/_AddProjectFormPartial" model="Model.ProjectForm" />
     </div>
 </div>
 
-@await Html.PartialAsync("Partials/_FormValidationPartial")
+<partial name="Partials/_FormValidationPartial" />

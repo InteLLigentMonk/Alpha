@@ -129,7 +129,7 @@ namespace Data.Repositories
                     foreach (var include in includes)
                         query = query.Include(include);
 
-                var entity = await _dbSet.FirstOrDefaultAsync(filter);
+                var entity = await query.FirstOrDefaultAsync(filter);
                 if(entity == null)
                 {
                     return new RepositoryResult<TModel>

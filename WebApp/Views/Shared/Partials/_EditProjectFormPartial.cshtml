@@ -1,0 +1,76 @@
+﻿@model ProjectFormViewModel
+
+<div class="modal-heading">
+    <h3 id="modal-title">Edit Project</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="Edit" asp-controller="Project" method="post" enctype="multipart/form-data" id="edit-project-form" class="projects-form">
+    <input asp-for="Id" hidden />
+    <div class="photo-upload-button">
+        @if (!string.IsNullOrEmpty(Model.ProjectPhotoUrl))
+        {
+            <label asp-for="ProjectPhoto">
+                <div id="photo-placeholder" class="photo-placeholder-square  d-none">
+                    <div class="camera-circle">
+                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
+                    </div>
+                </div>
+
+                <img id="project-img" class="upload-image" src="/uploads/@Model.ProjectPhotoUrl" />
+            </label>
+        }
+        else
+        {
+            <label asp-for="ProjectPhoto">
+                <div id="photo-placeholder" class="photo-placeholder-square ">
+                    <div class="camera-circle">
+                        <i class="fa-solid fa-camera-retro fa-2xl"></i>
+                    </div>
+                </div>
+
+                <img id="project-img" class="upload-image d-none" src="#" />
+            </label>
+        }
+        <input asp-for="ProjectPhoto" data-user-id="@Model.Id" accept="image/*" class="input">
+    </div>
+    <span asp-validation-for="ProjectPhoto"></span>
+
+    <div class="form-input">
+        <label asp-for="ProjectName"></label>
+        <input asp-for="ProjectName" class="input">
+        <span asp-validation-for="ProjectName"></span>
+    </div>
+    <div class="form-input">
+        <label asp-for="ClientName"></label>
+        <input asp-for="ClientName" class="input">
+        <span asp-validation-for="ClientName"></span>
+    </div>
+    <div class="form-input">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="input"></textarea>
+        <span asp-validation-for="Description"></span>
+    </div>
+    <div class="d-flex gap-4 w-full ">
+        <div class="form-input w-50 flex-1">
+            <label asp-for="StartDate"></label>
+            <input asp-for="StartDate" class="input">
+            <span asp-validation-for="StartDate"></span>
+        </div>
+        <div class="form-input w-50 flex-1">
+            <label asp-for="EndDate"></label>
+            <input asp-for="EndDate" class="input">
+            <span asp-validation-for="EndDate"></span>
+        </div>
+    </div>
+    <partial name="Partials/UI/_MemberInputPartial" model="@Model" />
+
+    <div class="form-input project-budget">
+        <label asp-for="Budget"></label>
+        <input asp-for="Budget" class="input project-budget-input">
+        <span class="project-budget-sign"><i class="fa-solid fa-sack-dollar fa-lg"></i></span>
+        <span asp-validation-for="Budget"></span>
+    </div>
+
+    <button id="btn-project" class="btn btn-primary w-100" onclick="hideModal()">Update</button>
+</form>

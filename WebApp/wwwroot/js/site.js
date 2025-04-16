@@ -1,5 +1,6 @@
 ﻿// ------------ Utility functions ------------
 
+//Password Visibility
 function togglePasswordVisibility(id) {
     const passwordField = document.querySelector(`#${id}`);
     const togglePasswordIcon = document.querySelector(`#toggle${id}Icon`);
@@ -10,259 +11,321 @@ function togglePasswordVisibility(id) {
     togglePasswordIcon.alt = isPasswordVisible ? 'Show Password' : 'Hide Password';
 }
 
+function initializePhotoUpload(photoInputId) {
+    const fileInput = document.getElementById(photoInputId);
+    if (!fileInput) return;
 
-
-function toggleModal(modalId, closeButtonId, formId) {
-    const modal = document.querySelector(`#${modalId}`);
-    const closeButton = document.querySelector(`#${closeButtonId}`);
-
-    if (!modal || !closeButton) {
-        return;
-    }
-
-    modal.style.display = "block";
-
-    if (formId) {
-        initializeValidation(`#${formId}`);
-    }
-
-    const closeModal = () => {
-        modal.style.display = "none";
-
-        if (formId) {
-            const form = document.querySelector(`#${formId}`);
-            const hiddenInput = document.querySelector("#Id");
-            const img = document.querySelector("#member-img");
-            const button = document.querySelector("#btn-member");
-            const modalTitle = document.querySelector("#modal-title");
-            const photoPlaceholder = document.querySelector("#photo-placeholder");
-            if (form) {
-                form.reset();
-            }
-            if (hiddenInput) {
-                hiddenInput.value = "";
-            }
-            if (img) {
-                img.classList.add("d-none")
-                img.src = "#"
-                img.alt = "Avatar placeholder"
-            }
-            if (button) {
-                button.innerHTML = "Add Member"
-            }
-            if (modalTitle) {
-                modalTitle.innerHTML = "New Member"
-            }
-            if (photoPlaceholder) {
-                photoPlaceholder.classList.remove("d-none")
-            }
-        }
-
-        closeButton.removeEventListener("click", closeModal);
-        window.removeEventListener("click", windowCloseModal);
-    }
-
-    const windowCloseModal = (e) => {
-        if (e.target == modal) {
-            closeModal();
-        }
-    }
-    closeButton.addEventListener("click", closeModal);
-    window.addEventListener("click", windowCloseModal);
-}
-
-
-
-
-function toggleModalWithData(modalId, closeButtonId, formId, data) {
-    console.log("Full data object:", data);
-
-
-    toggleModal(modalId, closeButtonId, formId)
-    // set the data in the inputs
-    const modal = document.querySelector(`#${modalId}`);
-    // Change modal h3 to Edit Member
-    const modalTitle = document.querySelector("#modal-title");
-    const photoPlaceholder = document.querySelector("#photo-placeholder");
-    const img = document.querySelector("#member-img");
-    const email = document.querySelector("#Email");
-    console.log(email)
-    const button = document.querySelector("#btn-member");
-    if (img) {
-        img.src = `/uploads/${data.AvatarUrl}`;
-        img.alt = `${data.FirstName} ${data.LastName}`;
-        img.classList.remove("d-none");
-        photoPlaceholder.classList.add("d-none");
-    }
-    if (email) {
-        email.readOnly = true;
-    }
-    if (modalTitle) {
-        modalTitle.innerHTML = "Edit Member";
-    }
-    if (button) {
-        button.innerHTML = "Save"
-    }
-
-    const inputs = modal.querySelectorAll("input, select, textarea");
-    console.log("Found inputs:", inputs.length);
-
-    inputs.forEach(input => {
-        const name = input.getAttribute("name");
-        const id = input.getAttribute("id");
-        console.log(`Input: id=${id}, name=${name}, value=${input.value}`);
-        if (data[name]) {
-            console.log(`  Setting ${name} to ${data[name]}`);
-            input.value = data[name];
+    fileInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        const img = document.querySelector('.upload-image');
+        const placeholder = document.querySelector('.photo-placeholder-square');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                img.src = e.target.result;
+                img.classList.remove('d-none');
+                placeholder.classList.add('d-none');
+            };
+            reader.readAsDataURL(file);
         } else {
-            console.log(`  No matching data property for ${name}`);
-            // Check for camelCase version
-            const camelCaseName = name.charAt(0).toLowerCase() + name.slice(1);
-            if (data[camelCaseName]) {
-                console.log(`  Found camelCase match: ${camelCaseName} = ${data[camelCaseName]}`);
-                input.value = data[camelCaseName];
-            }
+            img.classList.add('d-none');
+            placeholder.classList.remove('d-none');
         }
     });
-
 }
 
-function toggleProjectModal(modalId, closeButtonId, formId) {
-    const modal = document.querySelector(`#${modalId}`);
-    const closeButton = document.querySelector(`#${closeButtonId}`);
 
-    if (!modal || !closeButton) {
+//-------------- Handle Modals------------------
+
+// AJAX request helper function
+function makeRequest(url, method, data = null) {
+    return new Promise((resolve, reject) => {
+        const options = {
+            method: method,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        };
+
+        if (data && !(data instanceof FormData)) {
+            options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            options.body = new URLSearchParams(data).toString();
+        } else if (data) {
+            options.body = data;
+        }
+
+
+        fetch(url, options)
+            .then(response => {
+
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                }
+                return response.text();
+            })
+            .then(data => resolve(data))
+            .catch(error => reject(error));
+    });
+}
+
+
+//Show Modal with Bootstrap
+function showModal(){
+    const modalElement = document.getElementById('formModal');
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+    bootstrapModal.show();
+}
+
+//Hide Modal with Bootstrap
+function hideModal() {
+    const modalElement = document.getElementById('formModal');
+    const bootstrapModal = new bootstrap.Modal(modalElement);
+    if (bootstrapModal) {
+        bootstrapModal.hide();
+    }
+}
+
+// Load the Create form in modal
+function loadCreateModal(controller, formId) {
+    makeRequest(`/${controller}/Create`, 'GET')
+        .then(response => {
+            document.getElementById('modal-content').innerHTML = response;
+            showModal();
+            initializeFormSubmission(formId);
+            initializeValidation(`#${formId}`);
+            initializePhotoUpload("ProjectPhoto");
+            initializeMemberInput();
+        })
+        .catch(error => console.error(`Error loading ${formId} modal:`, error));
+}
+
+// Load the Edit form in modal
+function loadEditModal(controller, formId, id) {
+    makeRequest(`/${controller}/Edit/${id}`, 'GET')
+        .then(response => {
+            document.getElementById('modal-content').innerHTML = response;
+            showModal();
+            initializeFormSubmission(formId);
+            initializeValidation(`#${formId}`);
+            initializePhotoUpload("ProjectPhoto");
+            initializeMemberInput();
+        })
+        .catch(error => console.error(`Error loading ${form} modal:`, error));
+}
+
+// Load the Details form in modal
+function loadDetailsModal(model, id) {
+    makeRequest(`/${model}/Details/${id}`, 'GET')
+        .then(response => {
+            document.getElementById('modal-content').innerHTML = response;
+            showModal();
+        })
+        .catch(error => console.error(`Error loading details modal:`, error));
+}
+
+// Initialize form submission for dynamically loaded forms
+function initializeFormSubmission(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        if (!validateForm(form)) {
+            return;
+        }
+
+        const hasFileInputs = form.querySelector('input[type=file]') !== null;
+        let formData;
+
+        if (hasFileInputs) {
+            formData = new FormData(form);
+        } else {
+            formData = Object.fromEntries(new FormData(form).entries());
+
+            const tokenInput = form.querySelector('input[name="__RequestVerificationToken"]');
+            if (tokenInput) {
+                formData['__RequestVerificationToken'] = tokenInput.value;
+            }
+        }
+
+        makeRequest(form.action, form.method, formData)
+            .then(result => {
+                if (typeof result === 'object' && result.success) {
+                    hideModal();
+                    window.location.reload();
+                } else {
+                    document.getElementById('modal-content').innerHTML = result;
+                    initializeFormSubmission(formId);
+                    initializeValidation(`#${formId}`);
+                }
+            })
+            .catch(error => console.error('Error submitting the form:', error))
+    });
+}
+
+
+//-------------- Handle MemberInput ------------------
+
+function initializeMemberInput() {
+    // Look for hidden data containers that were added via AJAX
+    const membersDataElement = document.getElementById("members-data");
+    const selectedMembersDataElement = document.getElementById("selected-members-data");
+
+    if (!membersDataElement || !selectedMembersDataElement) {
+        console.error("Member data elements not found");
         return;
     }
 
-    modal.style.display = "block";
-
-    if (formId) {
-        initializeValidation(`#${formId}`);
-    }
-
-    const closeModal = () => {
-        modal.style.display = "none";
-
-        if (formId) {
-            const form = document.querySelector(`#${formId}`);
-            const hiddenInput = document.querySelector("#Id");
-            const img = document.querySelector("#project-img");
-            const button = document.querySelector("#btn-project");
-            const modalTitle = document.querySelector("#modal-title");
-            const photoPlaceholder = document.querySelector("#photo-placeholder");
-            if (form) {
-                form.reset();
-            }
-            if (hiddenInput) {
-                hiddenInput.value = "";
-            }
-            if (img) {
-                img.classList.add("d-none")
-                img.src = "#"
-                img.alt = "Project photo placeholder"
-            }
-            if (button) {
-                button.innerHTML = "Create"
-            }
-            if (modalTitle) {
-                modalTitle.innerHTML = "AddProject"
-            }
-            if (photoPlaceholder) {
-                photoPlaceholder.classList.remove("d-none")
-            }
-        }
-
-        closeButton.removeEventListener("click", closeModal);
-        window.removeEventListener("click", windowCloseModal);
-    }
-
-    const windowCloseModal = (e) => {
-        if (e.target == modal) {
-            closeModal();
-        }
-    }
-    closeButton.addEventListener("click", closeModal);
-    window.addEventListener("click", windowCloseModal);
-}
-
-function editProject(button) {
-    const projectData = {
-        Id: button.getAttribute('data-project-id'),
-        ProjectPhotoUrl: button.getAttribute('data-project-photo'),
-        ProjectName: button.getAttribute('data-project-name'),
-        ClientName: button.getAttribute('data-client-name'),
-        Description: button.getAttribute('data-description'),
-        StartDate: button.getAttribute('data-start-date'),
-        EndDate: button.getAttribute('data-end-date'),
-        Budget: button.getAttribute('data-budget')
-    };
-
-    // Handle members separately to avoid JSON parse issues
     try {
-        const membersBase64 = button.getAttribute('data-members');
-        if (membersBase64) {
-            // Decode the Base64 string to get the JSON
-            const jsonString = atob(membersBase64);
-            projectData.Members = JSON.parse(jsonString);
-        }
+        // Parse the JSON from the hidden div content
+        // Note: textContent preserves the raw text without HTML parsing
+        window.members = JSON.parse(membersDataElement.textContent || '[]');
+        window.selectedMembers = JSON.parse(selectedMembersDataElement.textContent || '[]');
     } catch (e) {
-        console.error("Error parsing members JSON:", e);
-        projectData.Members = [];
+        console.error("Error parsing member data:", e);
+        window.members = [];
+        window.selectedMembers = [];
     }
+    const input = document.getElementById("member-input");
+    const suggestions = document.getElementById("suggestions");
+    const selectedMembersContainer = document.getElementById("selected-members");
 
-    toggleProjectModalWithData('ProjectModal', 'btn-close', 'project-form', projectData);
+    if (!input || !suggestions || !selectedMembersContainer) return;
+
+    // Clear any existing event listeners (important for dynamically loaded content)
+    input.removeEventListener("input", handleInput);
+    input.addEventListener("input", handleInput);
+
+    // Initial render of selected members
+    renderSelectedMembers();
+    updateHiddenInputs();
 }
 
-function toggleProjectModalWithData(modalId, closeButtonId, formId, data) {
-    toggleProjectModal(modalId, closeButtonId, formId)
-    const modal = document.querySelector(`#${modalId}`);
-    const modalTitle = document.querySelector("#modal-title");
-    const photoPlaceholder = document.querySelector("#photo-placeholder");
-    const img = document.querySelector("#project-img");
-    const button = document.querySelector("#btn-project");
+function handleInput() {
+    const input = document.getElementById("member-input");
+    const suggestions = document.getElementById("suggestions");
+    const query = input.value.toLowerCase();
+    suggestions.innerHTML = "";
 
-    if (img) {
-        img.src = `/uploads/${data.ProjectPhotoUrl}`;
-        img.alt = `${data.FirstName} ${data.LastName}`;
-        img.classList.remove("d-none");
-        photoPlaceholder.classList.add("d-none");
-    }
-    if (modalTitle) {
-        modalTitle.innerHTML = "Edit Project";
-    }
-    if (button) {
-        button.innerHTML = "Save"
+    if (query.length === 0) {
+        suggestions.style.display = "none";
+        return;
     }
 
-    const inputs = modal.querySelectorAll("input, select, textarea, date");
+    const filteredMembers = window.members.filter(member => {
+        if (!member || !member.FirstName) return false;
 
-    inputs.forEach(input => {
-        const name = input.getAttribute("name");
-        if (name === "member-input") {
+        const nameMatches = member.FirstName.toLowerCase().includes(query);
 
-            window.selectedMembers = [];
+        // More robust duplicate detection in filter
+        const alreadySelected = window.selectedMembers.some(selected =>
+            (selected && member && selected.Id === member.Id) ||
+            (selected && member && selected.UserId === member.UserId) ||
+            (selected && member && selected.EmailAddress && member.EmailAddress &&
+                selected.EmailAddress.toLowerCase() === member.EmailAddress.toLowerCase())
+        );
 
-            if (data.Members && Array.isArray(data.Members)) {
-                data.Members.forEach(member => {
-                    if (!window.selectedMembers.some(m => m.id === member.id)) {
-                        window.selectedMembers.push(member);
-                    }
-                });
-            }
-
-            if (typeof window.renderSelectedMembers === "function") {
-                window.renderSelectedMembers();
-                window.updateHiddenInputs();
-            }
-        } else {
-            if (data[name]) {
-                input.value = data[name];
-            }
-        }
+        return nameMatches && !alreadySelected;
     });
 
+    if (filteredMembers.length > 0) {
+        suggestions.style.display = "block";
+        filteredMembers.forEach(member => {
+            const li = document.createElement("li");
+            // Use avatarUrl instead of avatar, and concatenate firstName + lastName instead of name
+            const displayName = `${member.FirstName || ''} ${member.LastName || ''}`.trim();
+            const avatarUrl = member.AvatarUrl || '../icons/avatars/1.svg';
+
+            li.innerHTML = `<img src="/uploads/${avatarUrl}" alt=""> ${displayName}`;
+            li.addEventListener("click", () => addMember(member));
+            suggestions.appendChild(li);
+        });
+    } else {
+        suggestions.style.display = "none";
+    }
 }
+
+function addMember(member) {
+    const input = document.getElementById("member-input");
+    const suggestions = document.getElementById("suggestions");
+
+    // More robust duplicate detection
+    const isDuplicate = window.selectedMembers.some(existing =>
+        (existing.Id && member.Id && existing.Id === member.Id) ||
+        (existing.UserId && member.UserId && existing.UserId === member.UserId) ||
+        (existing.EmailAddress && member.EmailAddress &&
+            existing.EmailAddress.toLowerCase() === member.EmailAddress.toLowerCase())
+    );
+
+    if (!isDuplicate) {
+        window.selectedMembers.push(member);
+        input.value = "";
+        input.focus();
+        suggestions.style.display = "none";
+        renderSelectedMembers();
+        updateHiddenInputs();
+    } else {
+        console.log("Prevented adding duplicate member:", member);
+    }
+}
+
+function removeMember(memberId) {
+    window.selectedMembers = window.selectedMembers.filter(member => member.Id !== memberId);
+    renderSelectedMembers();
+    updateHiddenInputs();
+}
+
+function renderSelectedMembers() {
+    const selectedMembersContainer = document.getElementById("selected-members");
+    if (!selectedMembersContainer) return;
+
+    selectedMembersContainer.innerHTML = "";
+    window.selectedMembers.forEach(member => {
+        const chip = document.createElement("div");
+        chip.classList.add("member-chip");
+
+        const displayName = `${member.FirstName || ''} ${member.LastName || ''}`.trim();
+        const avatarUrl = member.AvatarUrl || '/images/default-avatar.png';
+
+        chip.innerHTML = `
+            <img src="/uploads/${avatarUrl}" alt="">
+            ${displayName}
+            <span class="remove-btn" onclick="removeMember('${member.Id}')">&times;</span>
+        `;
+        selectedMembersContainer.appendChild(chip);
+    });
+}
+
+function updateHiddenInputs() {
+    const form = document.getElementById("add-project-form");
+
+    // Check for edit form as well
+    const editForm = document.getElementById("edit-project-form");
+    const formToUse = form || editForm;
+
+    if (!formToUse) {
+        console.error("Form not found");
+        return;
+    }
+
+    const existingInputs = formToUse.querySelectorAll("input[name^='Members']");
+    existingInputs.forEach(input => input.remove());
+
+    window.selectedMembers.forEach((member, index) => {
+        const hiddenInput = document.createElement("input");
+        hiddenInput.type = "hidden";
+        hiddenInput.name = `Members[${index}].UserId`;
+        hiddenInput.value = member.UserId;
+        formToUse.appendChild(hiddenInput);
+    });
+}
+
+
+
+
+
 
 
 function toggleMemberCardMenu() {
@@ -302,6 +365,8 @@ function toggleMemberCardMenu() {
     })
 
 }
+
+
 // ------------ Utility functions ------------
 
 

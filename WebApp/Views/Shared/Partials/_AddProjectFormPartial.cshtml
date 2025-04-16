@@ -2,8 +2,12 @@
 @{
 }
 
-<form asp-action="Projects" asp-controller="Project" method="post" enctype="multipart/form-data" id="project-form" class="projects-form">
-    <input asp-for="Id" hidden />
+<div class="modal-heading">
+    <h3 id="modal-title">Add Project</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="Create" asp-controller="Project" method="post" enctype="multipart/form-data" id="add-project-form" class="projects-form">
     <div class="photo-upload-button">
         <label asp-for="ProjectPhoto">
             <div id="photo-placeholder" class="photo-placeholder-square ">
@@ -54,29 +58,5 @@
         <span asp-validation-for="Budget"></span>
     </div>
 
-    <button id="btn-project" class="btn btn-primary w-100">Create</button>
+    <button id="btn-project" class="btn btn-primary w-100" onclick="hideModal()">Create</button>
 </form>
-
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const fileInput = document.querySelector('#ProjectPhoto')
-		if(!fileInput) return
-        fileInput.addEventListener("change", (e) => {
-			const file = e.target.files[0]
-			const img = document.querySelector('.upload-image')
-			const placeholder = document.querySelector('.photo-placeholder-square')
-            if(file){
-			    const reader = new FileReader()
-			    reader.onload = (e) => {
-				    img.src = e.target.result
-				    img.classList.remove('d-none')
-				    placeholder.classList.add('d-none')
-			    }
-			    reader.readAsDataURL(file)
-            } else {
-				img.classList.add('d-none')
-				placeholder.classList.remove('d-none')
-            }
-        })
-    })
-</script>

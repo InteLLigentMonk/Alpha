@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Factories;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using Data.Entities;
 using Domain.Models;
@@ -30,36 +31,124 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         return View(vm);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Projects(ProjectFormViewModel project)
+    public async Task<IActionResult> CreateAsync()
     {
-        if (!ModelState.IsValid)
-            return View(new ProjectsViewModel { ProjectForm = project });
 
-        Project model = project;
+        ViewData["Members"] = (await _userService.GetAllMembersAsync()).Result;
 
-        if (project.ProjectPhoto != null || project.ProjectPhoto?.Length > 0)
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-            var fileName = (await FileService.UploadImageAsync(project.ProjectPhoto, uploadsFolder)).Result;
-            model.ProjectPhotoUrl = fileName;
+            return PartialView("Partials/_AddProjectFormPartial", new ProjectFormViewModel());
         }
 
-        if (project.Id != null)
-        {
-            await _projectService.UpdateProject(model);
-
-            ViewBag.Message = "Project updated successfully!";
-            return RedirectToAction("Projects");
-           
-        }
-        else
-        {
-            await _projectService.AddProject(model);
-            ViewBag.Message = "Project added successfully!";
-            return RedirectToAction("Projects");
-        }
+        return View();
     }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(ProjectFormViewModel project)
+    {
+        if (ModelState.IsValid)
+        {
+            ViewData["Members"] = await _userService.GetAllMembersAsync();
+            Project model = project;
+
+            if (project.ProjectPhoto != null || project.ProjectPhoto?.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                var fileName = (await FileService.UploadImageAsync(project.ProjectPhoto, uploadsFolder)).Result;
+                model.ProjectPhotoUrl = fileName;
+            }
+
+            await _projectService.AddProject(model);
+
+            if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+            {
+                return Json(new { success = true });
+            }
+
+            return RedirectToAction("Projects");
+
+        }
+
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            return PartialView("_AddProjectFormPartial", project);
+        }
+
+        return View(new ProjectsViewModel { ProjectForm = project });
+
+    }
+
+    public async Task<IActionResult> Edit(Guid id)
+    {
+        ViewData["Members"] = (await _userService.GetAllMembersAsync()).Result;
+        var response = await _projectService.GetProjectById(id);
+        if (response.Succeeded && response.Result != null)
+        {
+            var project = response.Result;
+            var formViewModel = new ProjectFormViewModel
+            {
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                ClientName = project.ClientName,
+                Description = project.Description,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Budget = project.Budget,
+                ProjectPhotoUrl = project.ProjectPhotoUrl
+            };
+            if (project.Users != null)
+            {
+                formViewModel.Members = [.. project.Users.Select(u => new Member
+                {
+                    UserId = u.UserId,
+                    EmailAddress = u.EmailAddress,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    AvatarUrl = u.AvatarUrl
+                })];
+            }
+
+            return PartialView("Partials/_EditProjectFormPartial", formViewModel);
+        }
+
+        ViewBag.Message = "Project not found!";
+        return RedirectToAction("Projects");
+
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(Guid id, ProjectFormViewModel project)
+    {
+        if (ModelState.IsValid)
+        {
+            ViewData["Members"] = await _userService.GetAllMembersAsync();
+            Project model = project;
+
+            if (project.ProjectPhoto != null || project.ProjectPhoto?.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                var fileName = (await FileService.UploadImageAsync(project.ProjectPhoto, uploadsFolder)).Result;
+                model.ProjectPhotoUrl = fileName;
+            }
+
+            var response = await _projectService.UpdateProject(model);
+
+            if (response.Succeeded)
+            {
+                return Json(new { success = true });
+            }
+
+            return RedirectToAction("Projects");
+
+        }
+
+        return PartialView("_EditProjectFormPartial", project);
+    }
+
+
 
     public async Task<IActionResult> Delete(Guid id)
     {

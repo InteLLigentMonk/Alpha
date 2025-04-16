@@ -474,6 +474,8 @@ html.dark input[type="date"] {
 }
 
 .btn-card-settings {
+    border: none;
+    background-color: transparent;
     position: absolute;
     z-index: 1;
     top: 1rem;
@@ -498,9 +500,26 @@ html.dark input[type="date"] {
     border-radius: var(--radius);
     box-shadow: var(--shadow-card);
     padding: 1rem;
+    z-index: 15;
 }
 
-.modal {
+.custom-modal .modal-content {
+    margin: 2rem auto;
+    width: auto;
+    min-width: min-content;
+    max-width: 550px;
+    padding: 1rem;
+    background-color: var(--card);
+}
+
+.custom-modal .modal-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+/*.modal {
     display: none;
     z-index: 50;
     width: 100%;
@@ -508,20 +527,7 @@ html.dark input[type="date"] {
     overflow: auto;
     background-color: rgba(0,0,0,0.4);
 }
-
-.modal-content {
-    margin: 2rem auto;
-    width: auto;
-    min-width: min-content;
-    max-width: 550px;
-    padding: 1rem;
-}
-
-.modal-heading {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+*/
 
 .close {
     color: #aaa;

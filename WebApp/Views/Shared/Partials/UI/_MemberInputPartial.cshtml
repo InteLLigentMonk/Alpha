@@ -1,8 +1,12 @@
 ﻿@model ProjectFormViewModel;
 @{
     var selectedMembersList = Model.Members ?? new List<Member>();
-    var avalibleMembers = ViewData["Members"] as List<Member> ?? new List<Member>();
-    var test = "string";
+    var availableMembers = ViewData["Members"] as List<Member> ?? new List<Member>();
+
+    // Create JSON strings with minimal whitespace
+    var jsonOptions = new System.Text.Json.JsonSerializerOptions { WriteIndented = false };
+    var membersJson = System.Text.Json.JsonSerializer.Serialize(availableMembers, jsonOptions);
+    var selectedMembersJson = System.Text.Json.JsonSerializer.Serialize(selectedMembersList, jsonOptions);
 }
 
 <style>
@@ -104,131 +108,6 @@
     <ul id="suggestions" class="suggestions-list"></ul>
 </div>
 
-<script>
-
-    // Har tagit hjälp av ai för att göra delar av detta script.
-
-    window.members = @Html.Raw(Json.Serialize(avalibleMembers));
-    window.selectedMembers = @Html.Raw(Json.Serialize(selectedMembersList));
-
-    const input = document.getElementById("member-input");
-    const suggestions = document.getElementById("suggestions");
-    const selectedMembersContainer = document.getElementById("selected-members");
-
-    function initializeMemberInput() {
-        input.addEventListener("input", () => {
-            const query = input.value.toLowerCase();
-            suggestions.innerHTML = "";
-
-            if (query.length === 0) {
-                suggestions.style.display = "none";
-                return;
-            }
-
-            const filteredMembers = window.members.filter(member => {
-                if (!member || !member.firstName) return false;
-
-                const nameMatches = member.firstName.toLowerCase().includes(query);
-
-                // More robust duplicate detection in filter
-                const alreadySelected = window.selectedMembers.some(selected =>
-                    (selected && member && selected.id === member.id) ||
-                    (selected && member && selected.userId === member.userId) ||
-                    (selected && member && selected.emailAddress && member.emailAddress &&
-                     selected.emailAddress.toLowerCase() === member.emailAddress.toLowerCase())
-                );
-
-                return nameMatches && !alreadySelected;
-            });
-
-
-            if (filteredMembers.length > 0) {
-                suggestions.style.display = "block";
-                filteredMembers.forEach(member => {
-                    const li = document.createElement("li");
-                    // Use avatarUrl instead of avatar, and concatenate firstName + lastName instead of name
-                    const displayName = `${member.firstName || ''} ${member.lastName || ''}`.trim();
-                    const avatarUrl = member.avatarUrl || '../icons/avatars/1.svg';
-
-                    li.innerHTML = `<img src="/uploads/${avatarUrl}" alt=""> ${displayName}`;
-                    li.addEventListener("click", () => window.addMember(member));
-                    suggestions.appendChild(li);
-                });
-            } else {
-                suggestions.style.display = "none";
-            }
-        });
-    }
-
-
-    window.addMember = function(member) {
-        // More robust duplicate detection
-        const isDuplicate = window.selectedMembers.some(existing =>
-            // Check multiple properties to ensure we catch duplicates even if ID formats differ
-            (existing.id && member.id && existing.id === member.id) ||
-            (existing.userId && member.userId && existing.userId === member.userId) ||
-            (existing.emailAddress && member.emailAddress &&
-             existing.emailAddress.toLowerCase() === member.emailAddress.toLowerCase())
-        );
-
-        if (!isDuplicate) {
-            window.selectedMembers.push(member);
-            input.value = "";
-            input.focus();
-            suggestions.style.display = "none";
-            window.renderSelectedMembers();
-            window.updateHiddenInputs();
-        } else {
-            console.log("Prevented adding duplicate member:", member);
-        }
-    }
-
-    window.removeMember = function(memberId) {
-        window.selectedMembers = window.selectedMembers.filter(member => member.id !== memberId);
-        window.renderSelectedMembers();
-        window.updateHiddenInputs();
-    }
-
-    window.renderSelectedMembers = function() {
-        selectedMembersContainer.innerHTML = "";
-        window.selectedMembers.forEach(member => {
-            const chip = document.createElement("div");
-            chip.classList.add("member-chip");
-
-            const displayName = `${member.firstName || ''} ${member.lastName || ''}`.trim();
-            const avatarUrl = member.avatarUrl || '/images/default-avatar.png';
-
-            chip.innerHTML = `
-                <img src="/uploads/${avatarUrl}" alt="">
-                ${displayName}
-                <span class="remove-btn" onclick="window.removeMember('${member.id}')">&times;</span>
-            `;
-            selectedMembersContainer.appendChild(chip);
-        });
-    }
-
-    window.updateHiddenInputs = function() {
-        const form = document.getElementById("project-form");
-        if (!form) {
-            console.error("Form with ID 'project-form' not found");
-            return;
-        }
-
-        const existingInputs = form.querySelectorAll("input[name^='Members']");
-        existingInputs.forEach(input => input.remove());
-
-        window.selectedMembers.forEach((member, index) => {
-            const hiddenInput = document.createElement("input");
-            hiddenInput.type = "hidden";
-            hiddenInput.name = `Members[${index}].UserId`;
-            hiddenInput.value = member.userId;
-            form.appendChild(hiddenInput);
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        initializeMemberInput();
-        renderSelectedMembers();
-    });
-
-</script>
+<!-- Store data in hidden divs that can be easily accessed after AJAX loading -->
+<div id="members-data" style="display:none;">@membersJson</div>
+<div id="selected-members-data" style="display:none;">@selectedMembersJson</div>
