@@ -26,19 +26,6 @@ public class HomeController(IWebHostEnvironment env, IUserService userService, I
         return View();
     }
 
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Members()
-    {
-        var vm = new MembersViewModel();
-        var response = await _userService.GetAllMembersAsync();
-        if (response.Result != null)
-        {
-            vm.Members = response.Result;
-
-        }
-        return View(vm);
-    }
-
 
     public async Task<IActionResult> Profile()
     {

@@ -94,8 +94,13 @@ function loadCreateModal(controller, formId) {
             showModal();
             initializeFormSubmission(formId);
             initializeValidation(`#${formId}`);
-            initializePhotoUpload("ProjectPhoto");
-            initializeMemberInput();
+            if (controller === "Project") {
+                initializePhotoUpload("ProjectPhoto");
+                initializeMemberInput(formId);
+            }
+            if (controller === "Member") {
+                initializePhotoUpload("Avatar");
+            }
         })
         .catch(error => console.error(`Error loading ${formId} modal:`, error));
 }
@@ -108,10 +113,15 @@ function loadEditModal(controller, formId, id) {
             showModal();
             initializeFormSubmission(formId);
             initializeValidation(`#${formId}`);
-            initializePhotoUpload("ProjectPhoto");
-            initializeMemberInput();
+            if (controller === "Project") {
+                initializePhotoUpload("ProjectPhoto");
+                initializeMemberInput(formId);
+            }
+            if (controller === "Member") {
+                initializePhotoUpload("Avatar");
+            }
         })
-        .catch(error => console.error(`Error loading ${form} modal:`, error));
+        .catch(error => console.error(`Error loading ${formId} modal:`, error));
 }
 
 // Load the Details form in modal
@@ -122,6 +132,19 @@ function loadDetailsModal(model, id) {
             showModal();
         })
         .catch(error => console.error(`Error loading details modal:`, error));
+}
+
+// Load the Add members form in modal
+function loadMembersModal(controller, formId, id) {
+    makeRequest(`/${controller}/AddMembers/${id}`, 'GET')
+        .then(response => {
+            document.getElementById('modal-content').innerHTML = response;
+            showModal();
+            initializeFormSubmission(formId);
+            initializeValidation(`#${formId}`);
+            initializeMemberInput(formId);
+        })
+        .catch(error => console.error(`Error loading ${formId} modal:`, error));
 }
 
 // Initialize form submission for dynamically loaded forms
@@ -168,7 +191,8 @@ function initializeFormSubmission(formId) {
 
 //-------------- Handle MemberInput ------------------
 
-function initializeMemberInput() {
+function initializeMemberInput(formId) {
+    window.formId = formId
     // Look for hidden data containers that were added via AJAX
     const membersDataElement = document.getElementById("members-data");
     const selectedMembersDataElement = document.getElementById("selected-members-data");
@@ -183,6 +207,7 @@ function initializeMemberInput() {
         // Note: textContent preserves the raw text without HTML parsing
         window.members = JSON.parse(membersDataElement.textContent || '[]');
         window.selectedMembers = JSON.parse(selectedMembersDataElement.textContent || '[]');
+        console.log(window.selectedMembers);
     } catch (e) {
         console.error("Error parsing member data:", e);
         window.members = [];
@@ -299,18 +324,14 @@ function renderSelectedMembers() {
 }
 
 function updateHiddenInputs() {
-    const form = document.getElementById("add-project-form");
+    const form = document.getElementById(window.formId);
 
-    // Check for edit form as well
-    const editForm = document.getElementById("edit-project-form");
-    const formToUse = form || editForm;
-
-    if (!formToUse) {
+    if (!form) {
         console.error("Form not found");
         return;
     }
 
-    const existingInputs = formToUse.querySelectorAll("input[name^='Members']");
+    const existingInputs = form.querySelectorAll("input[name^='Members']");
     existingInputs.forEach(input => input.remove());
 
     window.selectedMembers.forEach((member, index) => {
@@ -318,7 +339,7 @@ function updateHiddenInputs() {
         hiddenInput.type = "hidden";
         hiddenInput.name = `Members[${index}].UserId`;
         hiddenInput.value = member.UserId;
-        formToUse.appendChild(hiddenInput);
+        form.appendChild(hiddenInput);
     });
 }
 

@@ -19,9 +19,9 @@
 			}
 			else
 			{
-					<div class="project-card-photo">
-						<img src="/uploads/@Model.ProjectPhotoUrl" alt="@Model.ProjectName image" />	
-					</div>
+				<div class="project-card-photo">
+					<img src="/uploads/@Model.ProjectPhotoUrl" alt="@Model.ProjectName image" />	
+				</div>
 			}
 			<div class="d-flex flex-column justify-content-center">
 				<h5>@Model.ProjectName</h5>
@@ -38,14 +38,20 @@
 		</p>
 	</div>
 	<div class="project-card-footer">
-		@if(timeLeft > 7)
+		@if (!Model.Finished)
 		{
-			var weeks = timeLeft / 7;
-			<div class="project-card-timeleft"><i class="fa-regular fa-clock"></i> @(weeks == 1 ? "1 week" : $"{weeks} weeks") left</div>
-		}
-		else
+			@if(timeLeft > 7)
+			{
+				var weeks = timeLeft / 7;
+				<div class="project-card-timeleft"><i class="fa-regular fa-clock"></i> @(weeks == 1 ? "1 week" : $"{weeks} weeks") left</div>
+			}
+			else
+			{
+				<div class="project-card-timeleft danger"><i class="fa-regular fa-clock"></i> @(timeLeft == 1 ? "1 day" : $"{timeLeft} days") left</div>
+			}
+		} else
 		{
-			<div class="project-card-timeleft danger"><i class="fa-regular fa-clock"></i> @(timeLeft == 1 ? "1 day" : $"{timeLeft} days") left</div>
+			<div class="project-card-timeleft success"><i class="fa-regular fa-clock"></i> Finished</div>
 		}
 		<div class="project-card-users">
 			@if (memberCount > 0)

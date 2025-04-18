@@ -31,7 +31,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         return View(vm);
     }
 
-    public async Task<IActionResult> CreateAsync()
+    public async Task<IActionResult> Create()
     {
 
         ViewData["Members"] = (await _userService.GetAllMembersAsync()).Result;
@@ -73,7 +73,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
 
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
-            return PartialView("_AddProjectFormPartial", project);
+            return PartialView("Partials/_AddProjectFormPartial", project);
         }
 
         return View(new ProjectsViewModel { ProjectForm = project });
@@ -95,6 +95,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 Description = project.Description,
                 StartDate = project.StartDate,
                 EndDate = project.EndDate,
+                Finished = project.Finished,
                 Budget = project.Budget,
                 ProjectPhotoUrl = project.ProjectPhotoUrl
             };
@@ -102,6 +103,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
             {
                 formViewModel.Members = [.. project.Users.Select(u => new Member
                 {
+                    Id = u.Id,
                     UserId = u.UserId,
                     EmailAddress = u.EmailAddress,
                     FirstName = u.FirstName,
@@ -148,6 +150,87 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         return PartialView("_EditProjectFormPartial", project);
     }
 
+    public async Task<IActionResult> AddMembers(Guid id)
+    {
+        ViewData["Members"] = (await _userService.GetAllMembersAsync()).Result;
+        var response = await _projectService.GetProjectById(id);
+        if (response.Succeeded && response.Result != null)
+        {
+            var project = response.Result;
+            var formViewModel = new ProjectFormViewModel
+            {
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                ClientName = project.ClientName,
+                Description = project.Description,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Finished = project.Finished,
+                Budget = project.Budget,
+                ProjectPhotoUrl = project.ProjectPhotoUrl
+            };
+            if (project.Users != null)
+            {
+                formViewModel.Members = [.. project.Users.Select(u => new Member
+                {
+                    Id = u.Id,
+                    UserId = u.UserId,
+                    EmailAddress = u.EmailAddress,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    AvatarUrl = u.AvatarUrl
+                })];
+            }
+
+            return PartialView("Partials/_AddMemberToProjectForm", formViewModel);
+        }
+
+        ViewBag.Message = "Project not found!";
+        return RedirectToAction("Projects");
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddMembers(ProjectFormViewModel form)
+    {
+        if (ModelState.IsValid)
+        {
+            if(form.Id != null)
+            {
+                var response = await _projectService.GetProjectById(form.Id.Value);
+                if (response.Succeeded && response.Result != null)
+                {
+                    var project = response.Result;
+                    if(project.Users != null)
+                        project.Users.Clear();
+                    
+                    foreach (var member in form.Members!)
+                    {
+                        project.Users!.Add(member);
+                    }
+
+                    var updateResult = await _projectService.UpdateProject(project);
+
+                    if (updateResult.Succeeded)
+                    {
+                        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+                        {
+                            return Json(new { success = true });
+                        }
+                        return RedirectToAction("Projects");
+                    }
+                }
+            }
+        }
+
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            ViewData["Members"] = (await _userService.GetAllMembersAsync()).Result;
+            return PartialView("Partials/_AddMemberToProjectForm", form);
+        }
+
+        return RedirectToAction("Projects");
+    }
 
 
     public async Task<IActionResult> Delete(Guid id)

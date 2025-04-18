@@ -7,7 +7,7 @@
 
     var totalProjects = Model.Projects.Count();
     var totalStarted = Model.Projects.Count(p => p.StartDate.Date <= DateTime.Today.Date);
-    Debug.WriteLine("totalStarted");
+    var totalFinished = Model.Projects.Count(p => p.Finished == true);
 
 }
 
@@ -19,7 +19,7 @@
 <div class="projects-statusbar">
     <button class="projects-statusbar-tab">All [@totalProjects]</button>
     <button class="projects-statusbar-tab">Started [@totalStarted]</button>
-    <button class="projects-statusbar-tab">Completed [6]</button>
+    <button class="projects-statusbar-tab">Completed [@totalFinished]</button>
 </div>
 
 <div class="main-grid">
@@ -33,6 +33,7 @@
 				Description = project.Description,
 				StartDate = project.StartDate,
 				EndDate = project.EndDate,
+				Finished = project.Finished,
 				Members = project.Users,
 				Budget = project.Budget,
 				ProjectPhotoUrl = project.ProjectPhotoUrl,

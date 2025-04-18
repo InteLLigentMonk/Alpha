@@ -5,7 +5,7 @@
     <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
 </div>
 
-<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="add-member-form" class="projects-form">
+<form asp-action="Create" asp-controller="Member" method="post" enctype="multipart/form-data" id="add-member-form" class="projects-form">
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             <div id="photo-placeholder" class="photo-placeholder-square ">
@@ -34,14 +34,7 @@
     </div>
     <div class="form-input">
         <label asp-for="Email"></label>
-		@if (!string.IsNullOrEmpty(Model.Email))
-		{
-			<input asp-for="Email" class="input" readonly>
-		}
-		else
-		{
 			<input asp-for="Email" class="input">
-		}
         <span asp-validation-for="Email"></span>
     </div>
     <div class="form-input">
@@ -72,6 +65,11 @@
             <input asp-for="City" class="input">
             <span asp-validation-for="City"></span>
         </div>
+    </div>
+    <div class="form-input">
+        <label asp-for="Country"></label>
+        <input asp-for="Country" class="input">
+        <span asp-validation-for="Country"></span>
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>

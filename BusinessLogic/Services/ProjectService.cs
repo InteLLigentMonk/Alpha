@@ -66,11 +66,12 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
                 Description = p.Description,
                 StartDate = p.StartDate,
                 EndDate = p.EndDate,
+                Finished = p.Finished,
                 Budget = p.Budget,
                 ProjectPhotoUrl = p.ProjectPhotoUrl,
                 Users = p.Users.Select(u => new Member
                 {
-                    Id = u.Id,
+                    Id = u.Profile.Id,
                     EmailAddress = u.Email,
                     FirstName = u.Profile.FirstName,
                     LastName = u.Profile.LastName,

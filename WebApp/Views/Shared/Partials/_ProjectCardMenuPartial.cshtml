@@ -5,24 +5,22 @@
     <div class="edit-menu-card-frame">
         <div class="edit">
             <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick='loadEditModal("Project","edit-project-form", "@Model.Id")'>
-                <i class="fa-solid fa-pen-to-square"></i>
+                <i class="fa-duotone fa-solid fa-pen-to-square"></i>
                 Edit
             </button>
         </div>
         <div class="add-member">
-            <a asp-action="AddMember" asp-controller="Projects">
-                <div class="btn btn-dropdown w-100">
-                    <i class="fa-solid fa-users-gear"></i>
-                    <p>Add Member</p>
-                </div>
-            </a>
+            <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick='loadMembersModal("Project","add-member-to-project-form", "@Model.Id")'>
+                <i class="fa-duotone fa-solid fa-user-plus"></i> 
+                Edit Members
+            </button>
         </div>
     </div>
-    <div>
+    <div class="mt-2">
         <div class="delete">
             <a asp-action="Delete" asp-controller="Project" asp-route-id="@Model.Id">
                 <div class="btn btn-delete w-100">
-                    <i class="fa-solid fa-trash-can"></i>
+                    <i class="fa-duotone fa-solid fa-trash-can"></i>
                     <p>Delete</p>
                 </div>
             </a>

@@ -69,6 +69,8 @@
     --accent-foreground: var(--color-surface);
     --destructive: hsl(from var(--color-red) h s l/0.4);
     --destructive-foreground: hsl(from var(--color-dark-red) h s l/0.6);
+    --success: hsl(from var(--color-green) h s l/0.4);
+    --success-foreground: hsl(from var(--color-dark-green) h s l/0.6);
     --border-light: var(--color-border-100);
     --border: var(--color-grey-400);
     --border-dark: var(--color-border-300);
@@ -100,6 +102,8 @@
     --accent-foreground: var(--color-surface);
     --destructive: hsl(from var(--color-dark-red) h s l/0.4);
     --destructive-foreground: hsl(from var(--color-red) h s l/0.4);
+    --success: hsl(from var(--color-dark-green) h s l/0.4);
+    --success-foreground: hsl(from var(--color-green) h s l/0.4);
     --border-light: hsl(from var(--color-border-100) h s l/0.1);
     --border: hsl(from var(--color-border-100) h s l/0.1);
     --border-dark: var(--color-border-300);
@@ -659,6 +663,10 @@ html.dark input[type="date"] {
     background-color: var(--destructive);
     color: var(--destructive-foreground);
 }
+.project-card-timeleft.success {
+    background-color: var(--success);
+    color: var(--success-foreground);
+}
 
 .project-card-footer {
     display: flex;
@@ -701,6 +709,8 @@ html.dark input[type="date"] {
     font-size: 14px;
     z-index: 6;
 }
+
+
 
 /* Project Image Placeholder */
 

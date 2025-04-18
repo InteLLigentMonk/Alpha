@@ -20,7 +20,6 @@ public class ProjectFormViewModel : IValidatableObject
     [RegularExpression(@"^.{3,}$", ErrorMessage = "Must be at least 3 characters long.")]
     public string ClientName { get; set; } = null!;
 
-    [Required(ErrorMessage = "Required")]
     [Display(Name = "Description", Prompt = "Description")]
     public string? Description { get; set; }
 
@@ -34,6 +33,9 @@ public class ProjectFormViewModel : IValidatableObject
     [DataType(DataType.Date)]
     public DateTime EndDate { get; set; } = DateTime.Today.AddDays(30);
 
+    [Display(Name = "Finished")]
+    public bool Finished { get; set; } = false;
+
 
     [Required]
     public List<Member>? Members { get; set; } = [];
@@ -42,7 +44,7 @@ public class ProjectFormViewModel : IValidatableObject
     [Required(ErrorMessage = "Required")]
     [Display(Name = "Budget")]
     [Range(0, double.MaxValue, ErrorMessage = "Must be a positive number")]
-    [RegularExpression(@"^\d+(\.\d{1,2})?$", ErrorMessage = "Budget must be a number with maximum 2 decimal places")]
+    [RegularExpression(@"^\d+([\.,]\d{1,2})?$", ErrorMessage = "Budget must be a number with maximum 2 decimal places")]
     public decimal Budget { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

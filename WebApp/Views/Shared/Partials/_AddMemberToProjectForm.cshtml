@@ -1,0 +1,14 @@
+﻿@model ProjectFormViewModel
+
+<div class="modal-heading">
+    <h3 id="modal-title">Edit Members in Project</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="AddMembers" asp-controller="Project" method="post" enctype="multipart/form-data" id="add-member-to-project-form" class="projects-form">
+    <input asp-for="Id" hidden />
+    <input asp-for="ProjectName" data-val="false" class="d-none" />
+    <input asp-for="ClientName" data-val="false" class="d-none" />
+    <partial name="Partials/UI/_MemberInputPartial" model="@Model" />
+    <button id="btn-project" class="btn btn-primary w-100">Add</button>
+</form>

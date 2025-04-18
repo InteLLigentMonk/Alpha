@@ -2,31 +2,13 @@
 
 <div id="card-menu-@Model.Id" class="card project-menu-card">
     <div class="edit">
-        <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick="toggleModalWithData('MemberModal', 'btn-member-close', 'member-form',
-                    {
-                        Id: '@Model.Id',
-                        UserId: '@Model.UserId',
-                        FirstName: '@Model.FirstName',
-                        LastName: '@Model.LastName',
-                        Email: '@Model.Email',
-                        PhoneNumber: '@Model.PhoneNumber',
-                        StreetAddress: '@Model.StreetAddress',
-                        StreetNumber: '@Model.StreetNumber',
-                        ZipCode: '@Model.ZipCode',
-                        City: '@Model.City',
-                        Country: '@Model.Country',
-                        JobTitle: '@Model.JobTitle',
-                        AvatarUrl: '@Model.AvatarUrl',
-                        Day: '@Model.Day',
-                        Month: '@Model.Month',
-                        Year: '@Model.Year'
-                    })">
+        <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick="loadEditModal('Member','edit-member-form','@Model.UserId')">
             <i class="fa-solid fa-pen-to-square"></i>
              Edit
         </button>
     </div>
     <div class="delete">
-        <a asp-action="Delete" asp-controller="Admin" asp-route-id="@Model.UserId">
+        <a asp-action="Delete" asp-controller="Member" asp-route-id="@Model.UserId">
             <div class="btn btn-delete w-100">
                 <i class="fa-solid fa-trash-can"></i>
                 <p>Delete</p>

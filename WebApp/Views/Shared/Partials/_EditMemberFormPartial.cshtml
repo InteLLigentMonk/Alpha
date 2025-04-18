@@ -1,7 +1,14 @@
 ﻿@model ProfileFormViewModel
 
-<form asp-action="AddMember" asp-controller="Admin" method="post" enctype="multipart/form-data" id="edit-member-form" class="projects-form">
-    <input type="hidden" asp-for="Id" />
+<div class="modal-heading">
+    <h3 id="modal-title">Edit Member</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="Edit" asp-controller="Member" method="post" enctype="multipart/form-data" id="edit-member-form" class="projects-form">
+    <input name="Id" id="Id" data-val="false" class="d-none" value="@Model.Id" />
+    <input name="UserId" id="UserId" data-val="false" class="d-none" value="@Model.UserId" />
+    <input name="AvatarUrl" id="AvatarUrl" data-val="false" class="d-none" value="@Model.AvatarUrl"/>
     <div class="photo-upload-button">
         <label asp-for="Avatar">
             @if (!string.IsNullOrEmpty(Model.AvatarUrl))
@@ -74,11 +81,11 @@
             <input asp-for="City" class="input">
             <span asp-validation-for="City"></span>
         </div>
-        <div class="form-input">
-            <label asp-for="Country"></label>
-            <input asp-for="Country" class="input">
-            <span asp-validation-for="Country"></span>
-        </div>
+    </div>
+    <div class="form-input">
+        <label asp-for="Country"></label>
+        <input asp-for="Country" class="input">
+        <span asp-validation-for="Country"></span>
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>

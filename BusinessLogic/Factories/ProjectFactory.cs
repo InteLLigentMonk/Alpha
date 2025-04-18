@@ -26,6 +26,7 @@ public class ProjectFactory(UserManager<AppUser> userManager)
             Description = project.Description,
             StartDate = project.StartDate,
             EndDate = project.EndDate,
+            Finished = project.Finished,
             Budget = project.Budget,
             ProjectPhotoUrl = project.ProjectPhotoUrl,
             Users = project.Users.Select(u => new Member
@@ -45,6 +46,7 @@ public class ProjectFactory(UserManager<AppUser> userManager)
             Description = project.Description,
             StartDate = project.StartDate,
             EndDate = project.EndDate,
+            Finished = project.Finished,
             Budget = project.Budget,
             ProjectPhotoUrl = project.ProjectPhotoUrl,
             Users = []
