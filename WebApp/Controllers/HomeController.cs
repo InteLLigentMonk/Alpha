@@ -13,13 +13,14 @@ using WebApp.Models;
 namespace WebApp.Controllers;
 
 [Authorize]
-public class HomeController(IWebHostEnvironment env, IUserService userService, IProfileService profileService, IProjectService projectService, UserManager<AppUser> userManager) : Controller
+public class HomeController(IWebHostEnvironment env, IUserService userService, IProfileService profileService, IProjectService projectService, UserManager<AppUser> userManager, IJobTitleService jobTitleService) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
     private readonly IUserService _userService = userService;
     private readonly IProfileService _profileService = profileService;
     private readonly IProjectService _projectService = projectService;
     private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly IJobTitleService _jobTitleService = jobTitleService;
 
     public IActionResult Dashboard()
     {
@@ -29,6 +30,12 @@ public class HomeController(IWebHostEnvironment env, IUserService userService, I
 
     public async Task<IActionResult> Profile()
     {
+        var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
+        if (jobTitleResponse.Result != null)
+        {
+            ViewData["JobTitles"] = jobTitleResponse.Result;
+        }
+
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
@@ -42,6 +49,7 @@ public class HomeController(IWebHostEnvironment env, IUserService userService, I
         var profileViewModel = userProfile.Result.MapTo<ProfileFormViewModel>();
         profileViewModel.UserId = user.Id;
         profileViewModel.Email = user.Email!;
+        profileViewModel.JobTitle = userProfile.Result.JobTitle!.Id;
         profileViewModel.Day = userProfile.Result.DateOfBirth.Day;
         profileViewModel.Month = userProfile.Result.DateOfBirth.Month;
         profileViewModel.Year = userProfile.Result.DateOfBirth.Year;

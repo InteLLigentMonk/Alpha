@@ -8,7 +8,7 @@ public class Member
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
     public string? EmailAddress { get; set; }
-    public string? JobTitle { get; set; }
+    public JobTitle? JobTitle { get; set; }
     public string? StreetAddress { get; set; }
     public string? StreetNumber { get; set; }
     public string? ZipCode { get; set; }

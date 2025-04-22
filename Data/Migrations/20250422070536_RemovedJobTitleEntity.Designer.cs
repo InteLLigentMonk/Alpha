@@ -4,6 +4,7 @@ using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422070536_RemovedJobTitleEntity")]
+    partial class RemovedJobTitleEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,23 +134,6 @@ namespace Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Data.Entities.JobTitleEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("JobTitles");
-                });
-
             modelBuilder.Entity("Data.Entities.ProfileEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -169,9 +155,6 @@ namespace Data.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("JobTitleId")
-                        .HasColumnType("int");
-
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
@@ -191,8 +174,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("JobTitleId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -357,19 +338,11 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ProfileEntity", b =>
                 {
-                    b.HasOne("Data.Entities.JobTitleEntity", "JobTitle")
-                        .WithMany("Profiles")
-                        .HasForeignKey("JobTitleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Data.Entities.AppUser", "User")
                         .WithOne("Profile")
                         .HasForeignKey("Data.Entities.ProfileEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("JobTitle");
 
                     b.Navigation("User");
                 });
@@ -429,11 +402,6 @@ namespace Data.Migrations
                 {
                     b.Navigation("Profile")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Data.Entities.JobTitleEntity", b =>
-                {
-                    b.Navigation("Profiles");
                 });
 #pragma warning restore 612, 618
         }

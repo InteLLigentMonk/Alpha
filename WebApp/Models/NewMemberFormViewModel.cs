@@ -23,7 +23,7 @@ namespace WebApp.Models
         public string? PhoneNumber { get; set; }
 
         [Display(Name = "Job Title", Prompt = "Batman")]
-        public string? JobTitle { get; set; }
+        public int JobTitle { get; set; }
 
         [Display(Name = "Street Name", Prompt = "Street Name")]
         public string? StreetAddress { get; set; }
@@ -89,7 +89,10 @@ namespace WebApp.Models
                 ZipCode = model.ZipCode,
                 City = model.City,
                 Country = model.Country,
-                JobTitle = model.JobTitle,
+                JobTitle = new JobTitle
+                {
+                    Id = model.JobTitle
+                },
                 DateOfBirth = model.DateOfBirth,
                 AvatarUrl = model.AvatarUrl
             };

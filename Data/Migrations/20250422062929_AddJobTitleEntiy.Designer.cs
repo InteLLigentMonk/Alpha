@@ -4,6 +4,7 @@ using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250422062929_AddJobTitleEntiy")]
+    partial class AddJobTitleEntiy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -169,7 +172,10 @@ namespace Data.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("JobTitleId")
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("JobTitleEntityId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -192,7 +198,7 @@ namespace Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JobTitleId");
+                    b.HasIndex("JobTitleEntityId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -357,19 +363,15 @@ namespace Data.Migrations
 
             modelBuilder.Entity("Data.Entities.ProfileEntity", b =>
                 {
-                    b.HasOne("Data.Entities.JobTitleEntity", "JobTitle")
+                    b.HasOne("Data.Entities.JobTitleEntity", null)
                         .WithMany("Profiles")
-                        .HasForeignKey("JobTitleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobTitleEntityId");
 
                     b.HasOne("Data.Entities.AppUser", "User")
                         .WithOne("Profile")
                         .HasForeignKey("Data.Entities.ProfileEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("JobTitle");
 
                     b.Navigation("User");
                 });

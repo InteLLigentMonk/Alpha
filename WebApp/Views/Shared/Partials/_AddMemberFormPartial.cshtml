@@ -1,5 +1,8 @@
 ﻿@model ProfileFormViewModel
-
+@{
+    var jobTitles = ViewData["JobTitles"] as List<JobTitle> ?? new List<JobTitle>();
+    var test = "test";
+}
 <div class="modal-heading">
     <h3 id="modal-title">New Member</h3>
     <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
@@ -34,7 +37,7 @@
     </div>
     <div class="form-input">
         <label asp-for="Email"></label>
-			<input asp-for="Email" class="input">
+        <input asp-for="Email" class="input">
         <span asp-validation-for="Email"></span>
     </div>
     <div class="form-input">
@@ -73,10 +76,14 @@
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>
-        <input asp-for="JobTitle" class="input">
+        <select asp-for="JobTitle" class="input">
+            @foreach(var jobTitle in jobTitles)
+            {
+                <option value="@jobTitle.Id">@jobTitle.Title</option>
+            }
+        </select>
         <span asp-validation-for="JobTitle"></span>
     </div>
-
     <div>
         <label class="mb-2">Date of Birth</label>
         <div class="form-group">

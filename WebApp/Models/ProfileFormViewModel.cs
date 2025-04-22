@@ -25,7 +25,7 @@ public class ProfileFormViewModel
     public string? PhoneNumber { get; set; }
 
     [Display(Name = "Job Title", Prompt = "Batman")]
-    public string? JobTitle { get; set; }
+    public int JobTitle { get; set; }
 
     [Display(Name = "Street Name", Prompt ="Street Name")]
     public string? StreetAddress { get; set; }
@@ -80,7 +80,10 @@ public class ProfileFormViewModel
             FirstName = model.FirstName,
             LastName = model.LastName,
             PhoneNumber = model.PhoneNumber,
-            JobTitle = model.JobTitle,
+            JobTitle = new JobTitle
+            {
+                Id = model.JobTitle
+            },
             StreetAddress = model.StreetAddress,
             StreetNumber = model.StreetNumber,
             ZipCode = model.ZipCode,

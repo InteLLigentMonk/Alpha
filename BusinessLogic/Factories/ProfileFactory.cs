@@ -33,7 +33,6 @@ public class ProfileFactory
             FirstName = model.FirstName,
             LastName = model.LastName,
             PhoneNumber = model.PhoneNumber,
-            JobTitle = model.JobTitle,
             StreetAddress = model.StreetAddress,
             StreetNumber = model.StreetNumber,
             ZipCode = model.ZipCode,
@@ -45,6 +44,10 @@ public class ProfileFactory
         if (model.UserId.HasValue)
         {
             profile.UserId = model.UserId.Value;
+        }
+        if (model.JobTitle != null)
+        {
+            profile.JobTitleId = model.JobTitle.Id;
         }
         return profile;
     }

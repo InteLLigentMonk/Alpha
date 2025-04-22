@@ -1,4 +1,8 @@
 ﻿@model ProfileFormViewModel
+@{
+    var jobTitles = ViewData["JobTitles"] as List<JobTitle> ?? new List<JobTitle>();
+    var test = "test";
+}
 
 <div class="modal-heading">
     <h3 id="modal-title">Edit Member</h3>
@@ -89,7 +93,19 @@
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>
-        <input asp-for="JobTitle" class="input">
+        <select asp-for="JobTitle" class="input">
+            @foreach (var jobTitle in jobTitles)
+            {
+				if (jobTitle.Id == Model.JobTitle)
+				{
+					<option value="@jobTitle.Id" selected>@jobTitle.Title</option>
+				}
+				else
+				{
+					<option value="@jobTitle.Id">@jobTitle.Title</option>
+				}
+            }
+        </select>
         <span asp-validation-for="JobTitle"></span>
     </div>
 

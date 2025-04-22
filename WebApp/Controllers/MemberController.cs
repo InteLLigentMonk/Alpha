@@ -4,82 +4,45 @@ using BusinessLogic.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.SqlServer.Server;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
 
-public class MemberController(IWebHostEnvironment env, IUserService userService, IProfileService profileService) : Controller
+public class MemberController(IWebHostEnvironment env, IUserService userService, IProfileService profileService, IJobTitleService jobTitleService) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
     private readonly IUserService _userService = userService;
     private readonly IProfileService _profileService = profileService;
+    private readonly IJobTitleService _jobTitleService = jobTitleService;
 
 
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Members()
     {
-        var vm = new MembersViewModel();
-        var response = await _userService.GetAllMembersAsync();
-        if (response.Result != null)
+        var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
+        if (jobTitleResponse.Result != null)
         {
-            vm.Members = response.Result;
-
+            ViewData["JobTitles"] = jobTitleResponse.Result;
         }
+
+        var vm = new MembersViewModel();
+        var memberResponse = await _userService.GetAllMembersAsync();
+        if (memberResponse.Result != null)
+        {
+            vm.Members = memberResponse.Result;
+        }
+
         return View(vm);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddMember(ProfileFormViewModel formData, string password = "BytMig123!")
+    public async Task<IActionResult> CreateAsync()
     {
-        if (ModelState.IsValid)
+        var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
+        if (jobTitleResponse.Result != null)
         {
-            if (formData.Id != Guid.Empty)
-            {
-                Profile model = formData;
-                if (formData.Avatar != null)
-                {
-                    var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                    var uploadResponse = await FileService.UploadImageAsync(formData.Avatar, uploadsFolder);
-                    if(uploadResponse.Result != null)
-                        model.AvatarUrl = uploadResponse.Result.ToString();
-                }
-                await _profileService.UpdateProfile(model);
-            }
-            else
-            {
-                var user = new UserRegistrationForm
-                {
-                    Email = formData.Email
-                };
-
-                var (result, userId) = await _userService.RegisterAsync(user, password);
-                if (result.Succeeded && userId.HasValue)
-                {
-                    
-                    Profile model = formData;
-                    model.UserId = userId;
-                    model.Id = Guid.NewGuid();
-
-                    if (formData.Avatar != null)
-                    {
-                        var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
-                        var uploadResponse = await FileService.UploadImageAsync(formData.Avatar, uploadsFolder);
-                        if (uploadResponse.Result != null)
-                            model.AvatarUrl = uploadResponse.Result.ToString();
-                    }
-                    
-                    await _profileService.CreateProfile(model);
-                    
-
-                }
-            }
+            ViewData["JobTitles"] = jobTitleResponse.Result;
         }
-        return RedirectToAction("Members", "Home");
-    }
 
-    public IActionResult Create()
-    {
         if (Request.Headers.XRequestedWith == "XMLHttpRequest")
         {
             return PartialView("Partials/_AddMemberFormPartial", new ProfileFormViewModel());
@@ -107,6 +70,12 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
                 Profile model = formData;
                 model.UserId = userId;
                 model.Id = Guid.NewGuid();
+
+                var jobTitleResponse = await _jobTitleService.GetJobTitle(formData.JobTitle);
+                if (jobTitleResponse.Succeeded && jobTitleResponse.Result != null)
+                {
+                    model.JobTitle = jobTitleResponse.Result;
+                }
 
                 if (formData.Avatar != null)
                 {
@@ -139,6 +108,12 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
 
     public async Task<IActionResult> Edit(Guid id)
     {
+        var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
+        if (jobTitleResponse.Result != null)
+        {
+            ViewData["JobTitles"] = jobTitleResponse.Result;
+        }
+
         var response = await _userService.GetMemberById(id);
         if (response.Succeeded) { 
             var vm = new ProfileFormViewModel
@@ -155,7 +130,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
                 Day = response.Result.DateOfBirth!.Value.Day,
                 Month = response.Result.DateOfBirth.Value.Month,
                 Year = response.Result.DateOfBirth.Value.Year,
-                JobTitle = response.Result.JobTitle,
+                JobTitle = response.Result.JobTitle!.Id,
                 Email = response.Result.EmailAddress!,
                 PhoneNumber = response.Result.PhoneNumber,
                 AvatarUrl = response.Result.AvatarUrl

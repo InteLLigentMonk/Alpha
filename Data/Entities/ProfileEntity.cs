@@ -9,7 +9,6 @@ public class ProfileEntity
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public string? PhoneNumber { get; set; }
-    public string? JobTitle { get; set; }
     public string? StreetAddress { get; set; }
     public string? StreetNumber { get; set; }
     public string? ZipCode { get; set; }
@@ -20,5 +19,8 @@ public class ProfileEntity
 
     public Guid UserId { get; set; }
     public AppUser User { get; set; } = null!;
+
+    public int JobTitleId { get; set; }
+    public JobTitleEntity? JobTitle { get; set; }
 
 }

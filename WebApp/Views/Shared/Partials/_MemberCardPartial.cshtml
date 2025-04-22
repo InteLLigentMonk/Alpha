@@ -1,4 +1,8 @@
 ﻿@model ProfileFormViewModel
+@{
+	var jobTitles = ViewData["JobTitles"] as List<JobTitle> ?? new List<JobTitle>();
+	var myJobTitle = jobTitles.FirstOrDefault(x => x.Id == Model.JobTitle);
+}
 
 
 <div class="member-card">
@@ -16,7 +20,7 @@
 		</div>
 		<div class="member-info">
 			<h4>@Model.FirstName @Model.LastName</h4>
-			<span class="">@Model.JobTitle</span>
+			<span class="">@myJobTitle?.Title</span>
 		</div>
 	</div>
 	<div class="member-card-body">

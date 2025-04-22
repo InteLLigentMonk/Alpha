@@ -52,6 +52,7 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
         }
         var user = await _userManager.Users
             .Include(u => u.Profile)
+            .ThenInclude(p => p.JobTitle)
             .FirstOrDefaultAsync(u => u.Id == id);
         return user == null
             ? new ServiceResult<AppUser>
@@ -102,7 +103,9 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
     public async Task<ServiceResult<IEnumerable<AppUser>>> GetAllUsersAsync()
     {
         var users = await _userManager.Users
-            .Include(u => u.Profile).ToListAsync();
+            .Include(u => u.Profile)
+            .ThenInclude(p => p.JobTitle)
+            .ToListAsync();
         if (users == null)
         {
             return new ServiceResult<IEnumerable<AppUser>>

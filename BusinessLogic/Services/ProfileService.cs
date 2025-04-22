@@ -19,7 +19,7 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
             var exists = await _profileRepository.Exsists(u => u.UserId == userId);
             if (exists.Result)
             {
-                var response = await _profileRepository.GetAsync(u => u.UserId == userId);
+                var response = await _profileRepository.GetAsync(u => u.UserId == userId, x => x.JobTitle);
                 if (response.Result != null)
                 {
                     return new ServiceResult<Profile>

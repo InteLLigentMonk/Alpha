@@ -17,9 +17,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
+builder.Services.AddScoped<IJobTitleRepository, JobTitleRepository>();
 
 builder.Services.AddScoped<ProjectFactory>();
 
+builder.Services.AddScoped<IJobTitleService, JobTitleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();

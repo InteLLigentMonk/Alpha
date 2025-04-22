@@ -25,7 +25,11 @@ public class UserFactory
             ZipCode = user.Profile.ZipCode,
             City = user.Profile.City,
             Country = user.Profile.Country,
-            JobTitle = user.Profile.JobTitle,
+            JobTitle = new JobTitle
+            {
+                Id = user.Profile.JobTitle!.Id,
+                Title = user.Profile.JobTitle.Title
+            },
             DateOfBirth = user.Profile.DateOfBirth,
             AvatarUrl = user.Profile.AvatarUrl
         };

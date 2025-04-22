@@ -1,4 +1,8 @@
 ﻿@model ProfileFormViewModel
+@{
+    var jobTitles = ViewData["JobTitles"] as List<JobTitle> ?? new List<JobTitle>();
+    var myJobTitle = jobTitles.FirstOrDefault(x => x.Id == Model.JobTitle);
+}
 
 <form asp-action="Profile" asp-controller="Home" method="post" enctype="multipart/form-data" id="profile-form" class="projects-form">
     <input asp-for="Id" class="d-none" data-val="false" />
@@ -94,7 +98,26 @@
     </div>
     <div class="form-input">
         <label asp-for="JobTitle"></label>
-        <input asp-for="JobTitle" class="input">
+        @if(User.IsInRole("Admin")){
+            <select asp-for="JobTitle" class="input">
+                @foreach (var jobTitle in jobTitles)
+                {
+                    if (jobTitle.Id == Model.JobTitle)
+                    {
+                        <option value="@jobTitle.Id" selected>@jobTitle.Title</option>
+                    }
+                    else
+                    {
+                        <option value="@jobTitle.Id">@jobTitle.Title</option>
+                    }
+                }
+            </select>
+		}
+		else
+		{
+            <input type="text" class="input" readonly value="@myJobTitle?.Title">
+            <input asp-for="JobTitle" class="d-none" data-val="false">
+        }
         <span asp-validation-for="JobTitle"></span>
     </div>
 
