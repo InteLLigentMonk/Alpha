@@ -1,0 +1,21 @@
+﻿@model ProjectsViewModel
+@{
+}
+
+@foreach (var project in Model.Projects)
+{
+    var projectViewModel = new ProjectFormViewModel
+            {
+                Id = project.Id,
+                ProjectName = project.ProjectName,
+                ClientName = project.ClientName,
+                Description = project.Description,
+                StartDate = project.StartDate,
+                EndDate = project.EndDate,
+                Finished = project.Finished,
+                Members = project.Users,
+                Budget = project.Budget,
+                ProjectPhotoUrl = project.ProjectPhotoUrl,
+            };
+    <partial name="Partials/_ProjectCardPartial" model="@projectViewModel" />
+}

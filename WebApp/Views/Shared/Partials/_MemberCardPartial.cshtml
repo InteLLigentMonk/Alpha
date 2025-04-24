@@ -7,7 +7,10 @@
 
 <div class="member-card">
 	<div class="member-card-header">
-		<div class="btn-card-settings" data-member-id="@Model.Id"><partial name="Partials/UI/_ProjectSettingsButtonPartial"/></div>
+		@if(User.IsInRole("Management") || User.IsInRole("Admin"))
+		{
+			<div class="btn-card-settings" data-member-id="@Model.Id"><partial name="Partials/UI/_ProjectSettingsButtonPartial"/></div>
+		}
 		<div class="member-photo">
 			@if (string.IsNullOrEmpty(Model.AvatarUrl))
 			{

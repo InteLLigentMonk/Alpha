@@ -147,6 +147,18 @@ function loadMembersModal(controller, formId, id) {
         .catch(error => console.error(`Error loading ${formId} modal:`, error));
 }
 
+// Load the Create form in modal
+function loadMemberRoleModal() {
+    makeRequest(`/Role/AddMemberToRole`, 'GET')
+        .then(response => {
+            document.getElementById('modal-content').innerHTML = response;
+            showModal();
+            initializeFormSubmission("add-member-to-role-form");
+            initializeValidation(`#add-member-to-role-form`);
+        })
+        .catch(error => console.error(`Error loading ${formId} modal:`, error));
+}
+
 // Initialize form submission for dynamically loaded forms
 function initializeFormSubmission(formId) {
     const form = document.getElementById(formId);

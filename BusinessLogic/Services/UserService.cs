@@ -25,8 +25,8 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
 
             AppUser appUser = new()
             {
-                Email = user.Email,
-                UserName = user.Email
+                Email = user.Email.ToLower(),
+                UserName = user.Email.ToLower()
             };
             var result = await _userManager.CreateAsync(appUser, password);
 
@@ -116,6 +116,83 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
             };
         }
         return new ServiceResult<IEnumerable<AppUser>>
+        {
+            Succeeded = true,
+            StatusCode = 200,
+            Result = users
+        };
+    }
+
+    //public async Task<ServiceResult<IEnumerable<SimpleUser>>> GetSimpleUsersAsync()
+    //{
+    //    var users = await _userManager.Users
+    //        .Select(u => new SimpleUser
+    //        {
+    //            Id = u.Id,
+    //            UserName = u.UserName!,
+    //            Email = u.Email!
+    //        })
+    //        .ToListAsync();
+
+    //    foreach (var user in users)
+    //    {
+    //        var appUser = await _userManager.FindByIdAsync(user.Id.ToString());
+    //        if (appUser != null) // Ensure appUser is not null before calling GetRolesAsync
+    //        {
+    //            user.Roles = await _userManager.GetRolesAsync(appUser);
+
+    //        }
+    //    }
+
+    //    if (users == null || !users.Any())
+    //    {
+    //        return new ServiceResult<IEnumerable<SimpleUser>>
+    //        {
+    //            Succeeded = false,
+    //            StatusCode = 404,
+    //            Error = "No users found"
+    //        };
+    //    }
+
+    //    return new ServiceResult<IEnumerable<SimpleUser>>
+    //    {
+    //        Succeeded = true,
+    //        StatusCode = 200,
+    //        Result = users
+    //    };
+    //}
+
+
+    public async Task<ServiceResult<IEnumerable<SimpleUser>>> GetSimpleUsersAsync()
+    {
+        var allUsers = await _userManager.Users.ToListAsync();
+        var users = allUsers
+            .Select(u => new SimpleUser
+            {
+                Id = u.Id,
+                UserName = u.UserName!,
+                Email = u.Email!
+            }).ToList();
+        var userDictionary = allUsers.ToDictionary(u => u.Id);
+        foreach (var user in users)
+        {
+            if (userDictionary.TryGetValue(user.Id, out var appUser))
+            {
+                user.Roles = await _userManager.GetRolesAsync(appUser);
+            }
+        }
+
+        if (users == null || users.Count == 0)
+        {
+            return new ServiceResult<IEnumerable<SimpleUser>>
+            {
+                Succeeded = false,
+                StatusCode = 404,
+                Error = "No users found"
+            };
+        }
+
+        return new ServiceResult<IEnumerable<SimpleUser>>
         {
             Succeeded = true,
             StatusCode = 200,

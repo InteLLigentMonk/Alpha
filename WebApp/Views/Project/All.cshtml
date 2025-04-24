@@ -1,0 +1,87 @@
+﻿@using System.Diagnostics
+@model ProjectsViewModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    ViewData["Title"] = "Projects";
+    ViewData["Members"] = Model.Members as List<Member>;
+
+    var totalProjects = Model.Projects.Count();
+    var totalStarted = Model.Projects.Count(p => p.StartDate.Date <= DateTime.Today.Date && p.Finished != true);
+    var totalFinished = Model.Projects.Count(p => p.Finished == true);
+
+}
+
+<div class="projects-title">
+    <h2>Projects</h2>
+    <button id="btn-new-project" class="btn btn-primary" onclick='loadCreateModal("Project","add-project-form")'><i class="fa-solid fa-plus"></i> Add Project</button>
+</div>
+
+<div class="projects-statusbar">
+    <button id="btn-all-projects" class="projects-statusbar-tab active" data-project-tab="all">All [@totalProjects]</button>
+    <button id="btn-started-projects" class="projects-statusbar-tab" data-project-tab="started">Started [@totalStarted]</button>
+    <button id="btn-completed-projects" class="projects-statusbar-tab" data-project-tab="completed">Completed [@totalFinished]</button>
+</div>
+
+<div class="main-grid">
+    <partial name="Partials/Projects/_CardLoopPartial" model="@Model" />
+</div>
+
+
+<div class="modal fade custom-modal" id="formModal" tabindex="-1" ariea-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-content">
+            
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_FormValidationPartial" />
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+		const tabButtons = document.querySelectorAll(".projects-statusbar-tab");
+		const mainGrid = document.querySelector(".main-grid");
+
+		tabButtons.forEach(button => {
+			button.addEventListener("click", function() {
+
+				tabButtons.forEach(btn => btn.classList.remove("active"));
+				this.classList.add("active");
+
+				const tabType = this.getAttribute("data-project-tab");
+				
+                loadProjectTab(tabType);
+			});
+        });
+
+
+        function loadProjectTab(tabType) {
+
+            mainGrid.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+            
+            let endpoint;
+            switch(tabType){
+                case "started":
+				    endpoint = "/Project/Started";
+					break;
+				case "completed":
+				    endpoint = "/Project/Completed";
+					break;
+				default:
+					endpoint = "/Project/All";
+					break;
+            }
+
+            makeRequest(endpoint, "GET")
+                .then(response => {
+					mainGrid.innerHTML = response;
+
+                    toggleMemberCardMenu();
+                })
+				.catch(error => {
+					console.error("Error loading projects:", error);
+					mainGrid.innerHTML = '<div class="alert alert-danger" role="alert">Error loading projects. Please try again later.</div>';
+				});
+        }
+    });
+</script>

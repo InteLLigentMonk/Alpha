@@ -1,0 +1,73 @@
+﻿@model RolesViewModel
+@{
+    Layout = "../Shared/_Layout.cshtml";
+    var usersWithRoles = Model.Users.Where(u => u.Roles.Any());
+}
+
+<div class="projects-title">
+    <h2>Role Administration</h2>
+</div>
+<div class="card">
+    <div class="member-card-header">
+        <div class="d-flex flex-row w-100 justify-between">
+            <h3>Members With Roles:</h3>
+            <button id="btn-new-project" class="btn btn-primary" onclick='loadMemberRoleModal("add-member-to-role-form")'><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+		        <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var user in usersWithRoles)
+            {
+                <tr>
+                    <td>@user.Email</td>
+			        <td>
+                        <div class="d-flex gap-1 flex-row">
+				        @foreach (var role in user.Roles)
+				        {
+                            <div class="role-pill">
+					            <span>@role</span>
+                                <a asp-action="Delete" asp-controller="Role" asp-route-id="@user.Id" asp-route-role="@role" class="btn-role-remove">&times;</a>
+                            </div>
+				        }
+                        </div>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="card mt-3">
+    <div class="member-card-header">
+        <div class="d-flex flex-row w-100 justify-between">
+            <h3>All Roles</h3>
+            <button id="btn-new-project" class="btn btn-primary" onclick='loadCreateModal("Role","add-role-form")'><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
+        <table>
+            <tr>
+                <th>Role Name</th>
+            </tr>
+            @foreach (var role in Model.Roles)
+            {
+                <tr>
+                    <td>@role.Name</td>
+                </tr>
+            }
+        </table>
+</div>
+
+
+<div class="modal fade custom-modal" id="formModal" tabindex="-1" ariea-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_FormValidationPartial" />

@@ -111,6 +111,122 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
         }
     }
 
+    public async Task<ServiceResult<IEnumerable<Project>>> GetStartedProjects()
+    {
+        try
+        {
+            var result = await _projectsRepository.GetAllAsync(p => new Project
+            {
+                Id = p.Id,
+                ProjectName = p.ProjectName,
+                ClientName = p.ClientName,
+                Description = p.Description,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Finished = p.Finished,
+                Budget = p.Budget,
+                ProjectPhotoUrl = p.ProjectPhotoUrl,
+                Users = p.Users.Select(u => new Member
+                {
+                    Id = u.Profile.Id,
+                    EmailAddress = u.Email,
+                    FirstName = u.Profile.FirstName,
+                    LastName = u.Profile.LastName,
+                    AvatarUrl = u.Profile.AvatarUrl,
+                    UserId = u.Profile.UserId
+                }).ToList()
+            },
+            filter: x => x.StartDate.Date < DateTime.Today.Date && x.Finished == false,
+            includes: [p => p.Users]
+            );
+            if (result == null)
+            {
+                return new ServiceResult<IEnumerable<Project>>
+                {
+                    Succeeded = false,
+                    StatusCode = 404,
+                    Error = "No projects found",
+                };
+            }
+            ;
+
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = true,
+                StatusCode = 200,
+                Result = result.Result
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = false,
+                StatusCode = 500,
+                Error = "Could not retrieve projects"
+            };
+        }
+    }
+
+    public async Task<ServiceResult<IEnumerable<Project>>> GetCompletedProjects()
+    {
+        try
+        {
+            var result = await _projectsRepository.GetAllAsync(p => new Project
+            {
+                Id = p.Id,
+                ProjectName = p.ProjectName,
+                ClientName = p.ClientName,
+                Description = p.Description,
+                StartDate = p.StartDate,
+                EndDate = p.EndDate,
+                Finished = p.Finished,
+                Budget = p.Budget,
+                ProjectPhotoUrl = p.ProjectPhotoUrl,
+                Users = p.Users.Select(u => new Member
+                {
+                    Id = u.Profile.Id,
+                    EmailAddress = u.Email,
+                    FirstName = u.Profile.FirstName,
+                    LastName = u.Profile.LastName,
+                    AvatarUrl = u.Profile.AvatarUrl,
+                    UserId = u.Profile.UserId
+                }).ToList()
+            },
+            filter: x => x.Finished == true,
+            includes: [p => p.Users]
+            );
+            if (result == null)
+            {
+                return new ServiceResult<IEnumerable<Project>>
+                {
+                    Succeeded = false,
+                    StatusCode = 404,
+                    Error = "No projects found",
+                };
+            }
+            ;
+
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = true,
+                StatusCode = 200,
+                Result = result.Result
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            return new ServiceResult<IEnumerable<Project>>
+            {
+                Succeeded = false,
+                StatusCode = 500,
+                Error = "Could not retrieve projects"
+            };
+        }
+    }
+
     public async Task<ServiceResult<Project>> GetProjectById(Guid id)
     {
         if (id != Guid.Empty)

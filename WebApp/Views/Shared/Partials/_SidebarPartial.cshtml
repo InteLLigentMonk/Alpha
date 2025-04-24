@@ -3,15 +3,19 @@
         <i class="fa-duotone fa-solid fa-xl fa-objects-column"></i>
         <span class="sidebar-button-text">Dashboard</span>
     </a>
-    <a asp-action="Projects" asp-controller="Project" class="btn btn-sidebar @(Context.Request.Path == "/project/projects" ? "active" : "")">
+    <a asp-action="All" asp-controller="Project" class="btn btn-sidebar @(Context.Request.Path == "/project/all" ? "active" : "")">
         <i class="fa-duotone fa-solid fa-xl fa-briefcase"></i>
         <span class="sidebar-button-text">Projects</span>
     </a>
+    <a asp-action="Members" asp-controller="Member" class="btn btn-sidebar @(Context.Request.Path == "/member/members" ? "active" : "")">
+        <i class="fa-duotone fa-solid fa-xl fa-users"></i>
+        <span class="sidebar-button-text">Team Members</span>
+    </a>
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Members" asp-controller="Member" class="btn btn-sidebar @(Context.Request.Path == "/member/members" ? "active" : "")">
-            <i class="fa-duotone fa-solid fa-xl fa-users"></i>
-            <span class="sidebar-button-text">Team Members</span>
-        </a>  
+        <a asp-action="Roles" asp-controller="Role" class="btn btn-sidebar @(Context.Request.Path == "/role/roles" ? "active" : "")">
+            <i class="fa-duotone fa-solid fa-users-gear"></i>
+            <span class="sidebar-button-text">Role Adm.</span>
+        </a>
     }
 </aside>

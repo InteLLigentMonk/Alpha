@@ -64,6 +64,7 @@ public class ProfileService(IProfileRepository profileRepository) : IProfileServ
                 {
                     await _profileRepository.RollbackTransactionAsync();
                     Debug.WriteLine(ex.Message);
+                    Debug.WriteLine(ex.InnerException.Message);
                     return new ServiceResult<bool>
                     {
                         Succeeded = false,

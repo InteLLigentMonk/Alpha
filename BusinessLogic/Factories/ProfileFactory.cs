@@ -20,6 +20,7 @@ public class ProfileFactory
         var profile = new Profile()
         {
             Id = Guid.NewGuid(),
+            JobTitle = new JobTitle { Id = 9 }
         };
 
         return profile;

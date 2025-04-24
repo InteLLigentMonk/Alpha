@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 
 namespace WebApp.Controllers;
-
+[Authorize]
 public class MemberController(IWebHostEnvironment env, IUserService userService, IProfileService profileService, IJobTitleService jobTitleService) : Controller
 {
     private readonly IWebHostEnvironment _env = env;
@@ -15,8 +15,6 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
     private readonly IProfileService _profileService = profileService;
     private readonly IJobTitleService _jobTitleService = jobTitleService;
 
-
-    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Members()
     {
         var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
@@ -35,6 +33,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
         return View(vm);
     }
 
+    [Authorize(Roles = "Admin,Management")]
     public async Task<IActionResult> CreateAsync()
     {
         var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
@@ -51,7 +50,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
         return View();
     }
 
-
+    [Authorize(Roles = "Admin,Management")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(ProfileFormViewModel formData)
@@ -106,6 +105,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
         return PartialView("Partials/_AddMemberFormPartial", formData);
     }
 
+    [Authorize(Roles = "Admin,Management")]
     public async Task<IActionResult> Edit(Guid id)
     {
         var jobTitleResponse = await _jobTitleService.GetAllJobTitles();
@@ -144,6 +144,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin,Management")]
     public async Task<IActionResult> Edit(Guid id,ProfileFormViewModel vm)
     {
         if (ModelState.IsValid)
@@ -173,6 +174,7 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
 
 
 
+    [Authorize(Roles = "Admin,Management")]
     public async Task<IActionResult> Delete(Guid id)
     {
         if (id == Guid.Empty)

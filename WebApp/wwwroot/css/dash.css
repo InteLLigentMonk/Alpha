@@ -97,15 +97,7 @@ label[for="ProjectPhoto"] {
 }
 
 /* Project Card Edit Menu Styling */
-.project-menu-card {
-    display: none;
-    position: absolute;
-    width: 260px;
-    top: 4rem;
-    right: 1rem;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-popover), var(--shadow-card);
-}
+
 
 .edit-menu-card-frame {
     display: flex;

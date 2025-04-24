@@ -3,6 +3,22 @@
 @using System.Text.Json.Serialization
 <div id="card-menu-@Model.Id" class="card project-menu-card">
     <div class="edit-menu-card-frame">
+        <div class="project-finished">
+            <a asp-action="Finish" asp-controller="Project" asp-route-id="@Model.Id">
+                <div id="btn-edit-member" class="btn btn-dropdown w-100">
+                    <i class="fa-duotone fa-solid fa-check-to-slot"></i>
+                    @if (!Model.Finished)
+                    {
+                        <span>Mark as Finished</span>
+
+                    }
+                    else
+                    {
+                        <span>Mark as Unfinished</span>
+                    }
+                </div>
+            </a>
+        </div>
         <div class="edit">
             <button id="btn-edit-member" class="btn btn-dropdown w-100" onclick='loadEditModal("Project","edit-project-form", "@Model.Id")'>
                 <i class="fa-duotone fa-solid fa-pen-to-square"></i>

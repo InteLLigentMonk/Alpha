@@ -40,6 +40,7 @@ public class ProjectsRepository(AppDbContext context) : BaseRepository<ProjectEn
                 Description = entity.Description,
                 StartDate = entity.StartDate,
                 EndDate = entity.EndDate,
+                Finished = entity.Finished,
                 Budget = entity.Budget,
                 ProjectPhotoUrl = entity.ProjectPhotoUrl,
                 Users = entity.Users.Select(u => new Member
@@ -93,6 +94,7 @@ public class ProjectsRepository(AppDbContext context) : BaseRepository<ProjectEn
             existingEntity.ProjectName = updatedEntity.ProjectName;
             existingEntity.ClientName = updatedEntity.ClientName;
             existingEntity.Description = updatedEntity.Description;
+            existingEntity.Finished = updatedEntity.Finished;
             existingEntity.StartDate = updatedEntity.StartDate;
             existingEntity.EndDate = updatedEntity.EndDate;
             existingEntity.Budget = updatedEntity.Budget;

@@ -18,7 +18,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
     private readonly UserManager<AppUser> _userManager = userManager;
 
 
-    public async Task<IActionResult> Projects()
+    public async Task<IActionResult> All()
     {
         var userResponse = await _userService.GetAllMembersAsync();
         var projectsResponse = await _projectService.GetProjects();
@@ -28,7 +28,39 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
             vm.Members = userResponse.Result;
             vm.Projects = projectsResponse.Result;
         }
+        if (Request.Headers.XRequestedWith == "XMLHttpRequest")
+        {
+            return PartialView("Partials/Projects/_CardLoopPartial", vm);
+        }
         return View(vm);
+    }
+
+    public async Task<IActionResult> Started()
+    {
+        var userResponse = await _userService.GetAllMembersAsync();
+        var projectsResponse = await _projectService.GetStartedProjects();
+        var vm = new ProjectsViewModel();
+        if (userResponse.Result != null && projectsResponse.Result != null)
+        {
+            vm.Members = userResponse.Result;
+            vm.Projects = projectsResponse.Result;
+        }
+   
+        return PartialView("Partials/Projects/_CardLoopPartial", vm);
+
+    }
+
+    public async Task<IActionResult> Completed()
+    {
+        var userResponse = await _userService.GetAllMembersAsync();
+        var projectsResponse = await _projectService.GetCompletedProjects();
+        var vm = new ProjectsViewModel();
+        if (userResponse.Result != null && projectsResponse.Result != null)
+        {
+            vm.Members = userResponse.Result;
+            vm.Projects = projectsResponse.Result;
+        }
+        return PartialView("Partials/Projects/_CardLoopPartial", vm);
     }
 
     public async Task<IActionResult> Create()
@@ -246,5 +278,30 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
             ViewBag.Message = "Error deleting project!";
             return RedirectToAction("Projects");
         }
+    }
+
+    public async Task<IActionResult> Finish(Guid id)
+    {
+        var response = await _projectService.GetProjectById(id);
+        if (response.Succeeded && response.Result != null)
+        {
+            var project = response.Result;
+            project.Finished = !project.Finished;
+            var updateResponse = await _projectService.UpdateProject(project);
+            if (updateResponse.Succeeded)
+            {
+                if(project.Finished)
+                {
+                    ViewBag.Message = "Project marked as finished!";
+                }
+                else
+                {
+                    ViewBag.Message = "Project marked as unfinished!";
+                }
+                    return RedirectToAction("All");
+            }
+        }
+        ViewBag.Message = "Error finishing project!";
+        return RedirectToAction("Projects");
     }
 }

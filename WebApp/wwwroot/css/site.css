@@ -263,6 +263,13 @@ input[type=checkbox]:checked::after {
 html.dark input[type="date"] {
     color-scheme: dark;
 }
+table{
+    border-collapse: collapse;
+}
+tr {
+    height: 3rem;
+    border-bottom: 1px solid var(--muted);
+}
 
 /* structure */
 
@@ -504,7 +511,6 @@ html.dark input[type="date"] {
     border-radius: var(--radius);
     box-shadow: var(--shadow-card);
     padding: 1rem;
-    z-index: 15;
 }
 
 .custom-modal .modal-content {
@@ -601,6 +607,11 @@ html.dark input[type="date"] {
     border-bottom: 1px solid var(--border);
 }
 
+.projects-statusbar a {
+    text-decoration: none;
+}
+
+
 .projects-statusbar-tab {
     color: var(--color-bodylight);
     outline: none;
@@ -610,10 +621,23 @@ html.dark input[type="date"] {
     border-bottom: 2px solid transparent;
     cursor: pointer;
 
-    &:hover, &:active, &:focus {
+    &:hover, &.active, &:focus {
         color: var(--accent);
         border-color: var(--accent);
     }
+}
+
+.project-menu-card {
+    display: none;
+    justify-content: start;
+    align-items:start;
+    position: absolute;
+    width: 260px;
+    top: 4rem;
+    right: 1rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-popover), var(--shadow-card);
+    z-index: 16;
 }
 
 .project-card-body {
@@ -832,16 +856,37 @@ html.dark input[type="date"] {
     position: relative;
     display: flex;
     flex-direction: column;
-    label
 
-{
+    label {
     margin-bottom: 0.5rem;
+    }
+
+    .field-validation-error {
+        padding: .6rem;
+    }
 }
 
-.field-validation-error {
-    padding: .6rem;
+/* Role Administration */
+.role-pill {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    border:1px solid var(--muted-foreground);
+    border-radius: 1rem;
 }
 
+.btn-role-remove {
+    color: var(--muted-foreground);
+    border: none;
+    outline: none;
+    background-color: transparent;
+    &:hover {
+        color: var(--destructive)
+        }
 }
 
 

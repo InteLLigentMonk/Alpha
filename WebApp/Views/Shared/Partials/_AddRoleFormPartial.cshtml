@@ -1,0 +1,15 @@
+﻿@model AddRoleFormViewModel
+
+<div class="modal-heading">
+    <h3 id="modal-title">Add a role</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="Create" asp-controller="Role" method="post" id="add-role-form" class="projects-form">
+    <div class="form-input">
+        <label asp-for="Role"></label>
+        <input asp-for="Role" class="input">
+        <span asp-validation-for="Role"></span>
+    </div>
+    <button id="btn-project" class="btn btn-primary w-100">Add</button>
+</form>

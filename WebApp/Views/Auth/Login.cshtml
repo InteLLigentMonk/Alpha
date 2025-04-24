@@ -1,11 +1,10 @@
 ﻿@{
     Layout = "../Shared/_LayoutAuth.cshtml";
-	string buttonName = "Login with Google";
 	ViewData["Title"] = "Login";
 }
 <link rel="stylesheet" href="~/css/login.css" />
 <h1>@ViewData["Title"]</h1>
-<partial name="Partials/UI/_ButtonGooglePartial" model=buttonName />
+<partial name="Partials/_ExternalAuthenticationPartial"/>
 <div class="or-divider">
     <div class="ruler"></div>
     <div>OR</div>
