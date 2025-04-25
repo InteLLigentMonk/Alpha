@@ -1,9 +1,29 @@
-﻿
+﻿@{
+    var profile = ViewBag.Profile as Profile;
+    // set greetingName to email but only chars before the @ sign
+    var greetingName = userManager.GetUserName(User)!.Split('@')[0];
+    string avatarUrl = "/icons/avatars/1.svg";
+    if(profile != null)
+    {
+        if (profile.AvatarUrl != null)
+        {
+            avatarUrl = $"/uploads/{profile.AvatarUrl}";
+        }
+
+        if(!string.IsNullOrEmpty(profile.FirstName) && !string.IsNullOrEmpty(profile.LastName))
+        {
+            greetingName = $"{profile.FirstName} {profile.LastName}";
+        }
+
+    }
+}
 <nav class="navbar w-100 navbar-expand-md">
     <div class=" container-fluid justify-content-between gap-2" >
         <partial name="Partials/_SearchFormPartial"/>
         <div class="d-md-none" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <img src="~/icons/avatars/1.svg" alt="your avatar" />
+            <div class="avatar-img">
+                <img src="@avatarUrl" alt="your avatar" />
+            </div>
         </div>
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
@@ -23,8 +43,12 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <div class="current-user">
-                            <img src="~/icons/avatars/1.svg" alt="your avatar" />
-                            <h6>@userManager.GetUserName(User)</h6>
+                            <div class="avatar-img">
+                                <img src="@avatarUrl" alt="your avatar" />
+                            </div>
+                            <h6>
+                                @greetingName
+                            </h6>
                             
                         </div>
                         <div class="form-check form-switch darkmode">

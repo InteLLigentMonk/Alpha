@@ -1,8 +1,35 @@
-﻿
+﻿@using BusinessLogic.Interfaces
+@using Microsoft.AspNetCore.Identity
+@using Data.Entities
+@inject UserManager<AppUser> UserManager
+@inject IProfileService ProfileService
+@{
+    string avatarUrl = "/icons/avatars/1.svg"; // Default avatar
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        // Get current user
+        var user = await UserManager.GetUserAsync(User);
+
+        if (user != null)
+        {
+            // Get profile with avatar URL
+            var profileResult = await ProfileService.GetProfile(user.Id);
+            ViewBag.Profile = profileResult.Result as Profile;
+
+            if (profileResult.Succeeded && profileResult.Result?.AvatarUrl != null)
+            {
+                avatarUrl = $"/uploads/{profileResult.Result.AvatarUrl}";
+            }
+        }
+    }
+}
 
 <header class="header">
-        <partial name="Partials/_NavBarPartial" />
+    <partial name="Partials/_NavBarPartial" />
+    <div class="avatar-img-container">
         <div class="avatar-img">
-            <img src="~/icons/avatars/1.svg" alt="your avatar" />
+            <img src="@avatarUrl" alt="your avatar" />
         </div>
+    </div>
 </header>

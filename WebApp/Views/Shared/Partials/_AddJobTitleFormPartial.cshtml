@@ -1,0 +1,15 @@
+﻿@model AddJobTitleFormViewModel
+
+<div class="modal-heading">
+    <h3 id="modal-title">Add a role</h3>
+    <span id="btn-close" class="close" data-bs-dismiss="modal">&times;</span>
+</div>
+
+<form asp-action="Create" asp-controller="JobTitle" method="post" id="add-jobtitle-form" class="projects-form">
+    <div class="form-input">
+        <label asp-for="JobTitle"></label>
+        <input asp-for="JobTitle" class="input">
+        <span asp-validation-for="JobTitle"></span>
+    </div>
+    <button id="btn-project" class="btn btn-primary w-100">Add</button>
+</form>

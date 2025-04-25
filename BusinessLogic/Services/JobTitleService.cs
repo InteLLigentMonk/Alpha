@@ -106,4 +106,41 @@ public class JobTitleService(IJobTitleRepository jobTitleRepository) : IJobTitle
             Error = "Job title is null"
         };
     }
+
+    public async Task<ServiceResult<bool>> Delete(int id)
+    {
+        var exists = await _jobTitleRepository.Exsists(u => u.Id == id);
+        if (exists.Result)
+        {
+            await _jobTitleRepository.BeginTransactionAsync();
+            try 
+            {
+                await _jobTitleRepository.DeleteByIdAsync(id);
+                await _jobTitleRepository.SaveAsync();
+                await _jobTitleRepository.CommitTransactionAsync();
+                return new ServiceResult<bool>
+                {
+                    Succeeded = true,
+                    StatusCode = 200,
+                    Result = true
+                };
+            } 
+            catch (Exception ex)
+            {
+                await _jobTitleRepository.RollbackTransactionAsync();
+                return new ServiceResult<bool>
+                {
+                    Succeeded = false,
+                    StatusCode = 500,
+                    Error = ex.Message
+                };
+            }
+        }
+        return new ServiceResult<bool>
+        {
+            Succeeded = false,
+            StatusCode = 404,
+            Error = "Job title not found"
+        };
+    }
 }

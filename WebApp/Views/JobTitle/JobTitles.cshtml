@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "../Shared/_Layout.cshtml";
+    var jobTitles = ViewData["JobTitles"] as List<JobTitle>;
+}
+
+<div class="card mt-3">
+    <div class="member-card-header">
+        <div class="d-flex flex-row w-100 justify-between">
+            <h3>All Job Titles</h3>
+            <button id="btn-new-project" class="btn btn-primary" onclick='loadCreateModal("JobTitle","add-jobtitle-form")'><i class="fa-solid fa-plus"></i></button>
+        </div>
+    </div>
+    <table>
+        <tr>
+            <th>Job Title</th>
+            <th>Remove</th>
+        </tr>
+        @foreach (var title in jobTitles!)
+        {
+            <tr>
+                <td>@title.Title</td>
+                <td>
+                    <a asp-action="Delete" asp-controller="JobTitle" asp-route-id="@title.Id" class="btn-role-remove">
+                        <div class="d-flex gap-1 flex-row">
+                            <div class="role-pill">
+                                <span>Delete</span>
+                            </div>
+                        </div>
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+<div class="modal fade custom-modal" id="formModal" tabindex="-1" ariea-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modal-content">
+        </div>
+    </div>
+</div>
+
+<partial name="Partials/_FormValidationPartial" />

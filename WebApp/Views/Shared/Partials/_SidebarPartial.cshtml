@@ -11,10 +11,17 @@
         <i class="fa-duotone fa-solid fa-xl fa-users"></i>
         <span class="sidebar-button-text">Team Members</span>
     </a>
+    @if (User.IsInRole("Management") || User.IsInRole("Admin"))
+    {
+        <a asp-action="JobTitles" asp-controller="JobTitle" class="btn btn-sidebar @(Context.Request.Path == "/jobtitle/jobtitles" ? "active" : "")">
+            <i class="fa-duotone fa-solid fa-xl fa-id-badge"></i>
+            <span class="sidebar-button-text">Job Titles</span>
+        </a>
+    }
     @if (User.IsInRole("Admin"))
     {
         <a asp-action="Roles" asp-controller="Role" class="btn btn-sidebar @(Context.Request.Path == "/role/roles" ? "active" : "")">
-            <i class="fa-duotone fa-solid fa-users-gear"></i>
+            <i class="fa-duotone fa-solid fa-xl fa-users-gear"></i>
             <span class="sidebar-button-text">Role Adm.</span>
         </a>
     }
