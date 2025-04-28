@@ -1,0 +1,73 @@
+﻿.cookieModal {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: hsl(from #000 h s l/0.7);
+    z-index: 999;
+}
+
+.cookieModal > .card {
+    position: absolute;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    top: 15%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 90%;
+    padding: 0px;
+    border: 1px solid hsl(from var(--accent) h s 85);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+
+    @media (min-width: 768px) {
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto;
+    }
+}
+
+.cookieModal > .card > .content {
+    display: grid;
+    gap: 1rem;
+    padding: 20px;
+}
+
+
+.cookieModal > .card > .settings {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    min-width: 300px;
+    padding: 20px;
+    background-color: hsl(from var(--accent) h s 85);
+    color: #000;
+}
+
+.cookieModal > .card > .settings > .text-container{
+    display: grid;
+    gap: 1rem;
+}
+
+.cookieModal > .card > .settings > .buttons {
+    display:flex;
+    gap: 0.6rem;
+    flex-direction: column
+}
+
+.cookieModal > .card > .settings > .text-container > .options > .option {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.cookieConsentIcon {
+    position: fixed;
+    bottom: 20px;
+    left:20px;
+    color: var(--foreground);
+}

@@ -1,0 +1,68 @@
+﻿<div id="cookieModal" class="cookieModal">
+	<div class="card">
+		<div class="content">
+            <h3>Oh look, another cookie consent banner!</h3>
+            <p>
+                Surprise! We're legally obligated to tell you we use cookies, as if anyone didn't know that
+                websites track everything these days. We could write paragraphs explaining what cookies are,
+                but let's be honest – you've seen this message 37 times today already.
+            </p>
+            <p>
+                Accept our cookies and we'll promise to collect just enough data to keep our lawyers happy,
+                while pretending we won't remember your entire browsing history. That's our cookie guarantee!
+            </p>
+            <p><a href="#">Read more here!</a></p>
+		</div>
+        <form id="cookieConsentForm" class="settings">
+            <div class="text-container">
+                <h4>Cookies</h4>
+                <div class="options">
+                    <div class="option">
+                        <label class="switch-label" for="cookieEssential">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            Essential (alltid aktiva)
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="cookieEssential" name="essential" checked disabled>
+                        </div>
+                    </div>
+                    <div class="option">
+                        <label class="switch-label" for="cookieFunctional">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            Functional
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="cookieFunctional" name="functional">
+                        </div>
+                    </div>
+                    <div class="option">
+                        <label class="switch-label" for="cookieAnalytics">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            Analytics
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="cookieAnalytics" name="analytics">
+                        </div>
+                    </div>
+                    <div class="option">
+                        <label class="switch-label" for="cookieMarketing">
+                            <i class="fa-solid fa-chevron-down"></i>
+                            Marketing
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="cookieMarketing" name="marketing">
+                        </div>
+                    </div>
+                </div>
+            </div>
+			<div class="buttons">
+				<button type="button" class="btn btn-dark" onclick="acceptAll()">Accept All</button>
+                <button type="button" class="btn btn-outline-dark" onclick="acceptSelected()">Accept Selected</button>
+            </div>
+        </form>
+	</div>
+</div>
+
+<div class="cookieConsentIcon" onclick="showCookieModal()">
+    <i class="fa-solid fa-cookie-bite"></i>
+</div>

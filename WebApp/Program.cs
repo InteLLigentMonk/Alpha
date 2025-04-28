@@ -19,15 +19,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IJobTitleRepository, JobTitleRepository>();
-
-builder.Services.AddScoped<ProjectFactory>();
-
 builder.Services.AddScoped<IJobTitleService, JobTitleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<ProjectFactory>();
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => !context.Request.Cookies.ContainsKey("cookieConsent");
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
 
 
 builder.Services.AddIdentity<AppUser, AppRole>(options =>
@@ -58,10 +62,9 @@ builder.Services.AddAuthentication(options =>
 var app = builder.Build();
 
 app.UseHsts();
-
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
