@@ -101,7 +101,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 return Json(new { success = true });
             }
 
-            return RedirectToAction("Projects");
+            return RedirectToAction("All");
 
         }
 
@@ -150,7 +150,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         }
 
         ViewBag.Message = "Project not found!";
-        return RedirectToAction("Projects");
+        return RedirectToAction("All");
 
     }
 
@@ -177,7 +177,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 return Json(new { success = true });
             }
 
-            return RedirectToAction("Projects");
+            return RedirectToAction("All");
 
         }
 
@@ -220,7 +220,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         }
 
         ViewBag.Message = "Project not found!";
-        return RedirectToAction("Projects");
+        return RedirectToAction("All");
     }
 
     [HttpPost]
@@ -250,7 +250,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                         {
                             return Json(new { success = true });
                         }
-                        return RedirectToAction("Projects");
+                        return RedirectToAction("All");
                     }
                 }
             }
@@ -262,7 +262,7 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
             return PartialView("Partials/_AddMemberToProjectForm", form);
         }
 
-        return RedirectToAction("Projects");
+        return RedirectToAction("All");
     }
 
 
@@ -272,12 +272,12 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         if (response.Succeeded)
         {
             ViewBag.Message = "Project deleted successfully!";
-            return RedirectToAction("Projects");
+            return RedirectToAction("All");
         }
         else
         {
             ViewBag.Message = "Error deleting project!";
-            return RedirectToAction("Projects");
+            return RedirectToAction("All");
         }
     }
 
@@ -304,6 +304,6 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
             }
         }
         ViewBag.Message = "Error finishing project!";
-        return RedirectToAction("Projects");
+        return RedirectToAction("All");
     }
 }

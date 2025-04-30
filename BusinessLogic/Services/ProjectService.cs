@@ -45,7 +45,7 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
                             CreatedByUserId = user.Id.ToString()
                         };
 
-                        if (string.IsNullOrEmpty(project.ProjectPhotoUrl))
+                        if (!string.IsNullOrEmpty(project.ProjectPhotoUrl))
                         {
                             notificationEntity.Icon = $"/uploads/{project.ProjectPhotoUrl}";
                         }
@@ -335,7 +335,7 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
                                 CreatedByUserId = user.Id.ToString()
                             };
 
-                            if (string.IsNullOrEmpty(project.ProjectPhotoUrl))
+                            if (!string.IsNullOrEmpty(project.ProjectPhotoUrl))
                             {
                                 notificationEntity.Icon = $"/uploads/{project.ProjectPhotoUrl}";
                             }
