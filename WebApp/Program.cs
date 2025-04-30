@@ -8,14 +8,17 @@ using Data.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using BusinessLogic.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 
+builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IProjectsRepository, ProjectsRepository>();
 builder.Services.AddScoped<IProfileRepository, ProfileRepository>();
 builder.Services.AddScoped<IJobTitleRepository, JobTitleRepository>();
@@ -106,5 +109,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Dashboard}/{id?}")
     .WithStaticAssets();
 
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

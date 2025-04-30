@@ -76,6 +76,9 @@
     --border-dark: var(--color-border-300);
     --input: var(--color-surface);
     --heading: var(--color-heading);
+    --notification: hsl(from var(--heading) h s 75);
+
+
     --radius: 0.875rem;
     /* shadows */
 
@@ -109,6 +112,7 @@
     --border-dark: var(--color-border-300);
     --input: var(--color-surface);
     --heading: var(--color-surface);
+    --notification: hsl(from var(--heading) h s 35)
 }
 
 

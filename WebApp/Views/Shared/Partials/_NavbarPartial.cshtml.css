@@ -71,6 +71,6 @@
 @media (min-width: 768px){
     .dropdown-menu {
         padding: 1rem;
-        width: 300px;
+        min-width: 350px;
     }
 }

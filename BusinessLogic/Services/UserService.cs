@@ -8,13 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BusinessLogic.Services;
 
-public class UserService(UserManager<AppUser> userManager, IProfileService profileService) : IUserService
+public class UserService(UserManager<AppUser> userManager, IProfileService profileService, INotificationService notificationService) : IUserService
 {
     private readonly UserManager<AppUser> _userManager = userManager;
     private readonly IProfileService _profileService = profileService;
+    private readonly INotificationService _notificationService = notificationService;
 
 
-    public async Task<(IdentityResult result, Guid? userId)> RegisterAsync(UserRegistrationForm user, string password)
+    public async Task<(IdentityResult result, Guid? userId)> RegisterAsync(UserRegistrationForm user, string password, string creatorId)
     {
         if (user != null)
         {
@@ -32,6 +33,34 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
 
             if (result.Succeeded)
             {
+                var creator = await _userManager.FindByIdAsync(creatorId);
+                if (creator != null)
+                {
+                    var response = await GetMemberById(creator.Id);
+                    if (response.Succeeded && response.Result != null)
+                    {
+                        var userWithProfile = response.Result;
+                        var notificationEntity = new NotificationEntity
+                        {
+                            Message = $"A new user was added by {userWithProfile.FirstName} {userWithProfile.LastName}",
+                            NotificationTypeId = 1,
+                            NotificationTargetGroupId = 2,
+                            CreatedByUserId = creator.Id.ToString()
+                        };
+
+                        if (string.IsNullOrEmpty(userWithProfile.AvatarUrl))
+                        {
+                            notificationEntity.Icon = "/icons/avatars/2.svg";
+                        }
+                        else
+                        {
+                            notificationEntity.Icon = $"/uploads/{userWithProfile.AvatarUrl}";
+                        }
+
+                        await _notificationService.AddNotificationAsync(notificationEntity, creator.Id.ToString());
+                    }
+                }
+
                 return (IdentityResult.Success, appUser.Id);
             }
         }
@@ -123,44 +152,6 @@ public class UserService(UserManager<AppUser> userManager, IProfileService profi
         };
     }
 
-    //public async Task<ServiceResult<IEnumerable<SimpleUser>>> GetSimpleUsersAsync()
-    //{
-    //    var users = await _userManager.Users
-    //        .Select(u => new SimpleUser
-    //        {
-    //            Id = u.Id,
-    //            UserName = u.UserName!,
-    //            Email = u.Email!
-    //        })
-    //        .ToListAsync();
-
-    //    foreach (var user in users)
-    //    {
-    //        var appUser = await _userManager.FindByIdAsync(user.Id.ToString());
-    //        if (appUser != null) // Ensure appUser is not null before calling GetRolesAsync
-    //        {
-    //            user.Roles = await _userManager.GetRolesAsync(appUser);
-
-    //        }
-    //    }
-
-    //    if (users == null || !users.Any())
-    //    {
-    //        return new ServiceResult<IEnumerable<SimpleUser>>
-    //        {
-    //            Succeeded = false,
-    //            StatusCode = 404,
-    //            Error = "No users found"
-    //        };
-    //    }
-
-    //    return new ServiceResult<IEnumerable<SimpleUser>>
-    //    {
-    //        Succeeded = true,
-    //        StatusCode = 200,
-    //        Result = users
-    //    };
-    //}
 
 
     public async Task<ServiceResult<IEnumerable<SimpleUser>>> GetSimpleUsersAsync()

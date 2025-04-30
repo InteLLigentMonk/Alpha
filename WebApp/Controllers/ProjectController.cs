@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Factories;
+﻿using System.Security.Claims;
+using BusinessLogic.Factories;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Services;
 using Data.Entities;
@@ -92,7 +93,8 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 model.ProjectPhotoUrl = fileName;
             }
 
-            await _projectService.AddProject(model);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+            await _projectService.AddProject(model, userId);
 
             if (Request.Headers.XRequestedWith == "XMLHttpRequest")
             {
@@ -167,8 +169,8 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 var fileName = (await FileService.UploadImageAsync(project.ProjectPhoto, uploadsFolder)).Result;
                 model.ProjectPhotoUrl = fileName;
             }
-
-            var response = await _projectService.UpdateProject(model);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+            var response = await _projectService.UpdateProject(model, userId);
 
             if (response.Succeeded)
             {
@@ -233,15 +235,14 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
                 if (response.Succeeded && response.Result != null)
                 {
                     var project = response.Result;
-                    if(project.Users != null)
-                        project.Users.Clear();
+                    project.Users?.Clear();
                     
                     foreach (var member in form.Members!)
                     {
                         project.Users!.Add(member);
                     }
-
-                    var updateResult = await _projectService.UpdateProject(project);
+                    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+                    var updateResult = await _projectService.UpdateProject(project, userId);
 
                     if (updateResult.Succeeded)
                     {
@@ -287,7 +288,8 @@ public class ProjectController(IWebHostEnvironment env, IUserService userService
         {
             var project = response.Result;
             project.Finished = !project.Finished;
-            var updateResponse = await _projectService.UpdateProject(project);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+            var updateResponse = await _projectService.UpdateProject(project, userId);
             if (updateResponse.Succeeded)
             {
                 if(project.Finished)

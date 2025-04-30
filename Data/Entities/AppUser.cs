@@ -7,4 +7,6 @@ public class AppUser : IdentityUser<Guid>
     public ICollection<ProjectEntity> Projects { get; set; } = [];
 
     public ProfileEntity Profile { get; set; } = null!;
+
+    public ICollection<NotificationDismissedEntity> DismissedNotifications { get; set; } = [];
 }

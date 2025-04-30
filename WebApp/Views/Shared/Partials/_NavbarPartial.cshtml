@@ -1,4 +1,6 @@
-﻿@{
+﻿<link rel="stylesheet" href="~/css/notificationSystem.css" />
+
+@{
     var profile = ViewBag.Profile as Profile;
     // set greetingName to email but only chars before the @ sign
     var greetingName = userManager.GetUserName(User)!.Split('@')[0];
@@ -16,6 +18,9 @@
         }
 
     }
+	// Get notifications
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+    var notifications = await notificationService.GetNotificationsAsync(userId);
 }
 <nav class="navbar w-100 navbar-expand-md">
     <div class=" container-fluid justify-content-between gap-2" >
@@ -28,17 +33,42 @@
 
         <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
             <ul class="navbar-nav mb-2 mb-lg-0">
+
+
+
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-bell fa-lg"></i>
-                    </a>
+                    <button class="nav-link" id="notificationNavbarDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                        <i class="fa-duotone fa-solid fa-bell fa-lg"></i>
+                        @if (notifications.Any())
+                        {
+                            <div class="n-dot n-dot-red"></div>
+                        }
+                    </button>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        Hej på dej
+                        <div class="notification-header">
+                            <h5>Notifications</h5>
+                            <span class="notification-number">@notifications.Count()</span>
+                        </div>
+                        <div class="notification-dropdown-divider"></div>
+                        <div class="notifications">
+
+							@foreach (var notification in notifications)
+							{
+								<div class="notification-item" data-id="@notification.Id">
+                                    <div class="notification-image">
+									    <img src="@notification.Icon" />
+                                    </div>
+									<div class="notification-message">@notification.Message</div>
+									<div class="notification-time" data-created="@notification.Created.ToString("s")">@notification.Created</div>
+									<button class="btn-close-notification" onclick="dismissNotification('@notification.Id')">&times;</button>
+								</div>
+							}
+
+                        </div>
                     </div>
-                    
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         <i class="fa-solid fa-gear fa-lg"></i>
                     </a>
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -76,3 +106,103 @@
         </div>
     </div>
 </nav>
+
+<script>
+    // SignalR - Notification del
+    const connection = new signalR.HubConnectionBuilder()
+    .withUrl("/notificationHub")
+    .build()
+
+    connection.on("ReceiveNotification", (notification) => {
+        const notificationContainer = document.querySelector('.notifications')
+        const notificationItem = document.createElement('div')
+        notificationItem.classList.add('notification-item')
+        notificationItem.setAttribute('data-id', notification.id)
+        notificationItem.innerHTML = `
+            <div class="notification-image">
+                <img src="${notification.icon}" />
+            </div>
+            <div class="notification-message">${notification.message}</div>
+            <div class="notification-time" data-created="${new Date(notification.created).toISOString()}">${notification.created}</div>
+            <button class="btn-close-notification" onclick="dismissNotification('${notification.id}')">&times;</button>
+        `
+        notificationContainer.insertBefore(notificationItem, notificationContainer.firstChild)
+
+        updateRelativeTime()
+        updateNotificationCount()
+
+    })
+
+    connection.on("NotificationDismissed", function(notificationId){
+        removeNotification(notificationId)
+    })
+
+    connection.start()
+        .then(() => {
+            connection.invoke("AddToGroup", "All")
+
+			const userRoles = @Html.Raw(Json.Serialize(User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value)
+                .ToList()))
+
+			if(userRoles.includes("Admin")){
+				connection.invoke("AddToGroup", "Admins")
+            }
+
+            if(userRoles.includes("Management")){
+                connection.invoke("AddToGroup", "Managers")
+            }
+        })
+        .catch(error => console.error("Error establishing connection: ", error))
+
+
+    //Hjälpfunctioner
+
+    async function dismissNotification(notificationId){
+        try {
+
+            const res = await fetch(`/api/notifications/dismiss/${notificationId}`, { method: 'POST' })
+            if(res.ok){
+                removeNotification(notificationId)
+            }
+            else {
+                console.error("Error dismissing notification")
+            }
+
+
+        } catch {
+            console.error("Error dismissing notification: ", error)
+        }
+    }
+
+    function removeNotification(notificationId) {
+        const notificationItem = document.querySelector(`.notification-item[data-id="${notificationId}"]`)
+        if (notificationItem) {
+            notificationItem.remove()
+            updateNotificationCount()
+        }
+    }
+
+    function updateNotificationCount() {
+        const notifications = document.querySelector('.notifications')
+        const notificationNumber = document.querySelector('.notification-number')
+        const notificationDropdownButton = document.querySelector('#notificationNavbarDropdown')
+        const notificationCount = notifications.querySelectorAll('.notification-item').length
+
+        if(notificationNumber){
+            notificationNumber.textContent = notificationCount
+        }
+
+        let dot = notificationDropdownButton.querySelector('.n-dot.n-dot-red')
+        if(notificationCount > 0 && !dot){
+            dot = document.createElement('div')
+            dot.classList.add('n-dot', 'n-dot-red')
+            notificationDropdownButton.appendChild(dot)
+        }
+        else if(notificationCount === 0 && dot){
+            dot.remove()
+        }
+
+    }
+</script>

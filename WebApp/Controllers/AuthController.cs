@@ -58,7 +58,8 @@ public class AuthController(IWebHostEnvironment env, IUserService userService, I
     {
         if (ModelState.IsValid)
         {
-            var (result, userId) = await _userService.RegisterAsync(formData, formData.Password);
+            var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+            var (result, userId) = await _userService.RegisterAsync(formData, formData.Password, creatorId);
             if (result.Succeeded)
             {
                 var profile = ProfileFactory.NewProfile();

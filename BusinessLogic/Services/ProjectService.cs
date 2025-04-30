@@ -2,17 +2,22 @@
 using BusinessLogic.Factories;
 using BusinessLogic.Interfaces;
 using BusinessLogic.Models;
+using Data.Entities;
 using Data.Interfaces;
 using Domain.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BusinessLogic.Services;
 
-public class ProjectService(IProjectsRepository projectsRepository, ProjectFactory projectFactory) : IProjectService
+public class ProjectService(IProjectsRepository projectsRepository, ProjectFactory projectFactory, UserManager<AppUser> userManager, IUserService userService, INotificationService notificationService) : IProjectService
 {
     private readonly IProjectsRepository _projectsRepository = projectsRepository;
     private readonly ProjectFactory _projectFactory = projectFactory;
+    private readonly UserManager<AppUser> _userManager = userManager;
+    private readonly IUserService _userService = userService;
+    private readonly INotificationService _notificationService = notificationService;
 
-    public async Task<ServiceResult<bool>> AddProject(Project project)
+    public async Task<ServiceResult<bool>> AddProject(Project project, string userId)
     {
         if (project != null)
         {
@@ -24,12 +29,42 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
                 await _projectsRepository.CreateAsync(projectEntity);
                 await _projectsRepository.SaveAsync();
                 await _projectsRepository.CommitTransactionAsync();
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user != null)
+                {
+                    var response = await _userService.GetMemberById(user.Id);
+                    if (response.Succeeded && response.Result != null)
+                    {
+                        var userWithProfile = response.Result;
+                        var notificationEntity = new NotificationEntity
+                        {
+                            Message = $"{userWithProfile.FirstName} {userWithProfile.LastName} added a new project: {project.ProjectName}",
+                            NotificationTypeId = 2,
+                            NotificationTargetGroupId = 1,
+                            CreatedByUserId = user.Id.ToString()
+                        };
+
+                        if (string.IsNullOrEmpty(project.ProjectPhotoUrl))
+                        {
+                            notificationEntity.Icon = $"/uploads/{project.ProjectPhotoUrl}";
+                        }
+                        else
+                        {
+                            notificationEntity.Icon = "/icons/projects/project-template.svg";
+                        }
+
+                        await _notificationService.AddNotificationAsync(notificationEntity, user.Id.ToString());
+                    }
+                }
+
                 return new ServiceResult<bool>
                 {
                     Succeeded = true,
                     StatusCode = 200,
                     Result = true
                 };
+                
             }
             catch (Exception ex)
             {
@@ -270,7 +305,7 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
         };
     }
 
-    public async Task<ServiceResult<bool>> UpdateProject(Project project)
+    public async Task<ServiceResult<bool>> UpdateProject(Project project, string userId)
     {
         if (project != null)
         {
@@ -284,6 +319,35 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
                 {
                     await _projectsRepository.SaveAsync();
                     await _projectsRepository.CommitTransactionAsync();
+
+                    var user = await _userManager.FindByIdAsync(userId);
+                    if (user != null)
+                    {
+                        var response = await _userService.GetMemberById(user.Id);
+                        if (response.Succeeded && response.Result != null)
+                        {
+                            var userWithProfile = response.Result;
+                            var notificationEntity = new NotificationEntity
+                            {
+                                Message = $"{userWithProfile.FirstName} {userWithProfile.LastName} updated a project: {project.ProjectName}",
+                                NotificationTypeId = 2,
+                                NotificationTargetGroupId = 1,
+                                CreatedByUserId = user.Id.ToString()
+                            };
+
+                            if (string.IsNullOrEmpty(project.ProjectPhotoUrl))
+                            {
+                                notificationEntity.Icon = $"/uploads/{project.ProjectPhotoUrl}";
+                            }
+                            else
+                            {
+                                notificationEntity.Icon = "/icons/projects/project-template.svg";
+                            }
+
+                            await _notificationService.AddNotificationAsync(notificationEntity, user.Id.ToString());
+                        }
+                    }
+
                     return new ServiceResult<bool>
                     {
                         Succeeded = true,
@@ -326,6 +390,7 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
         };
     }
 
+   
     public async Task<ServiceResult<bool>> DeleteProject(Guid id)
     {
         if (id != Guid.Empty)
@@ -333,15 +398,15 @@ public class ProjectService(IProjectsRepository projectsRepository, ProjectFacto
             await _projectsRepository.BeginTransactionAsync();
             try
             {
-                    await _projectsRepository.DeleteByIdAsync(id);
-                    await _projectsRepository.SaveAsync();
-                    await _projectsRepository.CommitTransactionAsync();
-                    return new ServiceResult<bool>
-                    {
-                        Succeeded = true,
-                        StatusCode = 200,
-                        Result = true
-                    };
+                await _projectsRepository.DeleteByIdAsync(id);
+                await _projectsRepository.SaveAsync();
+                await _projectsRepository.CommitTransactionAsync();
+                return new ServiceResult<bool>
+                {
+                    Succeeded = true,
+                    StatusCode = 200,
+                    Result = true
+                };
             }
             catch (Exception ex)
             {

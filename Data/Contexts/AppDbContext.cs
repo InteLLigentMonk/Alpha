@@ -10,6 +10,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<ProfileEntity> Profiles { get; set; } = null!;
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
     public DbSet<JobTitleEntity> JobTitles { get; set; } = null!;
+    public DbSet<NotificationEntity> Notifications { get; set; } = null!;
+    public DbSet<NotificationTypeEntity> NotificationTypes { get; set; } = null!;
+    public DbSet<NotificationTargetGroupEntity> NotificationTargetGroups { get; set; } = null!;
+    public DbSet<NotificationDismissedEntity> DismissedNotifications { get; set; } = null!;
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

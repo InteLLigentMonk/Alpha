@@ -7,9 +7,16 @@
 @using Data.Entities
 @using Domain.Models
 @using BusinessLogic.Models
+@using BusinessLogic.Services
+@using BusinessLogic.Interfaces
 @using System.Text.Json
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Mvc.Rendering
+
+
 @inject Microsoft.AspNetCore.Mvc.IUrlHelper Url
 @inject SignInManager<AppUser> signInManager
 @inject UserManager<AppUser> userManager
+@inject IUserService userService
+@inject INotificationService notificationService

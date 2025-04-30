@@ -14,6 +14,6 @@ namespace BusinessLogic.Interfaces
         Task<ServiceResult<Member>> GetMemberById(Guid id);
         Task<ServiceResult<IEnumerable<SimpleUser>>> GetSimpleUsersAsync();
         Task<ServiceResult<AppUser>> GetUserById(Guid id);
-        Task<(IdentityResult result, Guid? userId)> RegisterAsync(UserRegistrationForm user, string password);
+        Task<(IdentityResult result, Guid? userId)> RegisterAsync(UserRegistrationForm user, string password, string creatorId);
     }
 }

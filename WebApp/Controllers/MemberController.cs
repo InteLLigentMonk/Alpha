@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interfaces;
+﻿using System.Security.Claims;
+using BusinessLogic.Interfaces;
 using BusinessLogic.Models;
 using BusinessLogic.Services;
 using Domain.Models;
@@ -62,7 +63,8 @@ public class MemberController(IWebHostEnvironment env, IUserService userService,
                 Email = formData.Email
             };
 
-            var (result, userId) = await _userService.RegisterAsync(user, "BytMig123!");
+            var creatorId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "anonymous";
+            var (result, userId) = await _userService.RegisterAsync(user, "BytMig123!", creatorId);
             if (result.Succeeded && userId.HasValue)
             {
 
